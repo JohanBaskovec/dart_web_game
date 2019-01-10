@@ -99,6 +99,7 @@ Future<void> run() async {
               client.webSocket.add(jsonEncode(removeCommand.toJson()));
             }
           }
+          newPlayerWebSocket.close();
           clients[playerId] = null;
         });
       } catch (e, s) {
