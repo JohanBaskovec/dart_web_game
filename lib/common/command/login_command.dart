@@ -1,4 +1,4 @@
-import 'package:dart_game/command/command.dart';
+import 'package:dart_game/common/command/command.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'login_command.g.dart';

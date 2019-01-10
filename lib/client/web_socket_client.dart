@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:html';
 
-import 'package:dart_game/command/add_player_command.dart';
-import 'package:dart_game/command/command.dart';
-import 'package:dart_game/command/logged_in_command.dart';
-import 'package:dart_game/command/move_command.dart';
-import 'package:dart_game/command/remove_player_command.dart';
-import 'package:dart_game/input_manager.dart';
-import 'package:dart_game/world.dart';
+import 'package:dart_game/common/command/add_player_command.dart';
+import 'package:dart_game/common/command/command.dart';
+import 'package:dart_game/common/command/logged_in_command.dart';
+import 'package:dart_game/common/command/move_command.dart';
+import 'package:dart_game/common/command/remove_player_command.dart';
+import 'package:dart_game/client/input_manager.dart';
+import 'package:dart_game/common/game_objects/world.dart';
 
 class WebSocketClient {
   final WebSocket webSocket;

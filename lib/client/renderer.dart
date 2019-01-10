@@ -1,8 +1,8 @@
 import 'dart:html';
 
-import 'package:dart_game/canvas_position.dart';
-import 'package:dart_game/tile_position.dart';
-import 'package:dart_game/world.dart';
+import 'package:dart_game/common/canvas_position.dart';
+import 'package:dart_game/common/tile_position.dart';
+import 'package:dart_game/common/game_objects/world.dart';
 
 class Renderer {
   final CanvasElement _canvas;

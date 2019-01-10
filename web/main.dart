@@ -1,4 +1,4 @@
-import 'package:dart_game/game.dart';
+import 'package:dart_game/client/game.dart';
 
 void main() {
   final game = Game();

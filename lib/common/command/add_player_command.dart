@@ -1,5 +1,5 @@
-import 'package:dart_game/command/command.dart';
-import 'package:dart_game/player.dart';
+import 'package:dart_game/common/command/command.dart';
+import 'package:dart_game/common/game_objects/player.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'add_player_command.g.dart';

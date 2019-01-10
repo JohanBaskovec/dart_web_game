@@ -1,4 +1,4 @@
-import 'package:dart_game/tile_position.dart';
+import 'package:dart_game/common/tile_position.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'player.g.dart';

@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:html';
 
-import 'package:dart_game/command/move_command.dart';
-import 'package:dart_game/player.dart';
-import 'package:dart_game/web_socket_client.dart';
+import 'package:dart_game/common/command/move_command.dart';
+import 'package:dart_game/common/game_objects/player.dart';
+import 'package:dart_game/client/web_socket_client.dart';
 
 class InputManager {
   final CanvasElement _canvas;

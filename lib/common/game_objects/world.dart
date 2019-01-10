@@ -1,8 +1,8 @@
-import 'package:dart_game/constants.dart';
-import 'package:dart_game/game_objects/game_object.dart';
-import 'package:dart_game/player.dart';
-import 'package:dart_game/size.dart';
-import 'package:dart_game/tile.dart';
+import 'package:dart_game/common/constants.dart';
+import 'package:dart_game/common/game_objects/game_object.dart';
+import 'package:dart_game/common/game_objects/player.dart';
+import 'package:dart_game/common/size.dart';
+import 'package:dart_game/common/tile.dart';
 
 class World {
   Size _dimension;

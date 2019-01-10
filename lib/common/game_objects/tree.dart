@@ -1,5 +1,5 @@
-import 'package:dart_game/game_objects/game_object.dart';
-import 'package:dart_game/tile_position.dart';
+import 'package:dart_game/common/game_objects/game_object.dart';
+import 'package:dart_game/common/tile_position.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'tree.g.dart';

@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:html';
 
-import 'package:dart_game/input_manager.dart';
-import 'package:dart_game/renderer.dart';
-import 'package:dart_game/web_socket_client.dart';
-import 'package:dart_game/world.dart';
+import 'package:dart_game/client/input_manager.dart';
+import 'package:dart_game/client/renderer.dart';
+import 'package:dart_game/client/web_socket_client.dart';
+import 'package:dart_game/common/game_objects/world.dart';
 
 class Game {
   void run() {

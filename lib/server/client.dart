@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dart_game/player.dart';
+import 'package:dart_game/common/game_objects/player.dart';
 
 class Client {
   Player player;
