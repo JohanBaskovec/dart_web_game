@@ -18,33 +18,53 @@ Future<void> run() async {
     final String configurationFileContent =
         configurationFile.readAsStringSync();
     final YamlMap config = loadYaml(configurationFileContent) as YamlMap;
-    final world = World(Size(10, 10));
+    final world = World.fromConstants();
 
-    final List<Client> clients = [];
+    final List<Client> clients = List(MaxPlayers);
+    assert(clients.length == world.players.length);
+
     final HttpServer server =
         await HttpServer.bind(InternetAddress.anyIPv6, 8083);
+
+    int nPlayers = 0;
     server.listen((HttpRequest request) async {
       try {
+        if (nPlayers == MaxPlayers) {
+          // TODO: ErrorCommand
+          return;
+        }
         request.response.headers.add('Access-Control-Allow-Origin',
             '${config["frontend_host"]}:${config["frontend_port"]}');
         request.response.headers
             .add('Access-Control-Allow-Credentials', 'true');
-        final WebSocket websocket = await WebSocketTransformer.upgrade(request);
-        assert(clients.length == world.players.length);
-        final int playerId = clients.length;
+        final WebSocket newPlayerWebSocket = await WebSocketTransformer.upgrade(request);
+        int playerId;
+        for (int i = 0 ; i < clients.length ; i++) {
+          if (clients[i] == null) {
+            playerId = i;
+            break;
+          }
+        }
         final player = Player('admin', playerId);
-        world.players.add(player);
-        final client = Client(player, websocket);
+        world.players[playerId] = player;
+        nPlayers++;
+        final newClient = Client(player, newPlayerWebSocket);
+        clients[playerId] = newClient;
         // TODO: prevent synchro modification of clients,
         // because we may send wrong id to user otherwise
-        final loginCommand = LoginCommand('admin', playerId);
-        final addPlayerCommand = AddPlayerCommand('admin', playerId);
-        for (var client in clients) {
-          client.webSocket.add(jsonEncode(addPlayerCommand));
+        final addNewPlayer = AddPlayerCommand(player);
+        final loggedInCommand = LoggedInCommand(player, []);
+        print('Client connected!');
+        for (var i = 0 ; i < clients.length ; i++) {
+          if (clients[i] != null) {
+            clients[i].webSocket.add(jsonEncode(addNewPlayer));
+            loggedInCommand.players.add(world.players[i]);
+          }
         }
-        websocket.add(jsonEncode(loginCommand));
-        clients.add(client);
-        websocket.listen((dynamic data) {
+        final jsonCommand = jsonEncode(loggedInCommand.toJson());
+        newPlayerWebSocket.add(jsonCommand);
+
+        newPlayerWebSocket.listen((dynamic data) {
           final Map json = jsonDecode(data as String);
           if (json['type'] != null) {
             final type = commandTypeFromString(json['type'] as String);
@@ -55,18 +75,31 @@ Future<void> run() async {
                 world.players[command.playerId].position.x += command.x;
                 world.players[command.playerId].position.y += command.y;
                 for (var client in clients) {
-                  client.webSocket.add(jsonEncode(command));
+                  if (client != null) {
+                    client.webSocket.add(jsonEncode(command.toJson()));
+                  }
                 }
                 break;
               case CommandType.Login:
                 // TODO
+              case CommandType.LoggedIn:
               case CommandType.AddPlayer: // should never happen
+              case CommandType.RemovePlayer:
               case CommandType.Unknown:
                 print('Error, received unknown command!');
             }
           } else {
             print('Error: command without a type.');
           }
+        }, onDone: () {
+          print('Client disconnected.');
+          final removeCommand = RemovePlayerCommand(playerId);
+          for (var client in clients) {
+            if (client != null) {
+              client.webSocket.add(jsonEncode(removeCommand.toJson()));
+            }
+          }
+          clients[playerId] = null;
         });
       } catch (e, s) {
         print(e);

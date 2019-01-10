@@ -1,14 +1,14 @@
 import 'package:dart_game_common/command/command.dart';
+import 'package:dart_game_common/player.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'add_player_command.g.dart';
 
 @JsonSerializable(anyMap: true)
 class AddPlayerCommand extends Command {
-  String name;
-  int id;
+  Player player;
 
-  AddPlayerCommand([this.name, this.id]): super(CommandType.AddPlayer);
+  AddPlayerCommand([this.player]): super(CommandType.AddPlayer);
   
   /// Creates a new [AddPlayerCommand] from a JSON object.
   static AddPlayerCommand fromJson(Map<dynamic, dynamic> json) =>

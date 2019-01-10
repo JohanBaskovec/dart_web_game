@@ -1,21 +1,25 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'login_command.dart';
+part of 'logged_in_command.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-LoginCommand _$LoginCommandFromJson(Map json) {
-  return LoginCommand(json['name'] as String, json['id'] as int)
+LoggedInCommand _$LoggedInCommandFromJson(Map json) {
+  return LoggedInCommand(
+      json['player'] == null ? null : Player.fromJson(json['player'] as Map),
+      (json['players'] as List)
+          ?.map((e) => e == null ? null : Player.fromJson(e as Map))
+          ?.toList())
     ..type = _$enumDecodeNullable(_$CommandTypeEnumMap, json['type']);
 }
 
-Map<String, dynamic> _$LoginCommandToJson(LoginCommand instance) =>
+Map<String, dynamic> _$LoggedInCommandToJson(LoggedInCommand instance) =>
     <String, dynamic>{
       'type': _$CommandTypeEnumMap[instance.type],
-      'name': instance.name,
-      'id': instance.id
+      'player': instance.player,
+      'players': instance.players
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {

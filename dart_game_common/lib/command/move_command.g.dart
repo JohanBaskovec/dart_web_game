@@ -42,7 +42,9 @@ T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
 
 const _$CommandTypeEnumMap = <CommandType, dynamic>{
   CommandType.Login: 'Login',
+  CommandType.LoggedIn: 'LoggedIn',
   CommandType.AddPlayer: 'AddPlayer',
+  CommandType.RemovePlayer: 'RemovePlayer',
   CommandType.Move: 'Move',
   CommandType.Unknown: 'Unknown'
 };

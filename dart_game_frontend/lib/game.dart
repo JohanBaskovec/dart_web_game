@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:html';
 
-import 'package:dart_game_common/size.dart';
 import 'package:dart_game_common/world.dart';
 import 'package:dart_game_frontend/input_manager.dart';
 import 'package:dart_game_frontend/renderer.dart';
@@ -16,7 +15,7 @@ class Game {
 
     final CanvasElement canvas = document.getElementById('canvas');
     final renderer = Renderer(canvas);
-    final world = World(Size(10, 10));
+    final world = World.fromConstants();
 
     Timer.periodic(Duration(milliseconds: (1000 / 60).floor()), (Timer timer) {
       renderer.render(world);

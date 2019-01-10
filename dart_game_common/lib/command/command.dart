@@ -1,6 +1,8 @@
 enum CommandType {
   Login,
+  LoggedIn,
   AddPlayer,
+  RemovePlayer,
   Move,
   Unknown
 }
@@ -13,6 +15,10 @@ CommandType commandTypeFromString(String name) {
       return CommandType.AddPlayer;
     case 'Move':
       return CommandType.Move;
+    case 'LoggedIn':
+      return CommandType.LoggedIn;
+    case 'RemovePlayer':
+      return CommandType.RemovePlayer;
   }
   return CommandType.Unknown;
 }

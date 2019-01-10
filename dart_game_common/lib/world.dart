@@ -1,13 +1,14 @@
-import 'package:dart_game_common/player.dart';
-import 'package:dart_game_common/size.dart';
-import 'package:dart_game_common/tile.dart';
+import 'package:dart_game_common/dart_game_common.dart';
 
 class World {
   Size _dimension;
   List<List<Tile>> _tilesColumn;
   List<Player> _players;
 
-  World(this._dimension): _tilesColumn = List(_dimension.x), _players = [] {
+  World.fromConstants()
+      : _dimension = WorldSize,
+        _tilesColumn = List(WorldSize.x),
+        _players = List(MaxPlayers) {
     _tilesColumn.fillRange(0, _dimension.x, List(_dimension.y));
     for (List<Tile> column in _tilesColumn) {
       column.fillRange(0, _dimension.y, Tile());

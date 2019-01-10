@@ -1,4 +1,5 @@
 import 'package:dart_game_common/command/command.dart';
+import 'package:dart_game_common/player.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'login_command.g.dart';
@@ -7,7 +8,6 @@ part 'login_command.g.dart';
 class LoginCommand extends Command {
   String name;
   int id;
-
 
   LoginCommand([this.name, this.id]): super(CommandType.Login);
 

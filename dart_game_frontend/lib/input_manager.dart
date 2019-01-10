@@ -10,7 +10,7 @@ class InputManager {
   final BodyElement _body;
   WebSocketClient webSocketClient;
   Player player;
-  bool canvasActive;
+  bool canvasActive = false;
 
   InputManager(this._body, this._canvas);
 

@@ -1,20 +1,20 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'login_command.dart';
+part of 'remove_player_command.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-LoginCommand _$LoginCommandFromJson(Map json) {
-  return LoginCommand(json['name'] as String, json['id'] as int)
+RemovePlayerCommand _$RemovePlayerCommandFromJson(Map json) {
+  return RemovePlayerCommand(json['id'] as int)
     ..type = _$enumDecodeNullable(_$CommandTypeEnumMap, json['type']);
 }
 
-Map<String, dynamic> _$LoginCommandToJson(LoginCommand instance) =>
+Map<String, dynamic> _$RemovePlayerCommandToJson(
+        RemovePlayerCommand instance) =>
     <String, dynamic>{
       'type': _$CommandTypeEnumMap[instance.type],
-      'name': instance.name,
       'id': instance.id
     };
 

@@ -1,13 +1,20 @@
 import 'package:dart_game_common/tile_position.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'player.g.dart';
+
+@JsonSerializable(anyMap: true)
 class Player {
-  String _name;
+  String name;
   TilePosition position;
-  int _id;
+  int id;
 
-  Player([this._name, this._id]): position = TilePosition(0, 0);
+  Player([this.name, this.id]): position = TilePosition(0, 0);
 
-  int get id => _id;
+  /// Creates a new [Player] from a JSON object.
+  static Player fromJson(Map<dynamic, dynamic> json) =>
+      _$PlayerFromJson(json);
 
-  String get name => _name;
+  /// Convert this object to a JSON object.
+  Map<String, dynamic> toJson() => _$PlayerToJson(this);
 }

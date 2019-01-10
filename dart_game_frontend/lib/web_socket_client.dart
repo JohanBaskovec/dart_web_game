@@ -25,21 +25,22 @@ class WebSocketClient {
           case CommandType.AddPlayer:
             final command = AddPlayerCommand.fromJson(json);
             // TODO: send the entire Player, without his email, password etc.
-            final player = Player(command.name, command.id);
-            if (_world.players.length < command.id + 1) {
-              _world.players.length = command.id * 2;
+            _world.players[command.player.id] = command.player;
+            break;
+          case CommandType.RemovePlayer:
+            final command = RemovePlayerCommand.fromJson(json);
+            _world.players[command.id] = null;
+            break;
+          case CommandType.LoggedIn:
+            final command = LoggedInCommand.fromJson(json);
+            for (var player in command.players) {
+              _world.players[player.id] = player;
             }
-            _world.players[command.id] = player;
+            _inputManager.player = command.player;
             break;
           case CommandType.Login:
-            final command = LoginCommand.fromJson(json);
-            final player = Player(command.name, command.id);
-            if (_world.players.length < command.id + 1) {
-              _world.players.length = (command.id + 1) * 2;
-            }
-            _world.players[command.id] = player;
-            _inputManager.player = player;
             break;
+
           case CommandType.Unknown:
             break;
         }

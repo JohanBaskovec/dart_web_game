@@ -7,15 +7,15 @@ part of 'add_player_command.dart';
 // **************************************************************************
 
 AddPlayerCommand _$AddPlayerCommandFromJson(Map json) {
-  return AddPlayerCommand(json['name'] as String, json['id'] as int)
+  return AddPlayerCommand(
+      json['player'] == null ? null : Player.fromJson(json['player'] as Map))
     ..type = _$enumDecodeNullable(_$CommandTypeEnumMap, json['type']);
 }
 
 Map<String, dynamic> _$AddPlayerCommandToJson(AddPlayerCommand instance) =>
     <String, dynamic>{
       'type': _$CommandTypeEnumMap[instance.type],
-      'name': instance.name,
-      'id': instance.id
+      'player': instance.player
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {
@@ -40,7 +40,9 @@ T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
 
 const _$CommandTypeEnumMap = <CommandType, dynamic>{
   CommandType.Login: 'Login',
+  CommandType.LoggedIn: 'LoggedIn',
   CommandType.AddPlayer: 'AddPlayer',
+  CommandType.RemovePlayer: 'RemovePlayer',
   CommandType.Move: 'Move',
   CommandType.Unknown: 'Unknown'
 };
