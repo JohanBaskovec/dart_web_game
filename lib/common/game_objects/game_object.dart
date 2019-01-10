@@ -3,14 +3,14 @@ import 'package:json_annotation/json_annotation.dart';
 part 'game_object.g.dart';
 
 enum GameObjectType {
-  Tree,
-  AppleTree,
-  CoconutTree,
-  RopeTree,
-  LeafTree,
-  BarkTree,
-  Stone,
-  Axe
+  tree,
+  appleTree,
+  coconutTree,
+  ropeTree,
+  leafTree,
+  barkTree,
+  stone,
+  axe
 }
 
 @JsonSerializable(anyMap: true)

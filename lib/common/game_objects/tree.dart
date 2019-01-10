@@ -7,7 +7,7 @@ part 'tree.g.dart';
 @JsonSerializable(anyMap: true)
 class Tree extends GameObject {
   TilePosition position;
-  Tree(): super(GameObjectType.Tree);
+  Tree(): super(GameObjectType.tree);
 
   /// Creates a new [Tree] from a JSON object.
   static Tree fromJson(Map<dynamic, dynamic> json) =>

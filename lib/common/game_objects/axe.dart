@@ -7,7 +7,7 @@ part 'axe.g.dart';
 @JsonSerializable(anyMap: true)
 class Axe extends GameObject {
   WorldPosition position;
-  Axe(): super(GameObjectType.Axe);
+  Axe(): super(GameObjectType.axe);
   
   /// Creates a new [Axe] from a JSON object.
   static Axe fromJson(Map<dynamic, dynamic> json) =>

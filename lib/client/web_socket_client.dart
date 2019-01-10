@@ -22,31 +22,31 @@ class WebSocketClient {
       if (json['type'] != null) {
         final CommandType type = commandTypeFromString(json['type'] as String);
         switch (type) {
-          case CommandType.Move:
+          case CommandType.move:
             final MoveCommand command = MoveCommand.fromJson(json);
             _world.players[command.playerId].position.x += command.x;
             _world.players[command.playerId].position.y += command.y;
             break;
-          case CommandType.AddPlayer:
+          case CommandType.addPlayer:
             final command = AddPlayerCommand.fromJson(json);
             // TODO: send the entire Player, without his email, password etc.
             _world.players[command.player.id] = command.player;
             break;
-          case CommandType.RemovePlayer:
+          case CommandType.removePlayer:
             final command = RemovePlayerCommand.fromJson(json);
             _world.players[command.id] = null;
             break;
-          case CommandType.LoggedIn:
+          case CommandType.loggedIn:
             final command = LoggedInCommand.fromJson(json);
             for (var player in command.players) {
               _world.players[player.id] = player;
             }
             _inputManager.player = command.player;
             break;
-          case CommandType.Login:
+          case CommandType.login:
             break;
 
-          case CommandType.Unknown:
+          case CommandType.unknown:
             break;
         }
       }

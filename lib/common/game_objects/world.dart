@@ -11,10 +11,10 @@ class World {
   List<Player> _players;
 
   World.fromConstants()
-      : _dimension = WorldSize,
-        _tilesColumn = List(WorldSize.x),
-        _solidObjectColumns = List(WorldSize.x),
-        _players = List(MaxPlayers) {
+      : _dimension = worldSize,
+        _tilesColumn = List(worldSize.x),
+        _solidObjectColumns = List(worldSize.x),
+        _players = List(maxPlayers) {
     _tilesColumn.fillRange(0, _dimension.x, List(_dimension.y));
     for (List<Tile> column in _tilesColumn) {
       for (int i = 0 ; i < column.length ; i++) {

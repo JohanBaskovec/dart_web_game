@@ -8,7 +8,7 @@ part 'add_player_command.g.dart';
 class AddPlayerCommand extends Command {
   Player player;
 
-  AddPlayerCommand([this.player]): super(CommandType.AddPlayer);
+  AddPlayerCommand([this.player]): super(CommandType.addPlayer);
   
   /// Creates a new [AddPlayerCommand] from a JSON object.
   static AddPlayerCommand fromJson(Map<dynamic, dynamic> json) =>

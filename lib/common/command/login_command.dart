@@ -8,7 +8,7 @@ class LoginCommand extends Command {
   String name;
   int id;
 
-  LoginCommand([this.name, this.id]): super(CommandType.Login);
+  LoginCommand([this.name, this.id]): super(CommandType.login);
 
   /// Creates a new [LoginCommand] from a JSON object.
   static LoginCommand fromJson(Map<dynamic, dynamic> json) =>

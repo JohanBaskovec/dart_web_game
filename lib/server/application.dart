@@ -26,7 +26,7 @@ Future<void> run() async {
     final YamlMap config = loadYaml(configurationFileContent) as YamlMap;
     final world = World.fromConstants();
 
-    final List<Client> clients = List(MaxPlayers);
+    final List<Client> clients = List(maxPlayers);
     assert(clients.length == world.players.length);
 
     final HttpServer server =
@@ -35,7 +35,7 @@ Future<void> run() async {
     int nPlayers = 0;
     server.listen((HttpRequest request) async {
       try {
-        if (nPlayers == MaxPlayers) {
+        if (nPlayers == maxPlayers) {
           // TODO: ErrorCommand
           return;
         }
@@ -75,7 +75,7 @@ Future<void> run() async {
           if (json['type'] != null) {
             final type = commandTypeFromString(json['type'] as String);
             switch (type) {
-              case CommandType.Move:
+              case CommandType.move:
                 // TODO: collision etc.
                 final command = MoveCommand.fromJson(json);
                 world.players[command.playerId].position.x += command.x;
@@ -86,12 +86,12 @@ Future<void> run() async {
                   }
                 }
                 break;
-              case CommandType.Login:
+              case CommandType.login:
                 // TODO
-              case CommandType.LoggedIn:
-              case CommandType.AddPlayer: // should never happen
-              case CommandType.RemovePlayer:
-              case CommandType.Unknown:
+              case CommandType.loggedIn:
+              case CommandType.addPlayer: // should never happen
+              case CommandType.removePlayer:
+              case CommandType.unknown:
                 print('Error, received unknown command!');
             }
           } else {

@@ -10,7 +10,7 @@ class LoggedInCommand extends Command {
   List<Player> players;
 
   LoggedInCommand([this.player, this.players])
-      : super(CommandType.LoggedIn);
+      : super(CommandType.loggedIn);
 
   /// Creates a new [LoggedInCommand] from a JSON object.
   static LoggedInCommand fromJson(Map<dynamic, dynamic> json) =>

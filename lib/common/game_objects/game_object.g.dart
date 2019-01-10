@@ -35,12 +35,12 @@ T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
 }
 
 const _$GameObjectTypeEnumMap = <GameObjectType, dynamic>{
-  GameObjectType.Tree: 'Tree',
-  GameObjectType.AppleTree: 'AppleTree',
-  GameObjectType.CoconutTree: 'CoconutTree',
-  GameObjectType.RopeTree: 'RopeTree',
-  GameObjectType.LeafTree: 'LeafTree',
-  GameObjectType.BarkTree: 'BarkTree',
-  GameObjectType.Stone: 'Stone',
-  GameObjectType.Axe: 'Axe'
+  GameObjectType.tree: 'tree',
+  GameObjectType.appleTree: 'appleTree',
+  GameObjectType.coconutTree: 'coconutTree',
+  GameObjectType.ropeTree: 'ropeTree',
+  GameObjectType.leafTree: 'leafTree',
+  GameObjectType.barkTree: 'barkTree',
+  GameObjectType.stone: 'stone',
+  GameObjectType.axe: 'axe'
 };

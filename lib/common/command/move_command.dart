@@ -9,7 +9,7 @@ class MoveCommand extends Command {
   int y;
   int playerId;
 
-  MoveCommand([this.x, this.y, this.playerId]): super(CommandType.Move);
+  MoveCommand([this.x, this.y, this.playerId]): super(CommandType.move);
 
   /// Creates a new [MoveCommand] from a JSON object.
   static MoveCommand fromJson(Map<dynamic, dynamic> json) =>

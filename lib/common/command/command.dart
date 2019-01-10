@@ -1,26 +1,26 @@
 enum CommandType {
-  Login,
-  LoggedIn,
-  AddPlayer,
-  RemovePlayer,
-  Move,
-  Unknown
+  login,
+  loggedIn,
+  addPlayer,
+  removePlayer,
+  move,
+  unknown
 }
 
 CommandType commandTypeFromString(String name) {
   switch (name) {
-    case 'Login':
-      return CommandType.Login;
-    case 'AddPlayer':
-      return CommandType.AddPlayer;
-    case 'Move':
-      return CommandType.Move;
-    case 'LoggedIn':
-      return CommandType.LoggedIn;
-    case 'RemovePlayer':
-      return CommandType.RemovePlayer;
+    case 'login':
+      return CommandType.login;
+    case 'addPlayer':
+      return CommandType.addPlayer;
+    case 'move':
+      return CommandType.move;
+    case 'loggedIn':
+      return CommandType.loggedIn;
+    case 'removePlayer':
+      return CommandType.removePlayer;
   }
-  return CommandType.Unknown;
+  return CommandType.unknown;
 }
 
 class Command {
