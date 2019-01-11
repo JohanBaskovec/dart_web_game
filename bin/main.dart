@@ -1,4 +1,4 @@
-import 'package:dart_game/server/application.dart';
+import 'package:dart_game/server/server.dart';
 
 void main(List<String> arguments) {
   final server = Server();

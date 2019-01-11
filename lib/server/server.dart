@@ -19,14 +19,19 @@ class Server {
   HttpServer server;
   final List<Client> clients = List(maxPlayers);
 
+  void sendCommandToAllClients(Command command) {
+    for (var client in clients) {
+      if (client != null) {
+        client.sendCommand(command);
+      }
+    }
+  }
+
+
   void executeMoveCommand(MoveCommand command) {
     world.players[command.playerId].position.x += command.x;
     world.players[command.playerId].position.y += command.y;
-    for (var client in clients) {
-      if (client != null) {
-        client.webSocket.add(jsonEncode(command.toJson()));
-      }
-    }
+    sendCommandToAllClients(command);
   }
 
   /// Run the application.
@@ -99,11 +104,7 @@ class Server {
           }, onDone: () {
             print('Client disconnected.');
             final removeCommand = RemovePlayerCommand(playerId);
-            for (var client in clients) {
-              if (client != null) {
-                client.webSocket.add(jsonEncode(removeCommand.toJson()));
-              }
-            }
+            sendCommandToAllClients(removeCommand);
             newPlayerWebSocket.close();
             clients[playerId] = null;
           });
