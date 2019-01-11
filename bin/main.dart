@@ -1,5 +1,6 @@
-import 'package:dart_game/server/application.dart' as dart_game;
+import 'package:dart_game/server/application.dart';
 
 void main(List<String> arguments) {
-  dart_game.run();
+  final server = Server();
+  server.run();
 }

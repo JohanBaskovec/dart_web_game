@@ -17,5 +17,6 @@ class LoggedInCommand extends Command {
       _$LoggedInCommandFromJson(json);
 
   /// Convert this object to a JSON object.
+  @override
   Map<String, dynamic> toJson() => _$LoggedInCommandToJson(this);
 }

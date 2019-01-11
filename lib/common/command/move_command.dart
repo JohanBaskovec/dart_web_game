@@ -16,6 +16,7 @@ class MoveCommand extends Command {
       _$MoveCommandFromJson(json);
 
   /// Convert this object to a JSON object.
+  @override
   Map<String, dynamic> toJson() => _$MoveCommandToJson(this);
 }
 

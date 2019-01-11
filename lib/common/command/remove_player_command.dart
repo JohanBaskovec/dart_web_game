@@ -14,5 +14,6 @@ class RemovePlayerCommand extends Command {
       _$RemovePlayerCommandFromJson(json);
 
   /// Convert this object to a JSON object.
+  @override
   Map<String, dynamic> toJson() => _$RemovePlayerCommandToJson(this);
 }

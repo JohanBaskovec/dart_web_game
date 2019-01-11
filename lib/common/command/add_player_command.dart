@@ -15,5 +15,6 @@ class AddPlayerCommand extends Command {
       _$AddPlayerCommandFromJson(json);
 
   /// Convert this object to a JSON object.
+  @override
   Map<String, dynamic> toJson() => _$AddPlayerCommandToJson(this);
 }
