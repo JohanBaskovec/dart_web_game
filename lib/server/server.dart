@@ -30,9 +30,13 @@ class Server {
   }
 
   void executeMoveCommand(MoveCommand command) {
-    world.players[command.playerId].position.x += command.x;
-    world.players[command.playerId].position.y += command.y;
-    sendCommandToAllClients(command);
+    final targetX = world.players[command.playerId].position.x + command.x;
+    final targetY = world.players[command.playerId].position.y + command.y;
+    if (world.solidObjectColumns[targetX][targetY] == null) {
+      world.players[command.playerId].position.x += command.x;
+      world.players[command.playerId].position.y += command.y;
+      sendCommandToAllClients(command);
+    }
   }
 
   /// Run the application.
