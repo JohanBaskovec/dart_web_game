@@ -7,7 +7,7 @@ part 'remove_player_command.g.dart';
 class RemovePlayerCommand extends Command {
   int id;
 
-  RemovePlayerCommand([this.id]): super(CommandType.addPlayer);
+  RemovePlayerCommand([this.id]): super(CommandType.removePlayer);
   
   /// Creates a new [RemovePlayerCommand] from a JSON object.
   static RemovePlayerCommand fromJson(Map<dynamic, dynamic> json) =>
