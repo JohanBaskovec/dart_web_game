@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:dart_game/common/command/add_player_command.dart';
 import 'package:dart_game/common/command/command.dart';
@@ -15,9 +16,10 @@ import 'package:dart_game/server/client.dart';
 import 'package:yaml/yaml.dart';
 
 class Server {
-  World world = World.fromConstants();
   HttpServer server;
   final List<Client> clients = List(maxPlayers);
+  Random randomGenerator = Random.secure();
+  World world;
 
   void sendCommandToAllClients(Command command) {
     for (var client in clients) {
@@ -26,7 +28,6 @@ class Server {
       }
     }
   }
-
 
   void executeMoveCommand(MoveCommand command) {
     world.players[command.playerId].position.x += command.x;
@@ -47,6 +48,7 @@ class Server {
       final YamlMap config = loadYaml(configurationFileContent) as YamlMap;
 
       server = await HttpServer.bind(InternetAddress.anyIPv6, 8083);
+      world = World.fromConstants(randomGenerator);
 
       int nPlayers = 0;
       server.listen((HttpRequest request) async {
@@ -76,12 +78,11 @@ class Server {
           // TODO: prevent synchro modification of clients,
           // because we may send wrong id to user otherwise
           final addNewPlayer = AddPlayerCommand(player);
-          final loggedInCommand = LoggedInCommand(player, []);
+          final loggedInCommand = LoggedInCommand(player, world);
           print('Client connected!');
           for (var i = 0; i < clients.length; i++) {
             if (clients[i] != null) {
               clients[i].webSocket.add(jsonEncode(addNewPlayer));
-              loggedInCommand.players.add(world.players[i]);
             }
           }
           final jsonCommand = jsonEncode(loggedInCommand.toJson());
@@ -107,6 +108,7 @@ class Server {
             sendCommandToAllClients(removeCommand);
             newPlayerWebSocket.close();
             clients[playerId] = null;
+            world.players[playerId] = null;
           });
         } catch (e, s) {
           print(e);

@@ -1,18 +1,24 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'game_object.dart';
+part of 'solid_game_object.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-GameObject _$GameObjectFromJson(Map json) {
-  return GameObject(
-      _$enumDecodeNullable(_$GameObjectTypeEnumMap, json['type']));
+SolidGameObject _$SolidGameObjectFromJson(Map json) {
+  return SolidGameObject(
+      _$enumDecodeNullable(_$SolidGameObjectTypeEnumMap, json['type']),
+      json['position'] == null
+          ? null
+          : TilePosition.fromJson(json['position'] as Map));
 }
 
-Map<String, dynamic> _$GameObjectToJson(GameObject instance) =>
-    <String, dynamic>{'type': _$GameObjectTypeEnumMap[instance.type]};
+Map<String, dynamic> _$SolidGameObjectToJson(SolidGameObject instance) =>
+    <String, dynamic>{
+      'type': _$SolidGameObjectTypeEnumMap[instance.type],
+      'position': instance.position
+    };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {
   if (source == null) {
@@ -34,13 +40,11 @@ T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
   return _$enumDecode<T>(enumValues, source);
 }
 
-const _$GameObjectTypeEnumMap = <GameObjectType, dynamic>{
-  GameObjectType.tree: 'tree',
-  GameObjectType.appleTree: 'appleTree',
-  GameObjectType.coconutTree: 'coconutTree',
-  GameObjectType.ropeTree: 'ropeTree',
-  GameObjectType.leafTree: 'leafTree',
-  GameObjectType.barkTree: 'barkTree',
-  GameObjectType.stone: 'stone',
-  GameObjectType.axe: 'axe'
+const _$SolidGameObjectTypeEnumMap = <SolidGameObjectType, dynamic>{
+  SolidGameObjectType.tree: 'tree',
+  SolidGameObjectType.appleTree: 'appleTree',
+  SolidGameObjectType.coconutTree: 'coconutTree',
+  SolidGameObjectType.ropeTree: 'ropeTree',
+  SolidGameObjectType.leafTree: 'leafTree',
+  SolidGameObjectType.barkTree: 'barkTree'
 };

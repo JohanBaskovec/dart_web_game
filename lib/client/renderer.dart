@@ -1,8 +1,9 @@
 import 'dart:html';
 
 import 'package:dart_game/common/canvas_position.dart';
-import 'package:dart_game/common/tile_position.dart';
+import 'package:dart_game/common/game_objects/solid_game_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/tile_position.dart';
 
 class Renderer {
   final CanvasElement _canvas;
@@ -19,6 +20,17 @@ class Renderer {
             tilePositionToCanvasPosition(player.position);
         _ctx.fillStyle = 'green';
         _ctx.fillRect(position.x, position.y, 10, 10);
+      }
+    }
+
+    for (List<SolidGameObject> column in world.solidObjectColumns) {
+      for (SolidGameObject object in column) {
+        if (object != null) {
+          final CanvasPosition position =
+              tilePositionToCanvasPosition(object.position);
+          _ctx.fillStyle = 'black';
+          _ctx.fillRect(position.x, position.y, 10, 10);
+        }
       }
     }
   }

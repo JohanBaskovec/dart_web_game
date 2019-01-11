@@ -1,23 +1,23 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'logged_in_command.dart';
+part of 'soft_game_object.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-LoggedInCommand _$LoggedInCommandFromJson(Map json) {
-  return LoggedInCommand(
-      json['player'] == null ? null : Player.fromJson(json['player'] as Map),
-      json['world'] == null ? null : World.fromJson(json['world'] as Map))
-    ..type = _$enumDecodeNullable(_$CommandTypeEnumMap, json['type']);
+SoftGameObject _$SoftGameObjectFromJson(Map json) {
+  return SoftGameObject(
+      _$enumDecodeNullable(_$SoftGameObjectTypeEnumMap, json['type']),
+      json['position'] == null
+          ? null
+          : WorldPosition.fromJson(json['position'] as Map));
 }
 
-Map<String, dynamic> _$LoggedInCommandToJson(LoggedInCommand instance) =>
+Map<String, dynamic> _$SoftGameObjectToJson(SoftGameObject instance) =>
     <String, dynamic>{
-      'type': _$CommandTypeEnumMap[instance.type],
-      'player': instance.player,
-      'world': instance.world
+      'type': _$SoftGameObjectTypeEnumMap[instance.type],
+      'position': instance.position
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {
@@ -40,11 +40,7 @@ T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
   return _$enumDecode<T>(enumValues, source);
 }
 
-const _$CommandTypeEnumMap = <CommandType, dynamic>{
-  CommandType.login: 'login',
-  CommandType.loggedIn: 'loggedIn',
-  CommandType.addPlayer: 'addPlayer',
-  CommandType.removePlayer: 'removePlayer',
-  CommandType.move: 'move',
-  CommandType.unknown: 'unknown'
+const _$SoftGameObjectTypeEnumMap = <SoftGameObjectType, dynamic>{
+  SoftGameObjectType.stone: 'stone',
+  SoftGameObjectType.axe: 'axe'
 };

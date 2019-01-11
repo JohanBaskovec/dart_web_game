@@ -56,9 +56,9 @@ class WebSocketClient {
   }
 
   void doLoggedInCommand(LoggedInCommand command) {
-    for (var player in command.players) {
-      _world.players[player.id] = player;
-    }
+    _world.solidObjectColumns = command.world.solidObjectColumns;
+    _world.players = command.world.players;
+    _world.tilesColumn = command.world.tilesColumn;
     _inputManager.player = command.player;
   }
 }

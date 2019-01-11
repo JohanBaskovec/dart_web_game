@@ -15,7 +15,7 @@ class Game {
 
     final CanvasElement canvas = document.getElementById('canvas');
     final renderer = Renderer(canvas);
-    final world = World.fromConstants();
+    final world = World();
 
     Timer.periodic(Duration(milliseconds: (1000 / 60).floor()), (Timer timer) {
       renderer.render(world);
