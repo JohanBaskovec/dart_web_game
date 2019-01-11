@@ -13,6 +13,8 @@ class Renderer {
       : _ctx = _canvas.getContext('2d') as CanvasRenderingContext2D;
 
   void render(World world) {
+    _canvas.width = window.innerWidth;
+    _canvas.height = window.innerHeight;
     _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
     for (var player in world.players) {
       if (player != null) {
