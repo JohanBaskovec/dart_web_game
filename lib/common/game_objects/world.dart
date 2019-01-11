@@ -25,18 +25,23 @@ class World {
         tilesColumn = List(worldSize.x),
         solidObjectColumns = List(worldSize.x),
         players = List(maxPlayers) {
-    tilesColumn.fillRange(0, _dimension.x, List(_dimension.y));
+    for (int x = 0 ; x < _dimension.x ; x++) {
+      tilesColumn[x] = List(_dimension.y);
+    }
     for (List<Tile> column in tilesColumn) {
       for (int i = 0; i < column.length; i++) {
         column[i] = Tile();
       }
     }
 
-    solidObjectColumns.fillRange(0, _dimension.x, List(_dimension.y));
+    for (int x = 0 ; x < _dimension.x ; x++) {
+      solidObjectColumns[x] = List(_dimension.y);
+    }
     for (int x = 0; x < solidObjectColumns.length; x++) {
       for (int y = 0; y < solidObjectColumns[x].length; y++) {
         if (randomGenerator.nextInt(100) < 10) {
           solidObjectColumns[x][y] = Tree(TilePosition(x, y));
+print('$x : $y');
         }
       }
     }
