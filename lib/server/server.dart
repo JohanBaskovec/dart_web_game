@@ -153,7 +153,7 @@ class Server {
         .solidObjectColumns[command.targetPosition.x][command.targetPosition.y];
     final Client client = clients[command.playerId];
     final SoftGameObject item =
-        client.player.inventory.items[command.itemIndex];
+        client.player.inventory.items[command.itemIndex][0];
     switch (target.type) {
       case SolidGameObjectType.tree:
         useItemOnTree(client, item, target as Tree);

@@ -6,19 +6,26 @@ part 'inventory.g.dart';
 @JsonSerializable(anyMap: true)
 class Inventory {
   SoftGameObject currentlyEquiped;
-  List<SoftGameObject> items = [];
+  List<List<SoftGameObject>> items = [];
 
   void addItem(SoftGameObject item) {
-    item.index = items.length;
-    items.add(item);
+    var i = 0;
+    for (; i < items.length ; i++) {
+      if (items[i][0].type == item.type) {
+        break;
+      }
+    }
+    if (i == items.length) {
+      items.add([]);
+    }
+    item.index = i;
+    items[i].add(item);
+    print('Added $item to inventory in stack $i');
     currentlyEquiped ??= item;
-    print('Added $item to inventory');
   }
 
   int get size => items.length;
   
-  SoftGameObject removeLast() => items.removeLast();
-
   /// Creates a new [Inventory] from a JSON object.
   static Inventory fromJson(Map<dynamic, dynamic> json) => _$InventoryFromJson(json);
 

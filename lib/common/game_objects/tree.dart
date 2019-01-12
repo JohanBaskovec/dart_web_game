@@ -22,13 +22,16 @@ class Tree extends SolidGameObject {
   Map<String, dynamic> toJson() => _$TreeToJson(this);
 
   SoftGameObject cut() {
-     final SoftGameObject itemCutFromTree = inventory.removeLast();
+     final SoftGameObject itemCutFromTree = inventory.items[0].removeLast();
      print('Cut $itemCutFromTree from tree');
      return itemCutFromTree;
   }
 
   int get health {
-    return inventory.size;
+    if (inventory.items.isEmpty) {
+      return 0;
+    }
+    return inventory.items[0].length;
   }
 
   bool get dead {
