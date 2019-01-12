@@ -62,7 +62,7 @@ class Server {
           configurationFile.readAsStringSync();
       final YamlMap config = loadYaml(configurationFileContent) as YamlMap;
 
-      server = await HttpServer.bind(InternetAddress.anyIPv6, 8083);
+      server = await HttpServer.bind(InternetAddress.anyIPv6, config['backend_port'] as int);
       world = World.fromConstants(randomGenerator);
 
       int nPlayers = 0;
