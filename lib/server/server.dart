@@ -176,7 +176,7 @@ class Server {
         world.solidObjectColumns[target.tilePosition.x][target.tilePosition.y] =
             null;
         final removeCommand = RemoveSolidObjectCommand(target.tilePosition);
-        client.webSocket.add(jsonEncode(removeCommand));
+        sendCommandToAllClients(removeCommand);
       }
     }
   }
