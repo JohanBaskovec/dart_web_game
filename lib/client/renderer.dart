@@ -60,7 +60,7 @@ class Renderer {
   }
 
   WorldPosition getWorldPositionFromCanvasPosition(CanvasPosition position) {
-    return WorldPosition(position.x - cameraPosition.x, position.y - cameraPosition.y);
+    return WorldPosition((position.x * (1 / scale)) - cameraPosition.x, (position.y * (1 / scale)) - cameraPosition.y);
   }
 
   WorldPosition getCursorPositionInWorld(MouseEvent event) {
