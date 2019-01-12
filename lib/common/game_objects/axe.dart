@@ -16,4 +16,9 @@ class Axe extends SoftGameObject {
   /// Convert this object to a JSON object.
   @override
   Map<String, dynamic> toJson() => _$AxeToJson(this);
+
+  @override
+  String toString() {
+    return 'Axe{}';
+  }
 }

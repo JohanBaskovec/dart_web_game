@@ -1,23 +1,29 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'logged_in_command.dart';
+part of 'use_object_on_solid_object_command.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-LoggedInCommand _$LoggedInCommandFromJson(Map json) {
-  return LoggedInCommand(
-      json['player'] == null ? null : Player.fromJson(json['player'] as Map),
-      json['world'] == null ? null : World.fromJson(json['world'] as Map))
+UseObjectOnSolidObjectCommand _$UseObjectOnSolidObjectCommandFromJson(
+    Map json) {
+  return UseObjectOnSolidObjectCommand(
+      json['targetPosition'] == null
+          ? null
+          : TilePosition.fromJson(json['targetPosition'] as Map),
+      json['playerId'] as int,
+      json['itemIndex'] as int)
     ..type = _$enumDecodeNullable(_$CommandTypeEnumMap, json['type']);
 }
 
-Map<String, dynamic> _$LoggedInCommandToJson(LoggedInCommand instance) =>
+Map<String, dynamic> _$UseObjectOnSolidObjectCommandToJson(
+        UseObjectOnSolidObjectCommand instance) =>
     <String, dynamic>{
       'type': _$CommandTypeEnumMap[instance.type],
-      'player': instance.player,
-      'world': instance.world
+      'targetPosition': instance.targetPosition,
+      'playerId': instance.playerId,
+      'itemIndex': instance.itemIndex
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {

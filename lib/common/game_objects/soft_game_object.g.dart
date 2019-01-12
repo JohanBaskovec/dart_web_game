@@ -11,13 +11,15 @@ SoftGameObject _$SoftGameObjectFromJson(Map json) {
       _$enumDecodeNullable(_$SoftGameObjectTypeEnumMap, json['type']),
       json['position'] == null
           ? null
-          : WorldPosition.fromJson(json['position'] as Map));
+          : WorldPosition.fromJson(json['position'] as Map))
+    ..index = json['index'] as int;
 }
 
 Map<String, dynamic> _$SoftGameObjectToJson(SoftGameObject instance) =>
     <String, dynamic>{
       'type': _$SoftGameObjectTypeEnumMap[instance.type],
-      'position': instance.position
+      'position': instance.position,
+      'index': instance.index
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {
@@ -42,5 +44,6 @@ T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
 
 const _$SoftGameObjectTypeEnumMap = <SoftGameObjectType, dynamic>{
   SoftGameObjectType.stone: 'stone',
-  SoftGameObjectType.axe: 'axe'
+  SoftGameObjectType.axe: 'axe',
+  SoftGameObjectType.log: 'log'
 };

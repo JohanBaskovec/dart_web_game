@@ -21,7 +21,7 @@ class Game {
       renderer.render(world);
     });
 
-    final inputManager = InputManager(document.body, canvas);
+    final inputManager = InputManager(document.body, canvas, world);
     inputManager.listen();
 
     final webSocketClient =

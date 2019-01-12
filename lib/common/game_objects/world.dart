@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/player.dart';
+import 'package:dart_game/common/game_objects/soft_game_object.dart';
 import 'package:dart_game/common/game_objects/solid_game_object.dart';
 import 'package:dart_game/common/game_objects/tree.dart';
 import 'package:dart_game/common/size.dart';
@@ -14,9 +15,9 @@ part 'world.g.dart';
 @JsonSerializable(anyMap: true)
 class World {
   Size _dimension;
-  List<List<Tile>> tilesColumn;
-  List<List<SolidGameObject>> solidObjectColumns;
-  List<Player> players;
+  List<List<Tile>> tilesColumn = [];
+  List<List<SolidGameObject>> solidObjectColumns = [];
+  List<Player> players = [];
 
   World();
 
@@ -40,8 +41,12 @@ class World {
     for (int x = 0; x < solidObjectColumns.length; x++) {
       for (int y = 0; y < solidObjectColumns[x].length; y++) {
         if (randomGenerator.nextInt(100) < 10) {
-          solidObjectColumns[x][y] = Tree(TilePosition(x, y));
-print('$x : $y');
+          final tree = Tree(TilePosition(x, y));
+          final int nLogs = randomGenerator.nextInt(6) + 1;
+          for (int i = 0 ; i < nLogs ; i++) {
+            tree.inventory.addItem(SoftGameObject(SoftGameObjectType.log));
+          }
+          solidObjectColumns[x][y] = tree;
         }
       }
     }

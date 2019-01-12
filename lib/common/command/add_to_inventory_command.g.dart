@@ -1,23 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'logged_in_command.dart';
+part of 'add_to_inventory_command.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-LoggedInCommand _$LoggedInCommandFromJson(Map json) {
-  return LoggedInCommand(
-      json['player'] == null ? null : Player.fromJson(json['player'] as Map),
-      json['world'] == null ? null : World.fromJson(json['world'] as Map))
+AddToInventoryCommand _$AddToInventoryCommandFromJson(Map json) {
+  return AddToInventoryCommand(
+      json['playerId'] as int,
+      json['object'] == null
+          ? null
+          : SoftGameObject.fromJson(json['object'] as Map))
     ..type = _$enumDecodeNullable(_$CommandTypeEnumMap, json['type']);
 }
 
-Map<String, dynamic> _$LoggedInCommandToJson(LoggedInCommand instance) =>
+Map<String, dynamic> _$AddToInventoryCommandToJson(
+        AddToInventoryCommand instance) =>
     <String, dynamic>{
       'type': _$CommandTypeEnumMap[instance.type],
-      'player': instance.player,
-      'world': instance.world
+      'playerId': instance.playerId,
+      'object': instance.object
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {

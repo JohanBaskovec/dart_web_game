@@ -9,15 +9,21 @@ part of 'solid_game_object.dart';
 SolidGameObject _$SolidGameObjectFromJson(Map json) {
   return SolidGameObject(
       _$enumDecodeNullable(_$SolidGameObjectTypeEnumMap, json['type']),
-      json['position'] == null
+      json['tilePosition'] == null
           ? null
-          : TilePosition.fromJson(json['position'] as Map));
+          : TilePosition.fromJson(json['tilePosition'] as Map))
+    ..inventory = json['inventory'] == null
+        ? null
+        : Inventory.fromJson(json['inventory'] as Map)
+    ..box = json['box'] == null ? null : Box.fromJson(json['box'] as Map);
 }
 
 Map<String, dynamic> _$SolidGameObjectToJson(SolidGameObject instance) =>
     <String, dynamic>{
       'type': _$SolidGameObjectTypeEnumMap[instance.type],
-      'position': instance.position
+      'inventory': instance.inventory,
+      'box': instance.box,
+      'tilePosition': instance.tilePosition
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {
@@ -46,5 +52,6 @@ const _$SolidGameObjectTypeEnumMap = <SolidGameObjectType, dynamic>{
   SolidGameObjectType.coconutTree: 'coconutTree',
   SolidGameObjectType.ropeTree: 'ropeTree',
   SolidGameObjectType.leafTree: 'leafTree',
-  SolidGameObjectType.barkTree: 'barkTree'
+  SolidGameObjectType.barkTree: 'barkTree',
+  SolidGameObjectType.player: 'player'
 };

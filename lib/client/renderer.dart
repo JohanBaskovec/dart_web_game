@@ -18,26 +18,20 @@ class Renderer {
     _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
     for (var player in world.players) {
       if (player != null) {
-        final CanvasPosition position =
-            tilePositionToCanvasPosition(player.position);
         _ctx.fillStyle = 'green';
-        _ctx.fillRect(position.x, position.y, 10, 10);
+        _ctx.fillRect(player.box.left, player.box.top, player.box.width,
+            player.box.height);
       }
     }
 
     for (List<SolidGameObject> column in world.solidObjectColumns) {
       for (SolidGameObject object in column) {
         if (object != null) {
-          final CanvasPosition position =
-              tilePositionToCanvasPosition(object.position);
           _ctx.fillStyle = 'black';
-          _ctx.fillRect(position.x, position.y, 10, 10);
+          _ctx.fillRect(object.box.left, object.box.top, object.box.width,
+              object.box.height);
         }
       }
     }
-  }
-
-  CanvasPosition tilePositionToCanvasPosition(TilePosition position) {
-    return CanvasPosition(position.x * 10, position.y * 10);
   }
 }

@@ -39,5 +39,14 @@ const _$CommandTypeEnumMap = <CommandType, dynamic>{
   CommandType.addPlayer: 'addPlayer',
   CommandType.removePlayer: 'removePlayer',
   CommandType.move: 'move',
+  CommandType.useObjectOnSolidObject: 'useObjectOnSolidObject',
+  CommandType.removeSolidObject: 'removeSolidObject',
+  CommandType.addSolidObject: 'addSolidObject',
+  CommandType.addToInventory: 'addToInventory',
+  CommandType.removeFromInventory: 'removeFromInventory',
+  CommandType.addSoftObject: 'addSoftObject',
+  CommandType.removeSoftObject: 'removeSoftObject',
+  CommandType.addTile: 'addTile',
+  CommandType.removeTile: 'removeTile',
   CommandType.unknown: 'unknown'
 };

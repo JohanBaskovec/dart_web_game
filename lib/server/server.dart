@@ -4,14 +4,22 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:dart_game/common/command/add_player_command.dart';
+import 'package:dart_game/common/command/add_to_inventory_command.dart';
 import 'package:dart_game/common/command/command.dart';
 import 'package:dart_game/common/command/command_from_json.dart';
 import 'package:dart_game/common/command/logged_in_command.dart';
 import 'package:dart_game/common/command/move_command.dart';
 import 'package:dart_game/common/command/remove_player_command.dart';
+import 'package:dart_game/common/command/remove_solid_object_command.dart';
+import 'package:dart_game/common/command/use_object_on_solid_object_command.dart';
 import 'package:dart_game/common/constants.dart';
+import 'package:dart_game/common/game_objects/axe.dart';
 import 'package:dart_game/common/game_objects/player.dart';
+import 'package:dart_game/common/game_objects/soft_game_object.dart';
+import 'package:dart_game/common/game_objects/solid_game_object.dart';
+import 'package:dart_game/common/game_objects/tree.dart';
 import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/server/client.dart';
 import 'package:yaml/yaml.dart';
 
@@ -30,11 +38,10 @@ class Server {
   }
 
   void executeMoveCommand(MoveCommand command) {
-    final targetX = world.players[command.playerId].position.x + command.x;
-    final targetY = world.players[command.playerId].position.y + command.y;
+    final targetX = world.players[command.playerId].tilePosition.x + command.x;
+    final targetY = world.players[command.playerId].tilePosition.x + command.y;
     if (world.solidObjectColumns[targetX][targetY] == null) {
-      world.players[command.playerId].position.x += command.x;
-      world.players[command.playerId].position.y += command.y;
+      world.players[command.playerId].move(command.x, command.y);
       sendCommandToAllClients(command);
     }
   }
@@ -74,21 +81,23 @@ class Server {
               break;
             }
           }
-          final player = Player('admin', playerId);
-          world.players[playerId] = player;
+          final newPlayer = Player(TilePosition(0, 0), 'admin', playerId);
+          newPlayer.inventory.addItem(Axe());
+
+          world.players[playerId] = newPlayer;
           nPlayers++;
-          final newClient = Client(player, newPlayerWebSocket);
-          clients[playerId] = newClient;
+          final newClient = Client(newPlayer, newPlayerWebSocket);
           // TODO: prevent synchro modification of clients,
           // because we may send wrong id to user otherwise
-          final addNewPlayer = AddPlayerCommand(player);
-          final loggedInCommand = LoggedInCommand(player, world);
+          final addNewPlayer = AddPlayerCommand(newPlayer);
+          final loggedInCommand = LoggedInCommand(newPlayer, world);
           print('Client connected!');
           for (var i = 0; i < clients.length; i++) {
             if (clients[i] != null) {
               clients[i].webSocket.add(jsonEncode(addNewPlayer));
             }
           }
+          clients[playerId] = newClient;
           final jsonCommand = jsonEncode(loggedInCommand.toJson());
           newPlayerWebSocket.add(jsonCommand);
 
@@ -98,12 +107,21 @@ class Server {
               case CommandType.move:
                 executeMoveCommand(command as MoveCommand);
                 break;
+              case CommandType.useObjectOnSolidObject:
+                executeUseObjectOnSolidObjectCommand(
+                    command as UseObjectOnSolidObjectCommand);
+                break;
               case CommandType.login:
-              // TODO
               case CommandType.loggedIn:
               case CommandType.addPlayer: // should never happen
               case CommandType.removePlayer:
               case CommandType.unknown:
+              case CommandType.addSolidObject:
+              case CommandType.addSoftObject:
+              case CommandType.removeSoftObject:
+              case CommandType.removeFromInventory:
+              case CommandType.addTile:
+              case CommandType.removeTile:
                 print('Error, received unknown command!');
             }
           }, onDone: () {
@@ -123,6 +141,43 @@ class Server {
       print(e);
       print(s);
     }
+  }
 
+  void executeUseObjectOnSolidObjectCommand(
+      UseObjectOnSolidObjectCommand command) {
+    final SolidGameObject target = world
+        .solidObjectColumns[command.targetPosition.x][command.targetPosition.y];
+    final Client client = clients[command.playerId];
+    final SoftGameObject item =
+        client.player.inventory.items[command.itemIndex];
+    switch (target.type) {
+      case SolidGameObjectType.tree:
+        useItemOnTree(client, item, target as Tree);
+        break;
+      case SolidGameObjectType.player:
+      case SolidGameObjectType.appleTree:
+      case SolidGameObjectType.barkTree:
+      case SolidGameObjectType.coconutTree:
+      case SolidGameObjectType.leafTree:
+      case SolidGameObjectType.ropeTree:
+        throw Exception('Not implemented, should never happen.');
+    }
+  }
+
+  void useItemOnTree(Client client, SoftGameObject item, Tree target) {
+    if (item.type == SoftGameObjectType.axe) {
+      final SoftGameObject itemCutFromTree = target.cut();
+      client.player.inventory.addItem(itemCutFromTree);
+      final addToInventoryCommand =
+          AddToInventoryCommand(client.player.id, itemCutFromTree);
+      client.webSocket.add(jsonEncode(addToInventoryCommand));
+
+      if (target.dead) {
+        world.solidObjectColumns[target.tilePosition.x][target.tilePosition.y] =
+            null;
+        final removeCommand = RemoveSolidObjectCommand(target.tilePosition);
+        client.webSocket.add(jsonEncode(removeCommand));
+      }
+    }
   }
 }

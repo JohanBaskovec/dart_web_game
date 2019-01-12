@@ -8,6 +8,15 @@ enum CommandType {
   addPlayer,
   removePlayer,
   move,
+  useObjectOnSolidObject,
+  removeSolidObject,
+  addSolidObject,
+  addToInventory,
+  removeFromInventory,
+  addSoftObject,
+  removeSoftObject,
+  addTile,
+  removeTile,
   unknown
 }
 

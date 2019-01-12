@@ -1,23 +1,23 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'logged_in_command.dart';
+part of 'remove_solid_object_command.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-LoggedInCommand _$LoggedInCommandFromJson(Map json) {
-  return LoggedInCommand(
-      json['player'] == null ? null : Player.fromJson(json['player'] as Map),
-      json['world'] == null ? null : World.fromJson(json['world'] as Map))
+RemoveSolidObjectCommand _$RemoveSolidObjectCommandFromJson(Map json) {
+  return RemoveSolidObjectCommand(json['position'] == null
+      ? null
+      : TilePosition.fromJson(json['position'] as Map))
     ..type = _$enumDecodeNullable(_$CommandTypeEnumMap, json['type']);
 }
 
-Map<String, dynamic> _$LoggedInCommandToJson(LoggedInCommand instance) =>
+Map<String, dynamic> _$RemoveSolidObjectCommandToJson(
+        RemoveSolidObjectCommand instance) =>
     <String, dynamic>{
       'type': _$CommandTypeEnumMap[instance.type],
-      'player': instance.player,
-      'world': instance.world
+      'position': instance.position
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {

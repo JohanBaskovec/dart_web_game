@@ -7,15 +7,22 @@ part of 'tree.dart';
 // **************************************************************************
 
 Tree _$TreeFromJson(Map json) {
-  return Tree(json['position'] == null
-      ? null
-      : TilePosition.fromJson(json['position'] as Map))
-    ..type = _$enumDecodeNullable(_$SolidGameObjectTypeEnumMap, json['type']);
+  return Tree()
+    ..type = _$enumDecodeNullable(_$SolidGameObjectTypeEnumMap, json['type'])
+    ..inventory = json['inventory'] == null
+        ? null
+        : Inventory.fromJson(json['inventory'] as Map)
+    ..box = json['box'] == null ? null : Box.fromJson(json['box'] as Map)
+    ..tilePosition = json['tilePosition'] == null
+        ? null
+        : TilePosition.fromJson(json['tilePosition'] as Map);
 }
 
 Map<String, dynamic> _$TreeToJson(Tree instance) => <String, dynamic>{
       'type': _$SolidGameObjectTypeEnumMap[instance.type],
-      'position': instance.position
+      'inventory': instance.inventory,
+      'box': instance.box,
+      'tilePosition': instance.tilePosition
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {
@@ -44,5 +51,6 @@ const _$SolidGameObjectTypeEnumMap = <SolidGameObjectType, dynamic>{
   SolidGameObjectType.coconutTree: 'coconutTree',
   SolidGameObjectType.ropeTree: 'ropeTree',
   SolidGameObjectType.leafTree: 'leafTree',
-  SolidGameObjectType.barkTree: 'barkTree'
+  SolidGameObjectType.barkTree: 'barkTree',
+  SolidGameObjectType.player: 'player'
 };
