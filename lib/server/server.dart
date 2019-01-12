@@ -39,8 +39,12 @@ class Server {
 
   void executeMoveCommand(MoveCommand command) {
     final targetX = world.players[command.playerId].tilePosition.x + command.x;
-    final targetY = world.players[command.playerId].tilePosition.x + command.y;
-    if (world.solidObjectColumns[targetX][targetY] == null) {
+    final targetY = world.players[command.playerId].tilePosition.y + command.y;
+    if (targetX < worldSize.x &&
+        targetX >= 0 &&
+        targetY < worldSize.y &&
+        targetY >= 0 &&
+        world.solidObjectColumns[targetX][targetY] == null) {
       world.players[command.playerId].move(command.x, command.y);
       sendCommandToAllClients(command);
     }
