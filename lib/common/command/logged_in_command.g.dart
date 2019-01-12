@@ -7,8 +7,7 @@ part of 'logged_in_command.dart';
 // **************************************************************************
 
 LoggedInCommand _$LoggedInCommandFromJson(Map json) {
-  return LoggedInCommand(
-      json['player'] == null ? null : Player.fromJson(json['player'] as Map),
+  return LoggedInCommand(json['playerId'] as int,
       json['world'] == null ? null : World.fromJson(json['world'] as Map))
     ..type = _$enumDecodeNullable(_$CommandTypeEnumMap, json['type']);
 }
@@ -16,7 +15,7 @@ LoggedInCommand _$LoggedInCommandFromJson(Map json) {
 Map<String, dynamic> _$LoggedInCommandToJson(LoggedInCommand instance) =>
     <String, dynamic>{
       'type': _$CommandTypeEnumMap[instance.type],
-      'player': instance.player,
+      'playerId': instance.playerId,
       'world': instance.world
     };
 

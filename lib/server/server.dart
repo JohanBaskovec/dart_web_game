@@ -94,7 +94,7 @@ class Server {
           // TODO: prevent synchro modification of clients,
           // because we may send wrong id to user otherwise
           final addNewPlayer = AddPlayerCommand(newPlayer);
-          final loggedInCommand = LoggedInCommand(newPlayer, world);
+          final loggedInCommand = LoggedInCommand(newPlayer.id, world);
           print('Client connected!');
           for (var i = 0; i < clients.length; i++) {
             if (clients[i] != null) {

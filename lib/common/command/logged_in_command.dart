@@ -7,10 +7,10 @@ part 'logged_in_command.g.dart';
 
 @JsonSerializable(anyMap: true)
 class LoggedInCommand extends Command {
-  Player player;
+  int playerId;
   World world;
 
-  LoggedInCommand([this.player, this.world])
+  LoggedInCommand([this.playerId, this.world])
       : super(CommandType.loggedIn);
 
   /// Creates a new [LoggedInCommand] from a JSON object.

@@ -1,6 +1,7 @@
 import 'dart:html';
 
 import 'package:dart_game/client/input_manager.dart';
+import 'package:dart_game/client/renderer.dart';
 import 'package:dart_game/common/command/add_player_command.dart';
 import 'package:dart_game/common/command/add_to_inventory_command.dart';
 import 'package:dart_game/common/command/command.dart';
@@ -15,8 +16,9 @@ class WebSocketClient {
   final WebSocket webSocket;
   final World _world;
   final InputManager _inputManager;
+  final Renderer renderer;
 
-  WebSocketClient(this.webSocket, this._world, this._inputManager);
+  WebSocketClient(this.webSocket, this._world, this._inputManager, this.renderer);
 
   void connect() {
     webSocket.onMessage.listen((MessageEvent e) {
@@ -59,6 +61,9 @@ class WebSocketClient {
 
   void doMoveCommand(MoveCommand command) {
     _world.players[command.playerId].move(command.x, command.y);
+    if (command.playerId == _inputManager.player.id) {
+      renderer.moveCameraToPlayerPosition(_inputManager.player.tilePosition);
+    }
   }
 
   void doAddPlayerCommand(AddPlayerCommand command) {
@@ -73,7 +78,7 @@ class WebSocketClient {
     _world.solidObjectColumns = command.world.solidObjectColumns;
     _world.players = command.world.players;
     _world.tilesColumn = command.world.tilesColumn;
-    _inputManager.player = command.player;
+    _inputManager.player = _world.players[command.playerId];
   }
 
   void executeRemoveSolidObjectCommand(RemoveSolidObjectCommand command) {

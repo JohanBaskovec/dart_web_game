@@ -1,14 +1,18 @@
 import 'dart:html';
 
-import 'package:dart_game/common/canvas_position.dart';
+import 'package:dart_game/client/canvas_position.dart';
+import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/solid_game_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/tile_position.dart';
+import 'package:dart_game/common/world_position.dart';
 
 class Renderer {
   final CanvasElement _canvas;
   final CanvasRenderingContext2D _ctx;
   double scale = 1;
+  CanvasPosition cameraPosition;
+  TilePosition lastPlayerPosition;
 
   Renderer(this._canvas)
       : _ctx = _canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -17,6 +21,9 @@ class Renderer {
     _canvas.width = window.innerWidth;
     _canvas.height = window.innerHeight;
     _ctx.scale(scale, scale);
+    if (cameraPosition != null) {
+      _ctx.translate(cameraPosition.x, cameraPosition.y);
+    }
     _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
     for (var player in world.players) {
       if (player != null) {
@@ -39,5 +46,38 @@ class Renderer {
 
   void increaseScale(double increase) {
     scale += increase;
+    if (scale < 0.05) {
+      scale = 0.05;
+    }
+    moveCameraToPlayerPosition(lastPlayerPosition);
+  }
+
+  CanvasPosition getCursorPositionInCanvas(MouseEvent event) {
+    final rect = _canvas.getBoundingClientRect();
+    final double x = event.client.x - rect.left;
+    final double y = event.client.y - rect.top;
+    return CanvasPosition(x, y);
+  }
+
+  WorldPosition getWorldPositionFromCanvasPosition(CanvasPosition position) {
+    return WorldPosition(position.x - cameraPosition.x, position.y - cameraPosition.y);
+  }
+
+  WorldPosition getCursorPositionInWorld(MouseEvent event) {
+    final CanvasPosition canvasPosition = getCursorPositionInCanvas(event);
+    return getWorldPositionFromCanvasPosition(canvasPosition);
+  }
+
+  void moveCameraToPlayerPosition(TilePosition tilePosition) {
+    final double inverseScale = 1 / scale;
+    final double x = -tilePosition.x * tileSize * 1.0 - tileSize / 2;
+    final double y = -tilePosition.y * tileSize * 1.0 - tileSize / 2;
+    final double canvasMiddleWidth = _canvas.width / 2.0;
+    final double canvasMiddleHeight = _canvas.height / 2.0;
+
+    final double translateX = x + canvasMiddleWidth * inverseScale;
+    final double translateY = y + canvasMiddleHeight * inverseScale;
+    cameraPosition = CanvasPosition(translateX, translateY);
+    lastPlayerPosition = tilePosition;
   }
 }

@@ -17,7 +17,7 @@ class InputManager {
   final CanvasElement _canvas;
   final BodyElement _body;
   WebSocketClient webSocketClient;
-  Player player;
+  Player _player;
   bool canvasActive = false;
   World _world;
   DateTime lastClickTime = DateTime.now();
@@ -25,24 +25,6 @@ class InputManager {
   Renderer renderer;
 
   InputManager(this._body, this._canvas, this._world, this.renderer);
-
-  CanvasPosition getCursorPositionInCanvas(MouseEvent event) {
-    final rect = _canvas.getBoundingClientRect();
-    final int x = event.client.x - rect.left;
-    final int y = event.client.y - rect.top;
-    return CanvasPosition(x, y);
-  }
-
-  WorldPosition getWorldPositionFromCanvasPosition(CanvasPosition position) {
-    // TODO: once we add camera movement, we need to convert
-    // the position in the world
-    return WorldPosition(position.x, position.y);
-  }
-
-  WorldPosition getCursorPositionInWorld(MouseEvent event) {
-    final CanvasPosition canvasPosition = getCursorPositionInCanvas(event);
-    return getWorldPositionFromCanvasPosition(canvasPosition);
-  }
 
   void listen() {
     _body.onClick.listen((MouseEvent e) {
@@ -54,27 +36,23 @@ class InputManager {
       if (canvasActive && player != null) {
         switch (e.key) {
           case 'd':
-            final command = MoveCommand(1, 0, player.id);
-            webSocketClient.webSocket.send(jsonEncode(command));
+            move(1, 0);
             break;
           case 'q':
-            final command = MoveCommand(-1, 0, player.id);
-            webSocketClient.webSocket.send(jsonEncode(command));
+            move(-1, 0);
             break;
           case 's':
-            final command = MoveCommand(0, 1, player.id);
-            webSocketClient.webSocket.send(jsonEncode(command));
+            move(0, 1);
             break;
           case 'z':
-            final command = MoveCommand(0, -1, player.id);
-            webSocketClient.webSocket.send(jsonEncode(command));
+            move(0, -1);
             break;
         }
       }
     });
     _canvas.onClick.listen((MouseEvent e) {
       if (canClick) {
-        final WorldPosition mousePosition = getCursorPositionInWorld(e);
+        final WorldPosition mousePosition = renderer.getCursorPositionInWorld(e);
         for (List<SolidGameObject> column in _world.solidObjectColumns) {
           for (SolidGameObject object in column) {
             if (object != null) {
@@ -88,6 +66,11 @@ class InputManager {
     _canvas.onMouseWheel.listen((WheelEvent e) {
       renderer.increaseScale(-e.deltaY / 1000.0);
     });
+  }
+
+  void move(int x, int y){
+    final command = MoveCommand(x, y, player.id);
+    webSocketClient.webSocket.send(jsonEncode(command));
   }
 
   void maybeClickOnObject(SolidGameObject object, WorldPosition position) {
@@ -124,4 +107,12 @@ class InputManager {
             .subtract(minDurationBetweenClick)
             .isAfter(lastClickTime);
   }
+
+  Player get player => _player;
+
+  set player(Player value) {
+    _player = value;
+    renderer.moveCameraToPlayerPosition(value.tilePosition);
+  }
+
 }
