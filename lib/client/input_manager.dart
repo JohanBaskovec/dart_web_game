@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:html';
 
 import 'package:dart_game/client/canvas_position.dart';
+import 'package:dart_game/client/renderer.dart';
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/common/command/move_command.dart';
 import 'package:dart_game/common/command/use_object_on_solid_object_command.dart';
@@ -21,8 +22,9 @@ class InputManager {
   World _world;
   DateTime lastClickTime = DateTime.now();
   Duration minDurationBetweenClick = Duration(milliseconds: 100);
+  Renderer renderer;
 
-  InputManager(this._body, this._canvas, this._world);
+  InputManager(this._body, this._canvas, this._world, this.renderer);
 
   CanvasPosition getCursorPositionInCanvas(MouseEvent event) {
     final rect = _canvas.getBoundingClientRect();
@@ -82,6 +84,9 @@ class InputManager {
         }
         lastClickTime = DateTime.now();
       }
+    });
+    _canvas.onMouseWheel.listen((WheelEvent e) {
+      renderer.increaseScale(-e.deltaY / 1000.0);
     });
   }
 

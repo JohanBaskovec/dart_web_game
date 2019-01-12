@@ -8,6 +8,7 @@ import 'package:dart_game/common/tile_position.dart';
 class Renderer {
   final CanvasElement _canvas;
   final CanvasRenderingContext2D _ctx;
+  double scale = 1;
 
   Renderer(this._canvas)
       : _ctx = _canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -15,6 +16,7 @@ class Renderer {
   void render(World world) {
     _canvas.width = window.innerWidth;
     _canvas.height = window.innerHeight;
+    _ctx.scale(scale, scale);
     _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
     for (var player in world.players) {
       if (player != null) {
@@ -33,5 +35,9 @@ class Renderer {
         }
       }
     }
+  }
+
+  void increaseScale(double increase) {
+    scale += increase;
   }
 }
