@@ -59,8 +59,11 @@ class SolidGameObject {
   set tilePosition(TilePosition value) {
     _tilePosition = value;
     if (value != null) {
-      box = Box(tilePosition.x * tileSize, tilePosition.y * tileSize, tileSize,
-          tileSize);
+      box = Box(
+          (tilePosition.x * tileSize).toDouble(),
+          (tilePosition.y * tileSize).toDouble(),
+          tileSize.toDouble(),
+          tileSize.toDouble());
     }
   }
 }

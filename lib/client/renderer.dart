@@ -1,29 +1,35 @@
 import 'dart:html';
 
 import 'package:dart_game/client/canvas_position.dart';
+import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/constants.dart';
+import 'package:dart_game/common/game_objects/player.dart';
+import 'package:dart_game/common/game_objects/soft_game_object.dart';
 import 'package:dart_game/common/game_objects/solid_game_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/world_position.dart';
-
-enum ImageType { player, tree }
 
 class Renderer {
   final CanvasElement _canvas;
   final CanvasRenderingContext2D _ctx;
   double scale = 1;
   CanvasPosition cameraPosition;
-  TilePosition lastPlayerPosition;
-  Map<ImageType, ImageElement> images = {};
+  Player player;
+  Map<SoftGameObjectType, ImageElement> softImages = {};
+  Map<SolidGameObjectType, ImageElement> solidImages = {};
+  bool buildMenuEnabled = false;
 
   Renderer(this._canvas)
       : _ctx = _canvas.getContext('2d') as CanvasRenderingContext2D {
-    images[ImageType.tree] = ImageElement();
-    images[ImageType.tree].src = '/tree.png';
-
-    images[ImageType.player] = ImageElement();
-    images[ImageType.player].src = '/man.png';
+    for (SoftGameObjectType type in SoftGameObjectType.values) {
+      softImages[type] = ImageElement();
+      softImages[type].src = '/$type.png';
+    }
+    for (SolidGameObjectType type in SolidGameObjectType.values) {
+      solidImages[type] = ImageElement();
+      solidImages[type].src = '/$type.png';
+    }
   }
 
   void render(World world) {
@@ -35,20 +41,58 @@ class Renderer {
       _ctx.translate(cameraPosition.x, cameraPosition.y);
     }
     _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
+
     for (var player in world.players) {
       if (player != null) {
-        _ctx.drawImageScaled(images[ImageType.player], player.box.left,
-            player.box.top, player.box.width, player.box.height);
+        _ctx.drawImageScaled(
+            solidImages[SolidGameObjectType.player],
+            player.box.left,
+            player.box.top,
+            player.box.width,
+            player.box.height);
       }
     }
 
     for (List<SolidGameObject> column in world.solidObjectColumns) {
       for (SolidGameObject object in column) {
         if (object != null) {
-          _ctx.drawImageScaled(images[ImageType.tree], object.box.left,
-              object.box.top, object.box.width, object.box.height);
+          _ctx.drawImageScaled(
+              solidImages[SolidGameObjectType.tree],
+              object.box.left,
+              object.box.top,
+              object.box.width,
+              object.box.height);
         }
       }
+    }
+    _ctx.setTransform(1, 0, 0, 1, 0, 0);
+    if (player != null) {
+      _ctx.fillStyle = 'black';
+      final Box menuBox = Box(
+          _canvas.width / 10,
+          _canvas.height - _canvas.height / 10,
+          _canvas.width - _canvas.width / 5,
+          _canvas.height / 11);
+      _ctx.fillRect(menuBox.left, menuBox.top, menuBox.width, menuBox.height);
+      final double widthPerStack = menuBox.width / 9;
+      for (var i = 0; i < player.inventory.items.length; i++) {
+        final List<SoftGameObject> stack = player.inventory.items[i];
+        final double left = i * widthPerStack + menuBox.left;
+        _ctx.drawImageScaled(softImages[stack[0].type], left, menuBox.top,
+            widthPerStack, menuBox.height);
+        _ctx.fillStyle = 'white';
+        _ctx.fillText(stack.length.toString(), left, menuBox.bottom);
+        _ctx.fillStyle = 'black';
+      }
+    }
+    if (buildMenuEnabled) {
+      _ctx.fillStyle = 'black';
+      final Box menuBox = Box(
+          _canvas.width / 10,
+          0,
+          _canvas.width / 2,
+          _canvas.height / 2);
+      _ctx.fillRect(menuBox.left, menuBox.top, menuBox.width, menuBox.height);
     }
   }
 
@@ -57,7 +101,7 @@ class Renderer {
     if (scale < 0.05) {
       scale = 0.05;
     }
-    moveCameraToPlayerPosition(lastPlayerPosition);
+    moveCameraToPlayerPosition(player.tilePosition);
   }
 
   CanvasPosition getCursorPositionInCanvas(MouseEvent event) {
@@ -87,6 +131,5 @@ class Renderer {
     final double translateX = x + canvasMiddleWidth * inverseScale;
     final double translateY = y + canvasMiddleHeight * inverseScale;
     cameraPosition = CanvasPosition(translateX, translateY);
-    lastPlayerPosition = tilePosition;
   }
 }

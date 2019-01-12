@@ -21,7 +21,7 @@ class InputManager {
   bool canvasActive = false;
   World _world;
   DateTime lastClickTime = DateTime.now();
-  Duration minDurationBetweenClick = Duration(milliseconds: 100);
+  Duration minDurationBetweenAction = Duration(milliseconds: 70);
   Renderer renderer;
 
   InputManager(this._body, this._canvas, this._world, this.renderer);
@@ -32,7 +32,7 @@ class InputManager {
         canvasActive = true;
       }
     });
-    _body.onKeyUp.listen((KeyboardEvent e) {
+    _body.onKeyDown.listen((KeyboardEvent e) {
       if (canvasActive && player != null) {
         switch (e.key) {
           case 'd':
@@ -46,6 +46,9 @@ class InputManager {
             break;
           case 'z':
             move(0, -1);
+            break;
+          case 'b':
+            renderer.buildMenuEnabled = !renderer.buildMenuEnabled;
             break;
         }
       }
@@ -104,7 +107,7 @@ class InputManager {
 
   bool get canClick {
     return DateTime.now()
-            .subtract(minDurationBetweenClick)
+            .subtract(minDurationBetweenAction)
             .isAfter(lastClickTime);
   }
 
@@ -112,6 +115,7 @@ class InputManager {
 
   set player(Player value) {
     _player = value;
+    renderer.player = value;
     renderer.moveCameraToPlayerPosition(value.tilePosition);
   }
 

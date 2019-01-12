@@ -5,12 +5,12 @@ part 'box.g.dart';
 
 @JsonSerializable(anyMap: true)
 class Box {
-  int left;
-  int right;
-  int top;
-  int bottom;
-  int width;
-  int height;
+  double left;
+  double right;
+  double top;
+  double bottom;
+  double width;
+  double height;
 
   Box(this.left, this.top, this.width, this.height)
       : right = left + width,
