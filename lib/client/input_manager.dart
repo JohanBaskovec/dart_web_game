@@ -86,6 +86,7 @@ class InputManager {
             return;
           }
         }
+        chat.input.active = false;
         final WorldPosition mousePosition =
             renderer.getWorldPositionFromCanvasPosition(canvasPosition);
         final TilePosition tilePosition = TilePosition(
