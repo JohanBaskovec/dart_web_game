@@ -8,8 +8,11 @@ import 'package:dart_game/common/game_objects/receipes.dart';
 import 'package:dart_game/common/game_objects/soft_game_object.dart';
 import 'package:dart_game/common/game_objects/solid_game_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/message.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/ui/build_menu.dart';
+import 'package:dart_game/common/ui/chat.dart';
+import 'package:dart_game/common/ui/inventory_menu.dart';
 import 'package:dart_game/common/world_position.dart';
 
 class Renderer {
@@ -21,8 +24,10 @@ class Renderer {
   Map<SoftGameObjectType, ImageElement> softImages = {};
   Map<SolidGameObjectType, ImageElement> solidImages = {};
   BuildMenu buildMenu;
+  Chat chat;
+  InventoryMenu inventory;
 
-  Renderer(this._canvas, this.buildMenu)
+  Renderer(this._canvas, this.buildMenu, this.chat, this.inventory)
       : _ctx = _canvas.getContext('2d') as CanvasRenderingContext2D {
     for (SoftGameObjectType type in SoftGameObjectType.values) {
       softImages[type] = ImageElement();
@@ -37,6 +42,10 @@ class Renderer {
     _canvas.height = window.innerHeight;
     buildMenu.moveAndResize(
         Box(_canvas.width / 10, 100, _canvas.width / 2, _canvas.height / 2));
+    inventory.moveAndResize(Box(20, _canvas.height - _canvas.height / 10,
+        _canvas.width - 20 - _canvas.width / 3, _canvas.height / 11));
+    chat.moveAndResize(Box(inventory.box.right + 20, inventory.box.top - 100,
+        _canvas.width / 3 - 40, 100 + inventory.box.height));
   }
 
   void render(World world) {
@@ -63,32 +72,24 @@ class Renderer {
     for (List<SolidGameObject> column in world.solidObjectColumns) {
       for (SolidGameObject object in column) {
         if (object != null) {
-          _ctx.drawImageScaled(
-              solidImages[object.type],
-              object.box.left,
-              object.box.top,
-              object.box.width,
-              object.box.height);
+          _ctx.drawImageScaled(solidImages[object.type], object.box.left,
+              object.box.top, object.box.width, object.box.height);
         }
       }
     }
     _ctx.setTransform(1, 0, 0, 1, 0, 0);
     if (player != null) {
       _ctx.fillStyle = 'black';
-      final Box menuBox = Box(
-          _canvas.width / 10,
-          _canvas.height - _canvas.height / 10,
-          _canvas.width - _canvas.width / 5,
-          _canvas.height / 11);
-      _ctx.fillRect(menuBox.left, menuBox.top, menuBox.width, menuBox.height);
-      final double widthPerStack = menuBox.width / 9;
+      _ctx.fillRect(inventory.box.left, inventory.box.top, inventory.box.width,
+          inventory.box.height);
+      final double widthPerStack = inventory.box.width / 9;
       for (var i = 0; i < player.inventory.items.length; i++) {
         final List<SoftGameObject> stack = player.inventory.items[i];
-        final double left = i * widthPerStack + menuBox.left;
-        _ctx.drawImageScaled(softImages[stack[0].type], left, menuBox.top,
-            widthPerStack, menuBox.height);
+        final double left = i * widthPerStack + inventory.box.left;
+        _ctx.drawImageScaled(softImages[stack[0].type], left, inventory.box.top,
+            widthPerStack, inventory.box.height);
         _ctx.fillStyle = 'white';
-        _ctx.fillText(stack.length.toString(), left, menuBox.bottom);
+        _ctx.fillText(stack.length.toString(), left, inventory.box.bottom);
         _ctx.fillStyle = 'black';
       }
     }
@@ -109,6 +110,44 @@ class Renderer {
           k++;
         }
         _ctx.fillStyle = 'black';
+      }
+    }
+    if (chat.enabled) {
+      _ctx.fillStyle = 'black';
+      _ctx.fillRect(
+          chat.box.left, chat.box.top, chat.box.width, chat.box.height);
+      _ctx.fillStyle = 'white';
+      _ctx.fillRect(chat.input.box.left, chat.input.box.top,
+          chat.input.box.width, chat.input.box.height);
+      _ctx.fillStyle = 'black';
+      _ctx.fillText(
+          chat.input.content, chat.input.box.left, chat.input.box.top + 8);
+      _ctx.fillStyle = 'white';
+      num height = 0;
+      final List<String> lines = [];
+      for (int i = chat.messages.length - 1; i > -1 ; i--) {
+        final List<String> messageSplitBySpace = chat.messages[i].message.split(' ');
+        num width = 0;
+        int j = 0;
+        while (j < messageSplitBySpace.length) {
+          final StringBuffer line = StringBuffer();
+          while (width < chat.box.width) {
+            line.write('${messageSplitBySpace[j]} ');
+            width += _ctx.measureText(messageSplitBySpace[j]).width;
+            j++;
+            if (j >= messageSplitBySpace.length) {
+              break;
+            }
+          }
+          lines.add(line.toString());
+        }
+        height += 8;
+        if (height > chat.box.height) {
+          break;
+        }
+      }
+      for (int i = lines.length - 1; i > -1 ; i--) {
+        _ctx.fillText(lines[i], chat.box.left, chat.input.box.top - 9 * i);
       }
     }
   }

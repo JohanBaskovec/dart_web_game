@@ -29,12 +29,14 @@ class BuildMenu {
     this.box = box;
   }
 
-  void clickAt(CanvasPosition canvasPosition) {
+  bool clickAt(CanvasPosition canvasPosition) {
     for (BuildMenuButton button in buttons) {
       if (button.box.pointIsInBox(canvasPosition.x, canvasPosition.y)) {
         print('clicking on button ${button.type}');
         selectedType = button.type;
+        return false;
       }
     }
+    return true;
   }
 }

@@ -3,6 +3,8 @@ import 'dart:html';
 
 import 'package:dart_game/client/input_manager.dart';
 import 'package:dart_game/client/renderer.dart';
+import 'package:dart_game/common/command/client/client_command.dart';
+import 'package:dart_game/common/command/server/add_message_command.dart';
 import 'package:dart_game/common/command/server/add_player_command.dart';
 import 'package:dart_game/common/command/server/add_solid_object_command.dart';
 import 'package:dart_game/common/command/server/add_to_inventory_command.dart';
@@ -14,15 +16,17 @@ import 'package:dart_game/common/command/server/remove_solid_object_command.dart
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
 import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/ui/chat.dart';
 
 class WebSocketClient {
   final WebSocket webSocket;
   final World _world;
   final InputManager _inputManager;
   final Renderer renderer;
+  final Chat chat;
 
   WebSocketClient(
-      this.webSocket, this._world, this._inputManager, this.renderer);
+      this.webSocket, this._world, this._inputManager, this.renderer, this.chat);
 
   void connect() {
     webSocket.onMessage.listen((MessageEvent e) {
@@ -54,6 +58,9 @@ class WebSocketClient {
         case ServerCommandType.addSolidObject:
           executeAddSolidObjectCommand(command as AddSolidObjectCommand);
           break;
+        case ServerCommandType.addMessage:
+          executeAddMessageCommand(command as AddMessageCommand);
+          break;
         case ServerCommandType.unknown:
         case ServerCommandType.addSoftObject:
         case ServerCommandType.removeSoftObject:
@@ -65,6 +72,10 @@ class WebSocketClient {
       }
     });
     webSocket.onOpen.listen((Event e) {});
+  }
+
+  void sendCommand(ClientCommand command) {
+    webSocket.send(jsonEncode(command));
   }
 
   void executeMoveCommand(MovePlayerCommand command) {
@@ -109,5 +120,9 @@ class WebSocketClient {
             .removeFromStack(i, command.nObjectsToRemoveFromEachStack[i]);
       }
     }
+  }
+
+  void executeAddMessageCommand(AddMessageCommand command) {
+    chat.addMessage(command.message);
   }
 }

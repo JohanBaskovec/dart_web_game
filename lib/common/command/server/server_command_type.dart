@@ -11,6 +11,7 @@ enum ServerCommandType {
   removeSoftObject,
   addTile,
   removeTile,
+  addMessage,
   unknown
 }
 

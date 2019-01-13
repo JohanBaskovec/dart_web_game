@@ -1,3 +1,4 @@
+import 'package:dart_game/common/command/server/add_message_command.dart';
 import 'package:dart_game/common/command/server/add_player_command.dart';
 import 'package:dart_game/common/command/server/add_solid_object_command.dart';
 import 'package:dart_game/common/command/server/add_to_inventory_command.dart';
@@ -38,6 +39,8 @@ class ServerCommand {
         return RemoveSolidObjectCommand.fromJson(json);
       case ServerCommandType.removeFromInventory:
         return RemoveFromInventoryCommand.fromJson(json);
+      case ServerCommandType.addMessage:
+        return AddMessageCommand.fromJson(json);
       case ServerCommandType.addTile:
       case ServerCommandType.addSoftObject:
       case ServerCommandType.removeSoftObject:

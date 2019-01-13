@@ -1,23 +1,21 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'add_solid_object_command.dart';
+part of 'add_message_command.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-AddSolidObjectCommand _$AddSolidObjectCommandFromJson(Map json) {
-  return AddSolidObjectCommand(json['object'] == null
-      ? null
-      : SolidGameObject.fromJson(json['object'] as Map))
+AddMessageCommand _$AddMessageCommandFromJson(Map json) {
+  return AddMessageCommand(
+      json['message'] == null ? null : Message.fromJson(json['message'] as Map))
     ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type']);
 }
 
-Map<String, dynamic> _$AddSolidObjectCommandToJson(
-        AddSolidObjectCommand instance) =>
+Map<String, dynamic> _$AddMessageCommandToJson(AddMessageCommand instance) =>
     <String, dynamic>{
       'type': _$ServerCommandTypeEnumMap[instance.type],
-      'object': instance.object
+      'message': instance.message
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {

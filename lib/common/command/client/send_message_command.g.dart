@@ -1,21 +1,20 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'login_command.dart';
+part of 'send_message_command.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-LoginCommand _$LoginCommandFromJson(Map json) {
-  return LoginCommand(json['name'] as String, json['id'] as int)
+SendMessageCommand _$SendMessageCommandFromJson(Map json) {
+  return SendMessageCommand(json['message'] as String)
     ..type = _$enumDecodeNullable(_$ClientCommandTypeEnumMap, json['type']);
 }
 
-Map<String, dynamic> _$LoginCommandToJson(LoginCommand instance) =>
+Map<String, dynamic> _$SendMessageCommandToJson(SendMessageCommand instance) =>
     <String, dynamic>{
       'type': _$ClientCommandTypeEnumMap[instance.type],
-      'name': instance.name,
-      'id': instance.id
+      'message': instance.message
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {

@@ -7,7 +7,9 @@ import 'package:dart_game/common/command/client/build_solid_object_command.dart'
 import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/command/client/client_command_type.dart';
 import 'package:dart_game/common/command/client/move_command.dart';
+import 'package:dart_game/common/command/client/send_message_command.dart';
 import 'package:dart_game/common/command/client/use_object_on_solid_object_command.dart';
+import 'package:dart_game/common/command/server/add_message_command.dart';
 import 'package:dart_game/common/command/server/add_player_command.dart';
 import 'package:dart_game/common/command/server/add_solid_object_command.dart';
 import 'package:dart_game/common/command/server/add_to_inventory_command.dart';
@@ -25,6 +27,7 @@ import 'package:dart_game/common/game_objects/soft_game_object.dart';
 import 'package:dart_game/common/game_objects/solid_game_object.dart';
 import 'package:dart_game/common/game_objects/tree.dart';
 import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/message.dart';
 import 'package:dart_game/common/solid_object_building.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/server/client.dart';
@@ -68,7 +71,7 @@ class Server {
         print('${configurationFile.path} does not exist!');
       }
       final String configurationFileContent =
-      configurationFile.readAsStringSync();
+          configurationFile.readAsStringSync();
       final YamlMap config = loadYaml(configurationFileContent) as YamlMap;
 
       server = await HttpServer.bind(
@@ -87,7 +90,7 @@ class Server {
           request.response.headers
               .add('Access-Control-Allow-Credentials', 'true');
           final WebSocket newPlayerWebSocket =
-          await WebSocketTransformer.upgrade(request);
+              await WebSocketTransformer.upgrade(request);
           int playerId;
           for (int i = 0; i < clients.length; i++) {
             if (clients[i] == null) {
@@ -117,7 +120,7 @@ class Server {
 
           newPlayerWebSocket.listen((dynamic data) {
             final ClientCommand command =
-            ClientCommand.fromJson(jsonDecode(data as String) as Map);
+                ClientCommand.fromJson(jsonDecode(data as String) as Map);
             switch (command.type) {
               case ClientCommandType.move:
                 executeMoveCommand(command as MoveCommand);
@@ -130,9 +133,13 @@ class Server {
                 executeBuildSolidObjectCommand(
                     newClient, command as BuildSolidObjectCommand);
                 break;
+              case ClientCommandType.sendMessage:
+                executeSendMessageCommand(
+                    newClient, command as SendMessageCommand);
+                break;
               case ClientCommandType.login:
               case ClientCommandType.unknown:
-              // unimplemented, should never happen
+                // unimplemented, should never happen
                 break;
             }
           }, onDone: () {
@@ -160,7 +167,7 @@ class Server {
         .solidObjectColumns[command.targetPosition.x][command.targetPosition.y];
     final Client client = clients[command.playerId];
     final SoftGameObject item =
-    client.player.inventory.items[command.itemIndex][0];
+        client.player.inventory.items[command.itemIndex][0];
     switch (target.type) {
       case SolidGameObjectType.tree:
         useItemOnTree(client, item, target as Tree);
@@ -181,20 +188,20 @@ class Server {
       final SoftGameObject itemCutFromTree = target.cut();
       client.player.inventory.addItem(itemCutFromTree);
       final addToInventoryCommand =
-      AddToInventoryCommand(client.player.id, itemCutFromTree);
+          AddToInventoryCommand(client.player.id, itemCutFromTree);
       client.webSocket.add(jsonEncode(addToInventoryCommand));
 
       if (target.dead) {
         world.solidObjectColumns[target.tilePosition.x][target.tilePosition.y] =
-        null;
+            null;
         final removeCommand = RemoveSolidObjectCommand(target.tilePosition);
         sendCommandToAllClients(removeCommand);
       }
     }
   }
 
-  void executeBuildSolidObjectCommand(Client client,
-      BuildSolidObjectCommand command) {
+  void executeBuildSolidObjectCommand(
+      Client client, BuildSolidObjectCommand command) {
     if (world.solidObjectColumns[command.position.x][command.position.y] !=
         null) {
       print(
@@ -204,19 +211,20 @@ class Server {
 
     final Player player = client.player;
 
-    final Map<SoftGameObjectType, int> receipe = solidReceipes[command
-        .objectType];
+    final Map<SoftGameObjectType, int> receipe =
+        solidReceipes[command.objectType];
     if (!playerCanBuild(command.objectType, player)) {
       print('Tried to build an object but couldn\'t!');
       return;
     }
-    final removeFromInventoryCommand = RemoveFromInventoryCommand(
-        player.id, []);
+    final removeFromInventoryCommand =
+        RemoveFromInventoryCommand(player.id, []);
     for (var type in receipe.keys) {
       for (int i = 0; i < player.inventory.items.length; i++) {
         // TODO: Stack class
         if (player.inventory.items[i][0].type == type) {
-          removeFromInventoryCommand.nObjectsToRemoveFromEachStack.add(receipe[type]);
+          removeFromInventoryCommand.nObjectsToRemoveFromEachStack
+              .add(receipe[type]);
           for (int k = 0; k < receipe[type]; k++) {
             player.inventory.removeFromStack(i);
           }
@@ -228,7 +236,7 @@ class Server {
     switch (command.objectType) {
       case SolidGameObjectType.woodenWall:
         final object =
-        SolidGameObject(SolidGameObjectType.woodenWall, command.position);
+            SolidGameObject(SolidGameObjectType.woodenWall, command.position);
         world.solidObjectColumns[command.position.x][command.position.y] =
             object;
         sendCommandToAllClients(AddSolidObjectCommand(object));
@@ -238,5 +246,10 @@ class Server {
         break;
     }
     client.sendCommand(removeFromInventoryCommand);
+  }
+
+  void executeSendMessageCommand(Client newClient, SendMessageCommand command) {
+    sendCommandToAllClients(
+        AddMessageCommand(Message(newClient.player.id, command.message)));
   }
 }

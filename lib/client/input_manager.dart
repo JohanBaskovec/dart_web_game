@@ -10,14 +10,14 @@ import 'package:dart_game/common/command/client/use_object_on_solid_object_comma
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/axe.dart';
 import 'package:dart_game/common/game_objects/player.dart';
-import 'package:dart_game/common/game_objects/receipes.dart';
-import 'package:dart_game/common/game_objects/soft_game_object.dart';
 import 'package:dart_game/common/game_objects/solid_game_object.dart';
 import 'package:dart_game/common/game_objects/tree.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/solid_object_building.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/ui/build_menu.dart';
+import 'package:dart_game/common/ui/chat.dart';
+import 'package:dart_game/common/ui/inventory_menu.dart';
 import 'package:dart_game/common/world_position.dart';
 
 class InputManager {
@@ -31,9 +31,11 @@ class InputManager {
   Duration minDurationBetweenAction = Duration(milliseconds: 70);
   Renderer renderer;
   BuildMenu buildMenu;
+  Chat chat;
+  InventoryMenu inventory;
 
-  InputManager(
-      this._body, this._canvas, this._world, this.renderer, this.buildMenu);
+  InputManager(this._body, this._canvas, this._world, this.renderer,
+      this.buildMenu, this.chat, this.inventory);
 
   void listen() {
     _body.onClick.listen((MouseEvent e) {
@@ -43,31 +45,46 @@ class InputManager {
     });
     _body.onKeyDown.listen((KeyboardEvent e) {
       if (canvasActive && player != null) {
-        switch (e.key) {
-          case 'd':
-            move(1, 0);
-            break;
-          case 'q':
-            move(-1, 0);
-            break;
-          case 's':
-            move(0, 1);
-            break;
-          case 'z':
-            move(0, -1);
-            break;
-          case 'b':
-            buildMenu.enabled = !buildMenu.enabled;
-            break;
+        if (chat.enabled && chat.input.active) {
+          chat.type(e.key);
+        } else {
+          switch (e.key) {
+            case 'd':
+              move(1, 0);
+              break;
+            case 'q':
+              move(-1, 0);
+              break;
+            case 's':
+              move(0, 1);
+              break;
+            case 'z':
+              move(0, -1);
+              break;
+            case 'b':
+              buildMenu.enabled = !buildMenu.enabled;
+              break;
+          }
         }
       }
     });
     _canvas.onClick.listen((MouseEvent e) {
+      final CanvasPosition canvasPosition =
+          renderer.getCursorPositionInCanvas(e);
       if (canClick) {
-        final CanvasPosition canvasPosition =
-            renderer.getCursorPositionInCanvas(e);
+        bool keepGoing = true;
         if (buildMenu.enabled) {
-          buildMenu.clickAt(canvasPosition);
+          keepGoing = buildMenu.clickAt(canvasPosition);
+          if (!keepGoing) {
+            return;
+          }
+        }
+        if (chat.enabled) {
+          keepGoing = chat.clickAt(canvasPosition);
+
+          if (!keepGoing) {
+            return;
+          }
         }
         final WorldPosition mousePosition =
             renderer.getWorldPositionFromCanvasPosition(canvasPosition);
@@ -145,7 +162,8 @@ class InputManager {
       switch (buildMenu.selectedType) {
         case SolidGameObjectType.woodenWall:
           if (playerCanBuild(buildMenu.selectedType, player)) {
-            webSocketClient.webSocket.send(jsonEncode(BuildSolidObjectCommand(buildMenu.selectedType, tilePosition)));
+            webSocketClient.webSocket.send(jsonEncode(
+                BuildSolidObjectCommand(buildMenu.selectedType, tilePosition)));
           }
           break;
         default:
