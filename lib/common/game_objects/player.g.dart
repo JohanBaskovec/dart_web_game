@@ -13,17 +13,19 @@ Player _$PlayerFromJson(Map json) {
           : TilePosition.fromJson(json['tilePosition'] as Map),
       json['name'] as String,
       json['id'] as int)
-    ..type = _$enumDecodeNullable(_$SolidGameObjectTypeEnumMap, json['type'])
+    ..type = _$enumDecodeNullable(_$SolidObjectTypeEnumMap, json['type'])
     ..inventory = json['inventory'] == null
         ? null
         : Inventory.fromJson(json['inventory'] as Map)
-    ..box = json['box'] == null ? null : Box.fromJson(json['box'] as Map);
+    ..box = json['box'] == null ? null : Box.fromJson(json['box'] as Map)
+    ..alive = json['alive'] as bool;
 }
 
 Map<String, dynamic> _$PlayerToJson(Player instance) => <String, dynamic>{
-      'type': _$SolidGameObjectTypeEnumMap[instance.type],
+      'type': _$SolidObjectTypeEnumMap[instance.type],
       'inventory': instance.inventory,
       'box': instance.box,
+      'alive': instance.alive,
       'tilePosition': instance.tilePosition,
       'name': instance.name,
       'id': instance.id
@@ -49,13 +51,13 @@ T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
   return _$enumDecode<T>(enumValues, source);
 }
 
-const _$SolidGameObjectTypeEnumMap = <SolidGameObjectType, dynamic>{
-  SolidGameObjectType.tree: 'tree',
-  SolidGameObjectType.appleTree: 'appleTree',
-  SolidGameObjectType.coconutTree: 'coconutTree',
-  SolidGameObjectType.ropeTree: 'ropeTree',
-  SolidGameObjectType.leafTree: 'leafTree',
-  SolidGameObjectType.barkTree: 'barkTree',
-  SolidGameObjectType.player: 'player',
-  SolidGameObjectType.woodenWall: 'woodenWall'
+const _$SolidObjectTypeEnumMap = <SolidObjectType, dynamic>{
+  SolidObjectType.tree: 'tree',
+  SolidObjectType.appleTree: 'appleTree',
+  SolidObjectType.coconutTree: 'coconutTree',
+  SolidObjectType.ropeTree: 'ropeTree',
+  SolidObjectType.leafTree: 'leafTree',
+  SolidObjectType.barkTree: 'barkTree',
+  SolidObjectType.player: 'player',
+  SolidObjectType.woodenWall: 'woodenWall'
 };

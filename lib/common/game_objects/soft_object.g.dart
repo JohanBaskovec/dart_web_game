@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'soft_game_object.dart';
+part of 'soft_object.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -8,7 +8,7 @@ part of 'soft_game_object.dart';
 
 SoftGameObject _$SoftGameObjectFromJson(Map json) {
   return SoftGameObject(
-      _$enumDecodeNullable(_$SoftGameObjectTypeEnumMap, json['type']),
+      _$enumDecodeNullable(_$SoftObjectTypeEnumMap, json['type']),
       json['position'] == null
           ? null
           : WorldPosition.fromJson(json['position'] as Map))
@@ -17,7 +17,7 @@ SoftGameObject _$SoftGameObjectFromJson(Map json) {
 
 Map<String, dynamic> _$SoftGameObjectToJson(SoftGameObject instance) =>
     <String, dynamic>{
-      'type': _$SoftGameObjectTypeEnumMap[instance.type],
+      'type': _$SoftObjectTypeEnumMap[instance.type],
       'position': instance.position,
       'index': instance.index
     };
@@ -42,8 +42,11 @@ T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
   return _$enumDecode<T>(enumValues, source);
 }
 
-const _$SoftGameObjectTypeEnumMap = <SoftGameObjectType, dynamic>{
-  SoftGameObjectType.stone: 'stone',
-  SoftGameObjectType.axe: 'axe',
-  SoftGameObjectType.log: 'log'
+const _$SoftObjectTypeEnumMap = <SoftObjectType, dynamic>{
+  SoftObjectType.stone: 'stone',
+  SoftObjectType.axe: 'axe',
+  SoftObjectType.log: 'log',
+  SoftObjectType.hand: 'hand',
+  SoftObjectType.apple: 'apple',
+  SoftObjectType.fruitTreeLog: 'fruitTreeLog'
 };

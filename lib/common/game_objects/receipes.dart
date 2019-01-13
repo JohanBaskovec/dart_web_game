@@ -1,8 +1,8 @@
-import 'package:dart_game/common/game_objects/soft_game_object.dart';
-import 'package:dart_game/common/game_objects/solid_game_object.dart';
+import 'package:dart_game/common/game_objects/soft_object.dart';
+import 'package:dart_game/common/game_objects/solid_object.dart';
 
-final Map<SolidGameObjectType, Map<SoftGameObjectType, int>> solidReceipes = {
-  SolidGameObjectType.woodenWall: {
-    SoftGameObjectType.log: 5
+final Map<SolidObjectType, Map<SoftObjectType, int>> solidReceipes = {
+  SolidObjectType.woodenWall: {
+    SoftObjectType.log: 5
   }
 };

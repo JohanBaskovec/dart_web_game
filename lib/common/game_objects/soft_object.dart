@@ -2,18 +2,21 @@ import 'package:dart_game/common/game_objects/axe.dart';
 import 'package:dart_game/common/world_position.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'soft_game_object.g.dart';
+part 'soft_object.g.dart';
 
-enum SoftGameObjectType {
+enum SoftObjectType {
   stone,
   axe,
-  log
+  log,
+  hand,
+  apple,
+  fruitTreeLog
 }
 
 /// Objects that can be traversed
 @JsonSerializable(anyMap: true)
 class SoftGameObject {
-  SoftGameObjectType type;
+  SoftObjectType type;
   WorldPosition position;
   /// index in inventory if it's in one
   int index;
@@ -22,16 +25,14 @@ class SoftGameObject {
 
   /// Creates a new [SoftGameObject] from a JSON object.
   static SoftGameObject fromJson(Map<dynamic, dynamic> json) {
-    final type = _$enumDecode(_$SoftGameObjectTypeEnumMap, json['type']);
+    final type = _$enumDecode(_$SoftObjectTypeEnumMap, json['type']);
     switch (type) {
-      case SoftGameObjectType.axe:
+      case SoftObjectType.axe:
         return Axe.fromJson(json);
-      case SoftGameObjectType.log:
-      case SoftGameObjectType.stone:
+      default:
         return _$SoftGameObjectFromJson(json);
         break;
     }
-    throw Exception('Null SoftGameObject type, should never happen!');
   }
 
   /// Convert this object to a JSON object.

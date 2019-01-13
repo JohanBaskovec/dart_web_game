@@ -1,27 +1,30 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'tree.dart';
+part of 'solid_object.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-Tree _$TreeFromJson(Map json) {
-  return Tree()
-    ..type = _$enumDecodeNullable(_$SolidGameObjectTypeEnumMap, json['type'])
+SolidObject _$SolidObjectFromJson(Map json) {
+  return SolidObject(
+      _$enumDecodeNullable(_$SolidObjectTypeEnumMap, json['type']),
+      json['tilePosition'] == null
+          ? null
+          : TilePosition.fromJson(json['tilePosition'] as Map))
     ..inventory = json['inventory'] == null
         ? null
         : Inventory.fromJson(json['inventory'] as Map)
     ..box = json['box'] == null ? null : Box.fromJson(json['box'] as Map)
-    ..tilePosition = json['tilePosition'] == null
-        ? null
-        : TilePosition.fromJson(json['tilePosition'] as Map);
+    ..alive = json['alive'] as bool;
 }
 
-Map<String, dynamic> _$TreeToJson(Tree instance) => <String, dynamic>{
-      'type': _$SolidGameObjectTypeEnumMap[instance.type],
+Map<String, dynamic> _$SolidObjectToJson(SolidObject instance) =>
+    <String, dynamic>{
+      'type': _$SolidObjectTypeEnumMap[instance.type],
       'inventory': instance.inventory,
       'box': instance.box,
+      'alive': instance.alive,
       'tilePosition': instance.tilePosition
     };
 
@@ -45,13 +48,13 @@ T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
   return _$enumDecode<T>(enumValues, source);
 }
 
-const _$SolidGameObjectTypeEnumMap = <SolidGameObjectType, dynamic>{
-  SolidGameObjectType.tree: 'tree',
-  SolidGameObjectType.appleTree: 'appleTree',
-  SolidGameObjectType.coconutTree: 'coconutTree',
-  SolidGameObjectType.ropeTree: 'ropeTree',
-  SolidGameObjectType.leafTree: 'leafTree',
-  SolidGameObjectType.barkTree: 'barkTree',
-  SolidGameObjectType.player: 'player',
-  SolidGameObjectType.woodenWall: 'woodenWall'
+const _$SolidObjectTypeEnumMap = <SolidObjectType, dynamic>{
+  SolidObjectType.tree: 'tree',
+  SolidObjectType.appleTree: 'appleTree',
+  SolidObjectType.coconutTree: 'coconutTree',
+  SolidObjectType.ropeTree: 'ropeTree',
+  SolidObjectType.leafTree: 'leafTree',
+  SolidObjectType.barkTree: 'barkTree',
+  SolidObjectType.player: 'player',
+  SolidObjectType.woodenWall: 'woodenWall'
 };

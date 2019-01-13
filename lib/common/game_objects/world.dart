@@ -2,9 +2,8 @@ import 'dart:math';
 
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/player.dart';
-import 'package:dart_game/common/game_objects/soft_game_object.dart';
-import 'package:dart_game/common/game_objects/solid_game_object.dart';
-import 'package:dart_game/common/game_objects/tree.dart';
+import 'package:dart_game/common/game_objects/soft_object.dart';
+import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/size.dart';
 import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/common/tile_position.dart';
@@ -16,7 +15,7 @@ part 'world.g.dart';
 class World {
   Size _dimension;
   List<List<Tile>> tilesColumn = [];
-  List<List<SolidGameObject>> solidObjectColumns = [];
+  List<List<SolidObject>> solidObjectColumns = [];
   List<Player> players = [];
 
   World();
@@ -40,11 +39,23 @@ class World {
     }
     for (int x = 0; x < solidObjectColumns.length; x++) {
       for (int y = 0; y < solidObjectColumns[x].length; y++) {
-        if (randomGenerator.nextInt(100) < 10) {
-          final tree = Tree(TilePosition(x, y));
+        final int rand = randomGenerator.nextInt(100);
+        if (rand < 10) {
+          final tree = SolidObject(SolidObjectType.tree, TilePosition(x, y));
           final int nLogs = randomGenerator.nextInt(6) + 1;
           for (int i = 0 ; i < nLogs ; i++) {
-            tree.inventory.addItem(SoftGameObject(SoftGameObjectType.log));
+            tree.inventory.addItem(SoftGameObject(SoftObjectType.log));
+          }
+          solidObjectColumns[x][y] = tree;
+        } else if (rand < 20) {
+          final tree = SolidObject(SolidObjectType.appleTree, TilePosition(x, y));
+          final int nLogs = randomGenerator.nextInt(6) + 1;
+          for (int i = 0 ; i < nLogs ; i++) {
+            tree.inventory.addItem(SoftGameObject(SoftObjectType.fruitTreeLog));
+          }
+          final int nApples = randomGenerator.nextInt(6) + 1;
+          for (int i = 0 ; i < nLogs ; i++) {
+            tree.inventory.addItem(SoftGameObject(SoftObjectType.apple));
           }
           solidObjectColumns[x][y] = tree;
         }

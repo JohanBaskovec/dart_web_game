@@ -1,45 +1,69 @@
-import 'package:dart_game/common/game_objects/soft_game_object.dart';
+import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'inventory.g.dart';
 
+class InventoryPopResult {
+  int itemsLeft;
+  SoftGameObject object;
+
+  InventoryPopResult(this.itemsLeft, this.object);
+}
+
 @JsonSerializable(anyMap: true)
 class Inventory {
   SoftGameObject currentlyEquiped;
-  List<List<SoftGameObject>> items = [];
+  List<List<SoftGameObject>> stacks = [];
 
   void addItem(SoftGameObject item) {
     var i = 0;
-    for (; i < items.length; i++) {
-      if (items[i][0].type == item.type) {
+    for (; i < stacks.length; i++) {
+      if (stacks[i][0].type == item.type) {
         break;
       }
     }
-    if (i == items.length) {
-      items.add([]);
+    if (i == stacks.length) {
+      stacks.add([]);
     }
     item.index = i;
-    items[i].add(item);
+    stacks[i].add(item);
     print('Added $item to inventory in stack $i');
     currentlyEquiped ??= item;
   }
 
   void removeFromStack(int stackIndex, [int n = 1]) {
-    if (items[stackIndex].length >= n) {
-      if (items[stackIndex].length == n) {
-        items.removeAt(stackIndex);
+    if (stacks[stackIndex].length >= n) {
+      if (stacks[stackIndex].length == n) {
+        stacks.removeAt(stackIndex);
       } else {
-        items[stackIndex]
-            .removeRange(
-            items[stackIndex].length - n, items[stackIndex].length);
+        stacks[stackIndex].removeRange(
+            stacks[stackIndex].length - n, stacks[stackIndex].length);
       }
     } else {
       print('Attempting to remove $n items from stack $stackIndex'
-          ', but stack\' length is ${items[stackIndex].length}!');
+          ', but stack\' length is ${stacks[stackIndex].length}!');
     }
   }
 
-  int get size => items.length;
+  SoftGameObject popFromStack(int stackIndex) {
+    return stacks[stackIndex].removeLast();
+  }
+
+  InventoryPopResult popFirstOfType(SoftObjectType type) {
+    for (int i = 0; i < stacks.length; i++) {
+      if (stacks[i][0].type == SoftObjectType.apple) {
+        final InventoryPopResult result =
+            InventoryPopResult(stacks[i].length - 1, popFromStack(i));
+        if (stacks[i].isEmpty) {
+          stacks.removeAt(i);
+        }
+        return result;
+      }
+    }
+    return null;
+  }
+
+  int get size => stacks.length;
 
   /// Creates a new [Inventory] from a JSON object.
   static Inventory fromJson(Map<dynamic, dynamic> json) =>

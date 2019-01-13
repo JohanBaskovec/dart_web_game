@@ -5,8 +5,8 @@ import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/player.dart';
 import 'package:dart_game/common/game_objects/receipes.dart';
-import 'package:dart_game/common/game_objects/soft_game_object.dart';
-import 'package:dart_game/common/game_objects/solid_game_object.dart';
+import 'package:dart_game/common/game_objects/soft_object.dart';
+import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/message.dart';
 import 'package:dart_game/common/tile_position.dart';
@@ -21,19 +21,19 @@ class Renderer {
   double scale = 1;
   CanvasPosition cameraPosition;
   Player player;
-  Map<SoftGameObjectType, ImageElement> softImages = {};
-  Map<SolidGameObjectType, ImageElement> solidImages = {};
+  Map<SoftObjectType, ImageElement> softImages = {};
+  Map<SolidObjectType, ImageElement> solidImages = {};
   BuildMenu buildMenu;
   Chat chat;
   InventoryMenu inventory;
 
   Renderer(this._canvas, this.buildMenu, this.chat, this.inventory)
       : _ctx = _canvas.getContext('2d') as CanvasRenderingContext2D {
-    for (SoftGameObjectType type in SoftGameObjectType.values) {
+    for (SoftObjectType type in SoftObjectType.values) {
       softImages[type] = ImageElement();
       softImages[type].src = '/$type.png';
     }
-    for (SolidGameObjectType type in SolidGameObjectType.values) {
+    for (SolidObjectType type in SolidObjectType.values) {
       solidImages[type] = ImageElement();
       solidImages[type].src = '/$type.png';
     }
@@ -55,7 +55,7 @@ class Renderer {
     for (var player in world.players) {
       if (player != null) {
         _ctx.drawImageScaled(
-            solidImages[SolidGameObjectType.player],
+            solidImages[SolidObjectType.player],
             player.box.left,
             player.box.top,
             player.box.width,
@@ -63,8 +63,8 @@ class Renderer {
       }
     }
 
-    for (List<SolidGameObject> column in world.solidObjectColumns) {
-      for (SolidGameObject object in column) {
+    for (List<SolidObject> column in world.solidObjectColumns) {
+      for (SolidObject object in column) {
         if (object != null) {
           _ctx.drawImageScaled(solidImages[object.type], object.box.left,
               object.box.top, object.box.width, object.box.height);
@@ -77,8 +77,8 @@ class Renderer {
       _ctx.fillRect(inventory.box.left, inventory.box.top, inventory.box.width,
           inventory.box.height);
       final double widthPerStack = inventory.box.width / 9;
-      for (var i = 0; i < player.inventory.items.length; i++) {
-        final List<SoftGameObject> stack = player.inventory.items[i];
+      for (var i = 0; i < player.inventory.stacks.length; i++) {
+        final List<SoftGameObject> stack = player.inventory.stacks[i];
         final double left = i * widthPerStack + inventory.box.left;
         _ctx.drawImageScaled(softImages[stack[0].type], left, inventory.box.top,
             widthPerStack, inventory.box.height);
@@ -97,7 +97,7 @@ class Renderer {
             button.box.top, button.box.width, button.box.height);
         _ctx.fillStyle = 'white';
         var k = 0;
-        for (MapEntry<SoftGameObjectType, int> ingredientList
+        for (MapEntry<SoftObjectType, int> ingredientList
             in solidReceipes[button.type].entries) {
           _ctx.fillText('${ingredientList.key}: ${ingredientList.value}',
               buildMenu.box.left + 40, buildMenu.box.top + 15 * k + 15);

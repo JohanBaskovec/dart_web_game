@@ -1,11 +1,11 @@
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/game_objects/receipes.dart';
-import 'package:dart_game/common/game_objects/solid_game_object.dart';
+import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/ui/button.dart';
 
 class BuildMenuButton extends Button {
-  SolidGameObjectType type;
+  SolidObjectType type;
 
   BuildMenuButton(this.type);
 }
@@ -14,10 +14,10 @@ class BuildMenu {
   bool enabled = false;
   Box box = Box(0, 0, 0, 0);
   List<Button> buttons = [];
-  SolidGameObjectType selectedType;
+  SolidObjectType selectedType;
 
   BuildMenu() {
-    for (SolidGameObjectType type in solidReceipes.keys) {
+    for (SolidObjectType type in solidReceipes.keys) {
       buttons.add(BuildMenuButton(type));
     }
   }

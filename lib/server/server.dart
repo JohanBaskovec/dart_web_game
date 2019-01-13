@@ -23,9 +23,8 @@ import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/axe.dart';
 import 'package:dart_game/common/game_objects/player.dart';
 import 'package:dart_game/common/game_objects/receipes.dart';
-import 'package:dart_game/common/game_objects/soft_game_object.dart';
-import 'package:dart_game/common/game_objects/solid_game_object.dart';
-import 'package:dart_game/common/game_objects/tree.dart';
+import 'package:dart_game/common/game_objects/soft_object.dart';
+import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/message.dart';
 import 'package:dart_game/common/solid_object_building.dart';
@@ -99,6 +98,7 @@ class Server {
             }
           }
           final newPlayer = Player(TilePosition(0, 0), 'admin', playerId);
+          newPlayer.inventory.addItem(SoftGameObject(SoftObjectType.hand));
           newPlayer.inventory.addItem(Axe());
 
           world.players[playerId] = newPlayer;
@@ -163,35 +163,24 @@ class Server {
 
   void executeUseObjectOnSolidObjectCommand(
       UseObjectOnSolidObjectCommand command) {
-    final SolidGameObject target = world
+    final SolidObject target = world
         .solidObjectColumns[command.targetPosition.x][command.targetPosition.y];
     final Client client = clients[command.playerId];
     final SoftGameObject item =
-        client.player.inventory.items[command.itemIndex][0];
-    switch (target.type) {
-      case SolidGameObjectType.tree:
-        useItemOnTree(client, item, target as Tree);
-        break;
-      case SolidGameObjectType.player:
-      case SolidGameObjectType.appleTree:
-      case SolidGameObjectType.barkTree:
-      case SolidGameObjectType.coconutTree:
-      case SolidGameObjectType.leafTree:
-      case SolidGameObjectType.ropeTree:
-      case SolidGameObjectType.woodenWall:
-        throw Exception('Not implemented, should never happen.');
-    }
+        client.player.inventory.stacks[command.itemIndex][0];
+    useItemOnSolidObject(client, item, target);
   }
 
-  void useItemOnTree(Client client, SoftGameObject item, Tree target) {
-    if (item.type == SoftGameObjectType.axe) {
-      final SoftGameObject itemCutFromTree = target.cut();
-      client.player.inventory.addItem(itemCutFromTree);
+  void useItemOnSolidObject(
+      Client client, SoftGameObject item, SolidObject target) {
+    final SoftGameObject itemReceivedFromAction = target.useItem(item);
+    if (itemReceivedFromAction != null) {
+      client.player.inventory.addItem(itemReceivedFromAction);
       final addToInventoryCommand =
-          AddToInventoryCommand(client.player.id, itemCutFromTree);
-      client.webSocket.add(jsonEncode(addToInventoryCommand));
+          AddToInventoryCommand(client.player.id, itemReceivedFromAction);
+      client.sendCommand(addToInventoryCommand);
 
-      if (target.dead) {
+      if (!target.alive) {
         world.solidObjectColumns[target.tilePosition.x][target.tilePosition.y] =
             null;
         final removeCommand = RemoveSolidObjectCommand(target.tilePosition);
@@ -211,7 +200,7 @@ class Server {
 
     final Player player = client.player;
 
-    final Map<SoftGameObjectType, int> receipe =
+    final Map<SoftObjectType, int> receipe =
         solidReceipes[command.objectType];
     if (!playerCanBuild(command.objectType, player)) {
       print('Tried to build an object but couldn\'t!');
@@ -220,9 +209,9 @@ class Server {
     final removeFromInventoryCommand =
         RemoveFromInventoryCommand(player.id, []);
     for (var type in receipe.keys) {
-      for (int i = 0; i < player.inventory.items.length; i++) {
+      for (int i = 0; i < player.inventory.stacks.length; i++) {
         // TODO: Stack class
-        if (player.inventory.items[i][0].type == type) {
+        if (player.inventory.stacks[i][0].type == type) {
           removeFromInventoryCommand.nObjectsToRemoveFromEachStack
               .add(receipe[type]);
           for (int k = 0; k < receipe[type]; k++) {
@@ -234,9 +223,9 @@ class Server {
       }
     }
     switch (command.objectType) {
-      case SolidGameObjectType.woodenWall:
+      case SolidObjectType.woodenWall:
         final object =
-            SolidGameObject(SolidGameObjectType.woodenWall, command.position);
+            SolidObject(SolidObjectType.woodenWall, command.position);
         world.solidObjectColumns[command.position.x][command.position.y] =
             object;
         sendCommandToAllClients(AddSolidObjectCommand(object));

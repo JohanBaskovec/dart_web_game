@@ -8,10 +8,8 @@ import 'package:dart_game/common/command/client/build_solid_object_command.dart'
 import 'package:dart_game/common/command/client/move_command.dart';
 import 'package:dart_game/common/command/client/use_object_on_solid_object_command.dart';
 import 'package:dart_game/common/constants.dart';
-import 'package:dart_game/common/game_objects/axe.dart';
 import 'package:dart_game/common/game_objects/player.dart';
-import 'package:dart_game/common/game_objects/solid_game_object.dart';
-import 'package:dart_game/common/game_objects/tree.dart';
+import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/solid_object_building.dart';
 import 'package:dart_game/common/tile_position.dart';
@@ -122,31 +120,9 @@ class InputManager {
     webSocketClient.webSocket.send(jsonEncode(command));
   }
 
-  void clickOnSolidObject(SolidGameObject object) {
-    switch (object.type) {
-      case SolidGameObjectType.tree:
-        clickOnTree(object as Tree);
-        break;
-      case SolidGameObjectType.player:
-      case SolidGameObjectType.appleTree:
-      case SolidGameObjectType.barkTree:
-      case SolidGameObjectType.ropeTree:
-      case SolidGameObjectType.coconutTree:
-      case SolidGameObjectType.leafTree:
-      case SolidGameObjectType.woodenWall:
-        break;
-    }
-  }
-
-  void clickOnTree(Tree tree) {
-    if (player.inventory.currentlyEquiped is Axe) {
-      cutTree(player.inventory.currentlyEquiped as Axe, tree);
-    }
-  }
-
-  void cutTree(Axe axe, Tree tree) {
-    final command =
-        UseObjectOnSolidObjectCommand(tree.tilePosition, player.id, axe.index);
+  void clickOnSolidObject(SolidObject object) {
+    final command = UseObjectOnSolidObjectCommand(object.tilePosition,
+        player.id, player.inventory.currentlyEquiped.index);
     webSocketClient.webSocket.send(jsonEncode(command));
   }
 
@@ -167,7 +143,7 @@ class InputManager {
   void clickOnGround(TilePosition tilePosition) {
     if (buildMenu.enabled && buildMenu.selectedType != null) {
       switch (buildMenu.selectedType) {
-        case SolidGameObjectType.woodenWall:
+        case SolidObjectType.woodenWall:
           if (playerCanBuild(buildMenu.selectedType, player)) {
             webSocketClient.webSocket.send(jsonEncode(
                 BuildSolidObjectCommand(buildMenu.selectedType, tilePosition)));

@@ -8,7 +8,7 @@ part of 'axe.dart';
 
 Axe _$AxeFromJson(Map json) {
   return Axe()
-    ..type = _$enumDecodeNullable(_$SoftGameObjectTypeEnumMap, json['type'])
+    ..type = _$enumDecodeNullable(_$SoftObjectTypeEnumMap, json['type'])
     ..position = json['position'] == null
         ? null
         : WorldPosition.fromJson(json['position'] as Map)
@@ -16,7 +16,7 @@ Axe _$AxeFromJson(Map json) {
 }
 
 Map<String, dynamic> _$AxeToJson(Axe instance) => <String, dynamic>{
-      'type': _$SoftGameObjectTypeEnumMap[instance.type],
+      'type': _$SoftObjectTypeEnumMap[instance.type],
       'position': instance.position,
       'index': instance.index
     };
@@ -41,8 +41,11 @@ T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
   return _$enumDecode<T>(enumValues, source);
 }
 
-const _$SoftGameObjectTypeEnumMap = <SoftGameObjectType, dynamic>{
-  SoftGameObjectType.stone: 'stone',
-  SoftGameObjectType.axe: 'axe',
-  SoftGameObjectType.log: 'log'
+const _$SoftObjectTypeEnumMap = <SoftObjectType, dynamic>{
+  SoftObjectType.stone: 'stone',
+  SoftObjectType.axe: 'axe',
+  SoftObjectType.log: 'log',
+  SoftObjectType.hand: 'hand',
+  SoftObjectType.apple: 'apple',
+  SoftObjectType.fruitTreeLog: 'fruitTreeLog'
 };

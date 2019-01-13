@@ -11,7 +11,7 @@ Inventory _$InventoryFromJson(Map json) {
     ..currentlyEquiped = json['currentlyEquiped'] == null
         ? null
         : SoftGameObject.fromJson(json['currentlyEquiped'] as Map)
-    ..items = (json['items'] as List)
+    ..stacks = (json['stacks'] as List)
         ?.map((e) => (e as List)
             ?.map((e) => e == null ? null : SoftGameObject.fromJson(e as Map))
             ?.toList())
@@ -20,5 +20,5 @@ Inventory _$InventoryFromJson(Map json) {
 
 Map<String, dynamic> _$InventoryToJson(Inventory instance) => <String, dynamic>{
       'currentlyEquiped': instance.currentlyEquiped,
-      'items': instance.items
+      'stacks': instance.stacks
     };

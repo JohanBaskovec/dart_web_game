@@ -15,7 +15,7 @@ World _$WorldFromJson(Map json) {
         ?.toList()
     ..solidObjectColumns = (json['solidObjectColumns'] as List)
         ?.map((e) => (e as List)
-            ?.map((e) => e == null ? null : SolidGameObject.fromJson(e as Map))
+            ?.map((e) => e == null ? null : SolidObject.fromJson(e as Map))
             ?.toList())
         ?.toList()
     ..players = (json['players'] as List)

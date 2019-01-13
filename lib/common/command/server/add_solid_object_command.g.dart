@@ -9,7 +9,7 @@ part of 'add_solid_object_command.dart';
 AddSolidObjectCommand _$AddSolidObjectCommandFromJson(Map json) {
   return AddSolidObjectCommand(json['object'] == null
       ? null
-      : SolidGameObject.fromJson(json['object'] as Map))
+      : SolidObject.fromJson(json['object'] as Map))
     ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type']);
 }
 
