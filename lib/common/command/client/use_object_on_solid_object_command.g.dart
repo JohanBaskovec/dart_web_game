@@ -12,7 +12,6 @@ UseObjectOnSolidObjectCommand _$UseObjectOnSolidObjectCommandFromJson(
       json['targetPosition'] == null
           ? null
           : TilePosition.fromJson(json['targetPosition'] as Map),
-      json['playerId'] as int,
       json['itemIndex'] as int)
     ..type = _$enumDecodeNullable(_$ClientCommandTypeEnumMap, json['type']);
 }
@@ -22,7 +21,6 @@ Map<String, dynamic> _$UseObjectOnSolidObjectCommandToJson(
     <String, dynamic>{
       'type': _$ClientCommandTypeEnumMap[instance.type],
       'targetPosition': instance.targetPosition,
-      'playerId': instance.playerId,
       'itemIndex': instance.itemIndex
     };
 

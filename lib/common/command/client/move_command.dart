@@ -8,9 +8,8 @@ part 'move_command.g.dart';
 class MoveCommand extends ClientCommand {
   int x;
   int y;
-  int playerId;
 
-  MoveCommand([this.x, this.y, this.playerId]): super(ClientCommandType.move);
+  MoveCommand([this.x, this.y]): super(ClientCommandType.move);
 
   /// Creates a new [MoveCommand] from a JSON object.
   static MoveCommand fromJson(Map<dynamic, dynamic> json) =>

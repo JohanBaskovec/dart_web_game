@@ -46,17 +46,18 @@ class Server {
     }
   }
 
-  void executeMoveCommand(MoveCommand command) {
-    final targetX = world.players[command.playerId].tilePosition.x + command.x;
-    final targetY = world.players[command.playerId].tilePosition.y + command.y;
+  void executeMoveCommand(Client client, MoveCommand command) {
+    final int playerId = client.player.id;
+    final targetX = world.players[playerId].tilePosition.x + command.x;
+    final targetY = world.players[playerId].tilePosition.y + command.y;
     if (targetX < worldSize.x &&
         targetX >= 0 &&
         targetY < worldSize.y &&
         targetY >= 0 &&
         world.solidObjectColumns[targetX][targetY] == null) {
-      world.players[command.playerId].move(command.x, command.y);
+      world.players[playerId].move(command.x, command.y);
       final serverCommand = MovePlayerCommand(
-          command.playerId, world.players[command.playerId].tilePosition);
+          playerId, world.players[playerId].tilePosition);
       sendCommandToAllClients(serverCommand);
     }
   }
@@ -123,11 +124,11 @@ class Server {
                 ClientCommand.fromJson(jsonDecode(data as String) as Map);
             switch (command.type) {
               case ClientCommandType.move:
-                executeMoveCommand(command as MoveCommand);
+                executeMoveCommand(newClient, command as MoveCommand);
                 break;
               case ClientCommandType.useObjectOnSolidObject:
                 executeUseObjectOnSolidObjectCommand(
-                    command as UseObjectOnSolidObjectCommand);
+                    newClient, command as UseObjectOnSolidObjectCommand);
                 break;
               case ClientCommandType.buildSolidObject:
                 executeBuildSolidObjectCommand(
@@ -162,10 +163,9 @@ class Server {
   }
 
   void executeUseObjectOnSolidObjectCommand(
-      UseObjectOnSolidObjectCommand command) {
+      Client client, UseObjectOnSolidObjectCommand command) {
     final SolidObject target = world
         .solidObjectColumns[command.targetPosition.x][command.targetPosition.y];
-    final Client client = clients[command.playerId];
     final SoftGameObject item =
         client.player.inventory.stacks[command.itemIndex][0];
     useItemOnSolidObject(client, item, target);
@@ -200,8 +200,7 @@ class Server {
 
     final Player player = client.player;
 
-    final Map<SoftObjectType, int> receipe =
-        solidReceipes[command.objectType];
+    final Map<SoftObjectType, int> receipe = solidReceipes[command.objectType];
     if (!playerCanBuild(command.objectType, player)) {
       print('Tried to build an object but couldn\'t!');
       return;
@@ -210,7 +209,6 @@ class Server {
         RemoveFromInventoryCommand(player.id, []);
     for (var type in receipe.keys) {
       for (int i = 0; i < player.inventory.stacks.length; i++) {
-        // TODO: Stack class
         if (player.inventory.stacks[i][0].type == type) {
           removeFromInventoryCommand.nObjectsToRemoveFromEachStack
               .add(receipe[type]);

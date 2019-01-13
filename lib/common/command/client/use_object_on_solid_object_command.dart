@@ -10,14 +10,11 @@ class UseObjectOnSolidObjectCommand extends ClientCommand {
   /// Position of the target object
   TilePosition targetPosition;
 
-  /// Id of the player (his posisition in the players list)
-  int playerId;
-
   /// Item index in the player's inventory
   int itemIndex;
 
   UseObjectOnSolidObjectCommand(
-      this.targetPosition, this.playerId, this.itemIndex)
+      this.targetPosition, this.itemIndex)
       : super(ClientCommandType.useObjectOnSolidObject);
 
   /// Creates a new [UseObjectOnSolidObjectCommand] from a JSON object.

@@ -116,13 +116,13 @@ class InputManager {
   }
 
   void move(int x, int y) {
-    final command = MoveCommand(x, y, player.id);
+    final command = MoveCommand(x, y);
     webSocketClient.webSocket.send(jsonEncode(command));
   }
 
   void clickOnSolidObject(SolidObject object) {
-    final command = UseObjectOnSolidObjectCommand(object.tilePosition,
-        player.id, player.inventory.currentlyEquiped.index);
+    final command = UseObjectOnSolidObjectCommand(
+        object.tilePosition, player.inventory.currentlyEquiped.index);
     webSocketClient.webSocket.send(jsonEncode(command));
   }
 

@@ -7,8 +7,7 @@ part of 'move_command.dart';
 // **************************************************************************
 
 MoveCommand _$MoveCommandFromJson(Map json) {
-  return MoveCommand(
-      json['x'] as int, json['y'] as int, json['playerId'] as int)
+  return MoveCommand(json['x'] as int, json['y'] as int)
     ..type = _$enumDecodeNullable(_$ClientCommandTypeEnumMap, json['type']);
 }
 
@@ -16,8 +15,7 @@ Map<String, dynamic> _$MoveCommandToJson(MoveCommand instance) =>
     <String, dynamic>{
       'type': _$ClientCommandTypeEnumMap[instance.type],
       'x': instance.x,
-      'y': instance.y,
-      'playerId': instance.playerId
+      'y': instance.y
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {
