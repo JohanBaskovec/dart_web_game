@@ -8,12 +8,12 @@ part of 'login_command.dart';
 
 LoginCommand _$LoginCommandFromJson(Map json) {
   return LoginCommand(json['name'] as String, json['id'] as int)
-    ..type = _$enumDecodeNullable(_$CommandTypeEnumMap, json['type']);
+    ..type = _$enumDecodeNullable(_$ClientCommandTypeEnumMap, json['type']);
 }
 
 Map<String, dynamic> _$LoginCommandToJson(LoginCommand instance) =>
     <String, dynamic>{
-      'type': _$CommandTypeEnumMap[instance.type],
+      'type': _$ClientCommandTypeEnumMap[instance.type],
       'name': instance.name,
       'id': instance.id
     };
@@ -38,21 +38,10 @@ T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
   return _$enumDecode<T>(enumValues, source);
 }
 
-const _$CommandTypeEnumMap = <CommandType, dynamic>{
-  CommandType.login: 'login',
-  CommandType.loggedIn: 'loggedIn',
-  CommandType.addPlayer: 'addPlayer',
-  CommandType.removePlayer: 'removePlayer',
-  CommandType.move: 'move',
-  CommandType.useObjectOnSolidObject: 'useObjectOnSolidObject',
-  CommandType.removeSolidObject: 'removeSolidObject',
-  CommandType.addSolidObject: 'addSolidObject',
-  CommandType.addToInventory: 'addToInventory',
-  CommandType.removeFromInventory: 'removeFromInventory',
-  CommandType.addSoftObject: 'addSoftObject',
-  CommandType.removeSoftObject: 'removeSoftObject',
-  CommandType.addTile: 'addTile',
-  CommandType.removeTile: 'removeTile',
-  CommandType.buildSolidObject: 'buildSolidObject',
-  CommandType.unknown: 'unknown'
+const _$ClientCommandTypeEnumMap = <ClientCommandType, dynamic>{
+  ClientCommandType.login: 'login',
+  ClientCommandType.move: 'move',
+  ClientCommandType.useObjectOnSolidObject: 'useObjectOnSolidObject',
+  ClientCommandType.buildSolidObject: 'buildSolidObject',
+  ClientCommandType.unknown: 'unknown'
 };

@@ -8,13 +8,13 @@ part of 'remove_player_command.dart';
 
 RemovePlayerCommand _$RemovePlayerCommandFromJson(Map json) {
   return RemovePlayerCommand(json['id'] as int)
-    ..type = _$enumDecodeNullable(_$CommandTypeEnumMap, json['type']);
+    ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type']);
 }
 
 Map<String, dynamic> _$RemovePlayerCommandToJson(
         RemovePlayerCommand instance) =>
     <String, dynamic>{
-      'type': _$CommandTypeEnumMap[instance.type],
+      'type': _$ServerCommandTypeEnumMap[instance.type],
       'id': instance.id
     };
 
@@ -38,21 +38,18 @@ T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
   return _$enumDecode<T>(enumValues, source);
 }
 
-const _$CommandTypeEnumMap = <CommandType, dynamic>{
-  CommandType.login: 'login',
-  CommandType.loggedIn: 'loggedIn',
-  CommandType.addPlayer: 'addPlayer',
-  CommandType.removePlayer: 'removePlayer',
-  CommandType.move: 'move',
-  CommandType.useObjectOnSolidObject: 'useObjectOnSolidObject',
-  CommandType.removeSolidObject: 'removeSolidObject',
-  CommandType.addSolidObject: 'addSolidObject',
-  CommandType.addToInventory: 'addToInventory',
-  CommandType.removeFromInventory: 'removeFromInventory',
-  CommandType.addSoftObject: 'addSoftObject',
-  CommandType.removeSoftObject: 'removeSoftObject',
-  CommandType.addTile: 'addTile',
-  CommandType.removeTile: 'removeTile',
-  CommandType.buildSolidObject: 'buildSolidObject',
-  CommandType.unknown: 'unknown'
+const _$ServerCommandTypeEnumMap = <ServerCommandType, dynamic>{
+  ServerCommandType.loggedIn: 'loggedIn',
+  ServerCommandType.addPlayer: 'addPlayer',
+  ServerCommandType.removePlayer: 'removePlayer',
+  ServerCommandType.movePlayer: 'movePlayer',
+  ServerCommandType.removeSolidObject: 'removeSolidObject',
+  ServerCommandType.addSolidObject: 'addSolidObject',
+  ServerCommandType.addToInventory: 'addToInventory',
+  ServerCommandType.removeFromInventory: 'removeFromInventory',
+  ServerCommandType.addSoftObject: 'addSoftObject',
+  ServerCommandType.removeSoftObject: 'removeSoftObject',
+  ServerCommandType.addTile: 'addTile',
+  ServerCommandType.removeTile: 'removeTile',
+  ServerCommandType.unknown: 'unknown'
 };

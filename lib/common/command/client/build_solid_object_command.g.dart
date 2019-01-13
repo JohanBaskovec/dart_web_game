@@ -13,13 +13,13 @@ BuildSolidObjectCommand _$BuildSolidObjectCommandFromJson(Map json) {
       json['position'] == null
           ? null
           : TilePosition.fromJson(json['position'] as Map))
-    ..type = _$enumDecodeNullable(_$CommandTypeEnumMap, json['type']);
+    ..type = _$enumDecodeNullable(_$ClientCommandTypeEnumMap, json['type']);
 }
 
 Map<String, dynamic> _$BuildSolidObjectCommandToJson(
         BuildSolidObjectCommand instance) =>
     <String, dynamic>{
-      'type': _$CommandTypeEnumMap[instance.type],
+      'type': _$ClientCommandTypeEnumMap[instance.type],
       'playerId': instance.playerId,
       'objectType': _$SolidGameObjectTypeEnumMap[instance.objectType],
       'position': instance.position
@@ -56,21 +56,10 @@ const _$SolidGameObjectTypeEnumMap = <SolidGameObjectType, dynamic>{
   SolidGameObjectType.woodenWall: 'woodenWall'
 };
 
-const _$CommandTypeEnumMap = <CommandType, dynamic>{
-  CommandType.login: 'login',
-  CommandType.loggedIn: 'loggedIn',
-  CommandType.addPlayer: 'addPlayer',
-  CommandType.removePlayer: 'removePlayer',
-  CommandType.move: 'move',
-  CommandType.useObjectOnSolidObject: 'useObjectOnSolidObject',
-  CommandType.removeSolidObject: 'removeSolidObject',
-  CommandType.addSolidObject: 'addSolidObject',
-  CommandType.addToInventory: 'addToInventory',
-  CommandType.removeFromInventory: 'removeFromInventory',
-  CommandType.addSoftObject: 'addSoftObject',
-  CommandType.removeSoftObject: 'removeSoftObject',
-  CommandType.addTile: 'addTile',
-  CommandType.removeTile: 'removeTile',
-  CommandType.buildSolidObject: 'buildSolidObject',
-  CommandType.unknown: 'unknown'
+const _$ClientCommandTypeEnumMap = <ClientCommandType, dynamic>{
+  ClientCommandType.login: 'login',
+  ClientCommandType.move: 'move',
+  ClientCommandType.useObjectOnSolidObject: 'useObjectOnSolidObject',
+  ClientCommandType.buildSolidObject: 'buildSolidObject',
+  ClientCommandType.unknown: 'unknown'
 };

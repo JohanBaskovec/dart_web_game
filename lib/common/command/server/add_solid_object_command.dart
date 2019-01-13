@@ -1,15 +1,15 @@
-import 'package:dart_game/common/command/command.dart';
+import 'package:dart_game/common/command/server/server_command.dart';
+import 'package:dart_game/common/command/server/server_command_type.dart';
 import 'package:dart_game/common/game_objects/solid_game_object.dart';
-import 'package:dart_game/common/tile_position.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'add_solid_object_command.g.dart';
 
 @JsonSerializable(anyMap: true)
-class AddSolidObjectCommand extends Command {
+class AddSolidObjectCommand extends ServerCommand {
   SolidGameObject object;
 
-  AddSolidObjectCommand(this.object) : super(CommandType.addSolidObject);
+  AddSolidObjectCommand(this.object) : super(ServerCommandType.addSolidObject);
 
   /// Creates a new [AddSolidObjectCommand] from a JSON object.
   static AddSolidObjectCommand fromJson(Map<dynamic, dynamic> json) =>

@@ -1,15 +1,16 @@
-import 'package:dart_game/common/command/command.dart';
+import 'package:dart_game/common/command/server/server_command.dart';
+import 'package:dart_game/common/command/server/server_command_type.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'remove_solid_object_command.g.dart';
 
 @JsonSerializable(anyMap: true)
-class RemoveSolidObjectCommand extends Command {
+class RemoveSolidObjectCommand extends ServerCommand {
   TilePosition position;
 
   RemoveSolidObjectCommand(this.position)
-      : super(CommandType.removeSolidObject);
+      : super(ServerCommandType.removeSolidObject);
 
   /// Creates a new [RemoveSolidObjectCommand] from a JSON object.
   static RemoveSolidObjectCommand fromJson(Map<dynamic, dynamic> json) =>

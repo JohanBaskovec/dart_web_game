@@ -3,17 +3,19 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:dart_game/common/command/add_player_command.dart';
-import 'package:dart_game/common/command/add_solid_object_command.dart';
-import 'package:dart_game/common/command/add_to_inventory_command.dart';
-import 'package:dart_game/common/command/build_solid_object_command.dart';
-import 'package:dart_game/common/command/command.dart';
-import 'package:dart_game/common/command/command_from_json.dart';
-import 'package:dart_game/common/command/logged_in_command.dart';
-import 'package:dart_game/common/command/move_command.dart';
-import 'package:dart_game/common/command/remove_player_command.dart';
-import 'package:dart_game/common/command/remove_solid_object_command.dart';
-import 'package:dart_game/common/command/use_object_on_solid_object_command.dart';
+import 'package:dart_game/common/command/client/build_solid_object_command.dart';
+import 'package:dart_game/common/command/client/client_command.dart';
+import 'package:dart_game/common/command/client/client_command_type.dart';
+import 'package:dart_game/common/command/client/move_command.dart';
+import 'package:dart_game/common/command/client/use_object_on_solid_object_command.dart';
+import 'package:dart_game/common/command/server/add_player_command.dart';
+import 'package:dart_game/common/command/server/add_solid_object_command.dart';
+import 'package:dart_game/common/command/server/add_to_inventory_command.dart';
+import 'package:dart_game/common/command/server/logged_in_command.dart';
+import 'package:dart_game/common/command/server/move_player_command.dart';
+import 'package:dart_game/common/command/server/remove_player_command.dart';
+import 'package:dart_game/common/command/server/remove_solid_object_command.dart';
+import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/axe.dart';
 import 'package:dart_game/common/game_objects/player.dart';
@@ -33,7 +35,7 @@ class Server {
   Random randomGenerator = Random.secure();
   World world;
 
-  void sendCommandToAllClients(Command command) {
+  void sendCommandToAllClients(ServerCommand command) {
     for (var client in clients) {
       if (client != null) {
         client.sendCommand(command);
@@ -50,7 +52,9 @@ class Server {
         targetY >= 0 &&
         world.solidObjectColumns[targetX][targetY] == null) {
       world.players[command.playerId].move(command.x, command.y);
-      sendCommandToAllClients(command);
+      final serverCommand = MovePlayerCommand(
+          command.playerId, world.players[command.playerId].tilePosition);
+      sendCommandToAllClients(serverCommand);
     }
   }
 
@@ -111,31 +115,24 @@ class Server {
           newPlayerWebSocket.add(jsonCommand);
 
           newPlayerWebSocket.listen((dynamic data) {
-            final Command command = commandFromJson(data as String);
+            final ClientCommand command =
+                ClientCommand.fromJson(jsonDecode(data as String) as Map);
             switch (command.type) {
-              case CommandType.move:
+              case ClientCommandType.move:
                 executeMoveCommand(command as MoveCommand);
                 break;
-              case CommandType.useObjectOnSolidObject:
+              case ClientCommandType.useObjectOnSolidObject:
                 executeUseObjectOnSolidObjectCommand(
                     command as UseObjectOnSolidObjectCommand);
                 break;
-              case CommandType.buildSolidObject:
+              case ClientCommandType.buildSolidObject:
                 executeBuildSolidObjectCommand(
                     command as BuildSolidObjectCommand);
                 break;
-              case CommandType.login:
-              case CommandType.loggedIn:
-              case CommandType.addPlayer: // should never happen
-              case CommandType.removePlayer:
-              case CommandType.unknown:
-              case CommandType.addSolidObject:
-              case CommandType.addSoftObject:
-              case CommandType.removeSoftObject:
-              case CommandType.removeFromInventory:
-              case CommandType.addTile:
-              case CommandType.removeTile:
-                print('Error, received unknown command!');
+              case ClientCommandType.login:
+              case ClientCommandType.unknown:
+                // unimplemented, should never happen
+                break;
             }
           }, onDone: () {
             print('Client disconnected.');
@@ -173,6 +170,7 @@ class Server {
       case SolidGameObjectType.coconutTree:
       case SolidGameObjectType.leafTree:
       case SolidGameObjectType.ropeTree:
+      case SolidGameObjectType.woodenWall:
         throw Exception('Not implemented, should never happen.');
     }
   }
@@ -197,7 +195,8 @@ class Server {
   void executeBuildSolidObjectCommand(BuildSolidObjectCommand command) {
     if (world.solidObjectColumns[command.position.x][command.position.y] !=
         null) {
-      print('Tried to build an object but one already exists at that position!');
+      print(
+          'Tried to build an object but one already exists at that position!');
       return;
     }
 
@@ -220,8 +219,10 @@ class Server {
     }
     switch (command.objectType) {
       case SolidGameObjectType.woodenWall:
-        final object = SolidGameObject(SolidGameObjectType.woodenWall, command.position);
-        world.solidObjectColumns[command.position.x][command.position.y] = object;
+        final object =
+            SolidGameObject(SolidGameObjectType.woodenWall, command.position);
+        world.solidObjectColumns[command.position.x][command.position.y] =
+            object;
         sendCommandToAllClients(AddSolidObjectCommand(object));
         break;
       default:

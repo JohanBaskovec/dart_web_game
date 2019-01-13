@@ -23,6 +23,10 @@ class Player extends SolidGameObject {
     box.move(x * tileSize, y * tileSize);
   }
 
+  void moveTo(TilePosition position) {
+    tilePosition = position;
+  }
+
   /// Creates a new [Player] from a JSON object.
   static Player fromJson(Map<dynamic, dynamic> json) => _$PlayerFromJson(json);
 
