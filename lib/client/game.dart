@@ -32,7 +32,7 @@ class Game {
     inputManager.listen();
 
     final webSocketClient = WebSocketClient(
-        WebSocket('ws:127.0.0.1:8083/ws'), world, inputManager, renderer, chat);
+        WebSocket('ws:127.0.0.1:8083/ws'), world, inputManager, renderer, chat, inventory);
 
     webSocketClient.connect();
 

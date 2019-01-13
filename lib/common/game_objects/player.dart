@@ -1,9 +1,9 @@
-// unused but necessary for player.g.dart!
-import 'package:dart_game/common/box.dart';
+// DO NOT DELETE THESE 3 LINES!! Unused but necessary for player.g.dart!
 import 'package:dart_game/common/constants.dart';
-import 'package:dart_game/common/game_objects/soft_object.dart';
-import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/inventory.dart';
+import 'package:dart_game/common/box.dart';
+
+import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:json_annotation/json_annotation.dart';
 

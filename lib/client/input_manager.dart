@@ -76,19 +76,18 @@ class InputManager {
       final CanvasPosition canvasPosition =
           renderer.getCursorPositionInCanvas(e);
       if (canClick) {
-        bool keepGoing = true;
         if (buildMenu.enabled) {
-          keepGoing = buildMenu.clickAt(canvasPosition);
-          if (!keepGoing) {
+          if(!buildMenu.clickAt(canvasPosition)) {
             return;
           }
         }
         if (chat.enabled) {
-          keepGoing = chat.clickAt(canvasPosition);
-
-          if (!keepGoing) {
+          if (!chat.clickAt(canvasPosition)) {
             return;
           }
+        }
+        if (!inventory.clickAt(canvasPosition)) {
+          return;
         }
         chat.input.active = false;
         final WorldPosition mousePosition =

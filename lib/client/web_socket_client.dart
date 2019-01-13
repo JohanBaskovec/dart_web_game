@@ -17,6 +17,7 @@ import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/ui/chat.dart';
+import 'package:dart_game/common/ui/inventory_menu.dart';
 
 class WebSocketClient {
   final WebSocket webSocket;
@@ -24,9 +25,10 @@ class WebSocketClient {
   final InputManager _inputManager;
   final Renderer renderer;
   final Chat chat;
+  final InventoryMenu inventoryMenu;
 
-  WebSocketClient(
-      this.webSocket, this._world, this._inputManager, this.renderer, this.chat);
+  WebSocketClient(this.webSocket, this._world, this._inputManager,
+      this.renderer, this.chat, this.inventoryMenu);
 
   void connect() {
     webSocket.onMessage.listen((MessageEvent e) {
@@ -98,6 +100,7 @@ class WebSocketClient {
     _world.players = command.world.players;
     _world.tilesColumn = command.world.tilesColumn;
     _inputManager.player = _world.players[command.playerId];
+    inventoryMenu.player = _inputManager.player;
   }
 
   void executeRemoveSolidObjectCommand(RemoveSolidObjectCommand command) {
@@ -106,6 +109,7 @@ class WebSocketClient {
 
   void executeAddToInventoryCommand(AddToInventoryCommand command) {
     _inputManager.player.inventory.addItem(command.object);
+    inventoryMenu.update();
   }
 
   void executeAddSolidObjectCommand(AddSolidObjectCommand command) {

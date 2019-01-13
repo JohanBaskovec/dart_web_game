@@ -74,6 +74,7 @@ class Renderer {
     _ctx.setTransform(1, 0, 0, 1, 0, 0);
     if (player != null) {
       _ctx.fillStyle = 'black';
+      inventory.update();
       _ctx.fillRect(inventory.box.left, inventory.box.top, inventory.box.width,
           inventory.box.height);
       final double widthPerStack = inventory.box.width / 9;

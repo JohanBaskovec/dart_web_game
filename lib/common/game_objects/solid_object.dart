@@ -38,8 +38,11 @@ class SolidObject {
       case SolidObjectType.tree:
         if (item.type == SoftObjectType.axe) {
           final itemFromInventory = inventory.popFirstOfType(SoftObjectType.log);
-          if (itemFromInventory.itemsLeft == 0) {
-            alive = false;
+          if (itemFromInventory != null) {
+            if (itemFromInventory.itemsLeft == 0) {
+              alive = false;
+            }
+            return itemFromInventory.object;
           }
         }
         break;

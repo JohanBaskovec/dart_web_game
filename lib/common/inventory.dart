@@ -51,7 +51,7 @@ class Inventory {
 
   InventoryPopResult popFirstOfType(SoftObjectType type) {
     for (int i = 0; i < stacks.length; i++) {
-      if (stacks[i][0].type == SoftObjectType.apple) {
+      if (stacks[i][0].type == type) {
         final InventoryPopResult result =
             InventoryPopResult(stacks[i].length - 1, popFromStack(i));
         if (stacks[i].isEmpty) {
