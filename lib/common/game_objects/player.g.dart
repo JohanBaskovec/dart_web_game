@@ -56,5 +56,6 @@ const _$SolidGameObjectTypeEnumMap = <SolidGameObjectType, dynamic>{
   SolidGameObjectType.ropeTree: 'ropeTree',
   SolidGameObjectType.leafTree: 'leafTree',
   SolidGameObjectType.barkTree: 'barkTree',
-  SolidGameObjectType.player: 'player'
+  SolidGameObjectType.player: 'player',
+  SolidGameObjectType.woodenWall: 'woodenWall'
 };

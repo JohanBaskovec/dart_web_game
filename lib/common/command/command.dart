@@ -17,6 +17,7 @@ enum CommandType {
   removeSoftObject,
   addTile,
   removeTile,
+  buildSolidObject,
   unknown
 }
 

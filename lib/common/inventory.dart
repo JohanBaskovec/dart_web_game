@@ -23,6 +23,13 @@ class Inventory {
     print('Added $item to inventory in stack $i');
     currentlyEquiped ??= item;
   }
+  
+  void removeFromStack(int stackIndex) {
+    items[stackIndex].removeLast();
+    if (items[stackIndex].isEmpty) {
+      items.removeAt(stackIndex);
+    }
+  }
 
   int get size => items.length;
   

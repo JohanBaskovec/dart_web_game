@@ -4,10 +4,12 @@ import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/player.dart';
+import 'package:dart_game/common/game_objects/receipes.dart';
 import 'package:dart_game/common/game_objects/soft_game_object.dart';
 import 'package:dart_game/common/game_objects/solid_game_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/tile_position.dart';
+import 'package:dart_game/common/ui/build_menu.dart';
 import 'package:dart_game/common/world_position.dart';
 
 class Renderer {
@@ -18,9 +20,9 @@ class Renderer {
   Player player;
   Map<SoftGameObjectType, ImageElement> softImages = {};
   Map<SolidGameObjectType, ImageElement> solidImages = {};
-  bool buildMenuEnabled = false;
+  BuildMenu buildMenu;
 
-  Renderer(this._canvas)
+  Renderer(this._canvas, this.buildMenu)
       : _ctx = _canvas.getContext('2d') as CanvasRenderingContext2D {
     for (SoftGameObjectType type in SoftGameObjectType.values) {
       softImages[type] = ImageElement();
@@ -30,6 +32,11 @@ class Renderer {
       solidImages[type] = ImageElement();
       solidImages[type].src = '/$type.png';
     }
+
+    _canvas.width = window.innerWidth;
+    _canvas.height = window.innerHeight;
+    buildMenu.moveAndResize(
+        Box(_canvas.width / 10, 100, _canvas.width / 2, _canvas.height / 2));
   }
 
   void render(World world) {
@@ -57,7 +64,7 @@ class Renderer {
       for (SolidGameObject object in column) {
         if (object != null) {
           _ctx.drawImageScaled(
-              solidImages[SolidGameObjectType.tree],
+              solidImages[object.type],
               object.box.left,
               object.box.top,
               object.box.width,
@@ -85,14 +92,24 @@ class Renderer {
         _ctx.fillStyle = 'black';
       }
     }
-    if (buildMenuEnabled) {
+    if (buildMenu.enabled) {
       _ctx.fillStyle = 'black';
-      final Box menuBox = Box(
-          _canvas.width / 10,
-          0,
-          _canvas.width / 2,
-          _canvas.height / 2);
-      _ctx.fillRect(menuBox.left, menuBox.top, menuBox.width, menuBox.height);
+      _ctx.fillRect(buildMenu.box.left, buildMenu.box.top, buildMenu.box.width,
+          buildMenu.box.height);
+
+      for (BuildMenuButton button in buildMenu.buttons) {
+        _ctx.drawImageScaled(solidImages[button.type], button.box.left,
+            button.box.top, button.box.width, button.box.height);
+        _ctx.fillStyle = 'white';
+        var k = 0;
+        for (MapEntry<SoftGameObjectType, int> ingredientList
+            in solidReceipes[button.type].entries) {
+          _ctx.fillText('${ingredientList.key}: ${ingredientList.value}',
+              buildMenu.box.left + 40, buildMenu.box.top + 15 * k + 15);
+          k++;
+        }
+        _ctx.fillStyle = 'black';
+      }
     }
   }
 

@@ -4,7 +4,9 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:dart_game/common/command/add_player_command.dart';
+import 'package:dart_game/common/command/add_solid_object_command.dart';
 import 'package:dart_game/common/command/add_to_inventory_command.dart';
+import 'package:dart_game/common/command/build_solid_object_command.dart';
 import 'package:dart_game/common/command/command.dart';
 import 'package:dart_game/common/command/command_from_json.dart';
 import 'package:dart_game/common/command/logged_in_command.dart';
@@ -15,10 +17,12 @@ import 'package:dart_game/common/command/use_object_on_solid_object_command.dart
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/axe.dart';
 import 'package:dart_game/common/game_objects/player.dart';
+import 'package:dart_game/common/game_objects/receipes.dart';
 import 'package:dart_game/common/game_objects/soft_game_object.dart';
 import 'package:dart_game/common/game_objects/solid_game_object.dart';
 import 'package:dart_game/common/game_objects/tree.dart';
 import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/solid_object_building.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/server/client.dart';
 import 'package:yaml/yaml.dart';
@@ -62,7 +66,8 @@ class Server {
           configurationFile.readAsStringSync();
       final YamlMap config = loadYaml(configurationFileContent) as YamlMap;
 
-      server = await HttpServer.bind(InternetAddress.anyIPv6, config['backend_port'] as int);
+      server = await HttpServer.bind(
+          InternetAddress.anyIPv6, config['backend_port'] as int);
       world = World.fromConstants(randomGenerator);
 
       int nPlayers = 0;
@@ -114,6 +119,10 @@ class Server {
               case CommandType.useObjectOnSolidObject:
                 executeUseObjectOnSolidObjectCommand(
                     command as UseObjectOnSolidObjectCommand);
+                break;
+              case CommandType.buildSolidObject:
+                executeBuildSolidObjectCommand(
+                    command as BuildSolidObjectCommand);
                 break;
               case CommandType.login:
               case CommandType.loggedIn:
@@ -182,6 +191,42 @@ class Server {
         final removeCommand = RemoveSolidObjectCommand(target.tilePosition);
         sendCommandToAllClients(removeCommand);
       }
+    }
+  }
+
+  void executeBuildSolidObjectCommand(BuildSolidObjectCommand command) {
+    if (world.solidObjectColumns[command.position.x][command.position.y] !=
+        null) {
+      print('Tried to build an object but one already exists at that position!');
+      return;
+    }
+
+    final Player player = world.players[command.playerId];
+    final Map<SoftGameObjectType, int> receipe =
+        solidReceipes[command.objectType];
+    if (!playerCanBuild(command.objectType, player)) {
+      print('Tried to build an object but couldn\'t!');
+      return;
+    }
+    for (var type in receipe.keys) {
+      for (int i = 0; i < player.inventory.items.length; i++) {
+        // TODO: Stack class
+        if (player.inventory.items[i][0].type == type) {
+          for (int k = 0; k < receipe[type]; k++) {
+            player.inventory.removeFromStack(i);
+          }
+        }
+      }
+    }
+    switch (command.objectType) {
+      case SolidGameObjectType.woodenWall:
+        final object = SolidGameObject(SolidGameObjectType.woodenWall, command.position);
+        world.solidObjectColumns[command.position.x][command.position.y] = object;
+        sendCommandToAllClients(AddSolidObjectCommand(object));
+        break;
+      default:
+        throw Exception('Not implemented!!');
+        break;
     }
   }
 }

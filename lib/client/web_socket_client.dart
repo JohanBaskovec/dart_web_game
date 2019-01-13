@@ -3,6 +3,7 @@ import 'dart:html';
 import 'package:dart_game/client/input_manager.dart';
 import 'package:dart_game/client/renderer.dart';
 import 'package:dart_game/common/command/add_player_command.dart';
+import 'package:dart_game/common/command/add_solid_object_command.dart';
 import 'package:dart_game/common/command/add_to_inventory_command.dart';
 import 'package:dart_game/common/command/command.dart';
 import 'package:dart_game/common/command/command_from_json.dart';
@@ -18,7 +19,8 @@ class WebSocketClient {
   final InputManager _inputManager;
   final Renderer renderer;
 
-  WebSocketClient(this.webSocket, this._world, this._inputManager, this.renderer);
+  WebSocketClient(this.webSocket, this._world, this._inputManager,
+      this.renderer);
 
   void connect() {
     webSocket.onMessage.listen((MessageEvent e) {
@@ -42,10 +44,13 @@ class WebSocketClient {
         case CommandType.removeSolidObject:
           executeRemoveSolidObjectCommand(command as RemoveSolidObjectCommand);
           break;
+        case CommandType.addSolidObject:
+          executeAddSolidObjectCommand(command as AddSolidObjectCommand);
+          break;
+        case CommandType.buildSolidObject:
         case CommandType.useObjectOnSolidObject:
         case CommandType.login:
         case CommandType.unknown:
-        case CommandType.addSolidObject:
         case CommandType.addSoftObject:
         case CommandType.removeSoftObject:
         case CommandType.removeFromInventory:
@@ -87,5 +92,10 @@ class WebSocketClient {
 
   void executeAddToInventoryCommand(AddToInventoryCommand command) {
     _inputManager.player.inventory.addItem(command.object);
+  }
+
+  void executeAddSolidObjectCommand(AddSolidObjectCommand command) {
+    _world.solidObjectColumns[command.object.tilePosition.x][command.object
+        .tilePosition.y] = command.object;
   }
 }

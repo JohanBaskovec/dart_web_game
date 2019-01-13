@@ -1,21 +1,23 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'login_command.dart';
+part of 'add_solid_object_command.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-LoginCommand _$LoginCommandFromJson(Map json) {
-  return LoginCommand(json['name'] as String, json['id'] as int)
+AddSolidObjectCommand _$AddSolidObjectCommandFromJson(Map json) {
+  return AddSolidObjectCommand(json['object'] == null
+      ? null
+      : SolidGameObject.fromJson(json['object'] as Map))
     ..type = _$enumDecodeNullable(_$CommandTypeEnumMap, json['type']);
 }
 
-Map<String, dynamic> _$LoginCommandToJson(LoginCommand instance) =>
+Map<String, dynamic> _$AddSolidObjectCommandToJson(
+        AddSolidObjectCommand instance) =>
     <String, dynamic>{
       'type': _$CommandTypeEnumMap[instance.type],
-      'name': instance.name,
-      'id': instance.id
+      'object': instance.object
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {

@@ -58,5 +58,6 @@ const _$CommandTypeEnumMap = <CommandType, dynamic>{
   CommandType.removeSoftObject: 'removeSoftObject',
   CommandType.addTile: 'addTile',
   CommandType.removeTile: 'removeTile',
+  CommandType.buildSolidObject: 'buildSolidObject',
   CommandType.unknown: 'unknown'
 };

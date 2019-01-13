@@ -4,13 +4,20 @@ import 'dart:html';
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/client/renderer.dart';
 import 'package:dart_game/client/web_socket_client.dart';
+import 'package:dart_game/common/command/build_solid_object_command.dart';
 import 'package:dart_game/common/command/move_command.dart';
 import 'package:dart_game/common/command/use_object_on_solid_object_command.dart';
+import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/axe.dart';
 import 'package:dart_game/common/game_objects/player.dart';
+import 'package:dart_game/common/game_objects/receipes.dart';
+import 'package:dart_game/common/game_objects/soft_game_object.dart';
 import 'package:dart_game/common/game_objects/solid_game_object.dart';
 import 'package:dart_game/common/game_objects/tree.dart';
 import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/solid_object_building.dart';
+import 'package:dart_game/common/tile_position.dart';
+import 'package:dart_game/common/ui/build_menu.dart';
 import 'package:dart_game/common/world_position.dart';
 
 class InputManager {
@@ -23,8 +30,10 @@ class InputManager {
   DateTime lastClickTime = DateTime.now();
   Duration minDurationBetweenAction = Duration(milliseconds: 70);
   Renderer renderer;
+  BuildMenu buildMenu;
 
-  InputManager(this._body, this._canvas, this._world, this.renderer);
+  InputManager(
+      this._body, this._canvas, this._world, this.renderer, this.buildMenu);
 
   void listen() {
     _body.onClick.listen((MouseEvent e) {
@@ -48,22 +57,35 @@ class InputManager {
             move(0, -1);
             break;
           case 'b':
-            renderer.buildMenuEnabled = !renderer.buildMenuEnabled;
+            buildMenu.enabled = !buildMenu.enabled;
             break;
         }
       }
     });
     _canvas.onClick.listen((MouseEvent e) {
       if (canClick) {
-        final WorldPosition mousePosition = renderer.getCursorPositionInWorld(e);
-        for (List<SolidGameObject> column in _world.solidObjectColumns) {
-          for (SolidGameObject object in column) {
-            if (object != null) {
-              maybeClickOnObject(object, mousePosition);
-            }
+        final CanvasPosition canvasPosition =
+            renderer.getCursorPositionInCanvas(e);
+        if (buildMenu.enabled) {
+          buildMenu.clickAt(canvasPosition);
+        }
+        final WorldPosition mousePosition =
+            renderer.getWorldPositionFromCanvasPosition(canvasPosition);
+        final TilePosition tilePosition = TilePosition(
+            (mousePosition.x / tileSize).floor(),
+            (mousePosition.y / tileSize).floor());
+        if (tilePosition.x >= 0 &&
+            tilePosition.x < worldSize.x &&
+            tilePosition.y >= 0 &&
+            tilePosition.y < worldSize.y) {
+          final object =
+              _world.solidObjectColumns[tilePosition.x][tilePosition.y];
+          if (object == null) {
+            clickOnGround(tilePosition);
+          } else {
+            clickOnSolidObject(object);
           }
         }
-        lastClickTime = DateTime.now();
       }
     });
     _canvas.onMouseWheel.listen((WheelEvent e) {
@@ -71,25 +93,24 @@ class InputManager {
     });
   }
 
-  void move(int x, int y){
+  void move(int x, int y) {
     final command = MoveCommand(x, y, player.id);
     webSocketClient.webSocket.send(jsonEncode(command));
   }
 
-  void maybeClickOnObject(SolidGameObject object, WorldPosition position) {
-    if (object.box.pointIsInBox(position)) {
-      switch (object.type) {
-        case SolidGameObjectType.tree:
-          clickOnTree(object as Tree);
-          break;
-        case SolidGameObjectType.player:
-        case SolidGameObjectType.appleTree:
-        case SolidGameObjectType.barkTree:
-        case SolidGameObjectType.ropeTree:
-        case SolidGameObjectType.coconutTree:
-        case SolidGameObjectType.leafTree:
-          break;
-      }
+  void clickOnSolidObject(SolidGameObject object) {
+    switch (object.type) {
+      case SolidGameObjectType.tree:
+        clickOnTree(object as Tree);
+        break;
+      case SolidGameObjectType.player:
+      case SolidGameObjectType.appleTree:
+      case SolidGameObjectType.barkTree:
+      case SolidGameObjectType.ropeTree:
+      case SolidGameObjectType.coconutTree:
+      case SolidGameObjectType.leafTree:
+      case SolidGameObjectType.woodenWall:
+        break;
     }
   }
 
@@ -107,8 +128,8 @@ class InputManager {
 
   bool get canClick {
     return DateTime.now()
-            .subtract(minDurationBetweenAction)
-            .isAfter(lastClickTime);
+        .subtract(minDurationBetweenAction)
+        .isAfter(lastClickTime);
   }
 
   Player get player => _player;
@@ -119,4 +140,18 @@ class InputManager {
     renderer.moveCameraToPlayerPosition(value.tilePosition);
   }
 
+  void clickOnGround(TilePosition tilePosition) {
+    if (buildMenu.enabled && buildMenu.selectedType != null) {
+      switch (buildMenu.selectedType) {
+        case SolidGameObjectType.woodenWall:
+          if (playerCanBuild(buildMenu.selectedType, player)) {
+            webSocketClient.webSocket.send(jsonEncode(BuildSolidObjectCommand(player.id, buildMenu.selectedType, tilePosition)));
+          }
+          break;
+        default:
+          print('Not implemented yet!');
+          break;
+      }
+    }
+  }
 }

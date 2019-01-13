@@ -5,6 +5,7 @@ import 'package:dart_game/client/input_manager.dart';
 import 'package:dart_game/client/renderer.dart';
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/ui/build_menu.dart';
 
 class Game {
   void run() {
@@ -13,15 +14,16 @@ class Game {
   <canvas id="canvas"></canvas>
   </div>''';
 
+    final buildMenu = BuildMenu();
     final CanvasElement canvas = document.getElementById('canvas');
-    final renderer = Renderer(canvas);
+    final renderer = Renderer(canvas, buildMenu);
     final world = World();
 
     Timer.periodic(Duration(milliseconds: (1000 / 60).floor()), (Timer timer) {
       renderer.render(world);
     });
 
-    final inputManager = InputManager(document.body, canvas, world, renderer);
+    final inputManager = InputManager(document.body, canvas, world, renderer, buildMenu);
     inputManager.listen();
 
     final webSocketClient =

@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:dart_game/common/command/add_player_command.dart';
+import 'package:dart_game/common/command/add_solid_object_command.dart';
 import 'package:dart_game/common/command/add_to_inventory_command.dart';
+import 'package:dart_game/common/command/build_solid_object_command.dart';
 import 'package:dart_game/common/command/command.dart';
 import 'package:dart_game/common/command/logged_in_command.dart';
 import 'package:dart_game/common/command/move_command.dart';
@@ -35,7 +37,12 @@ Command commandFromJson(String jsonString) {
     case CommandType.addToInventory:
       command = AddToInventoryCommand.fromJson(jsonObject);
       break;
+    case CommandType.buildSolidObject:
+      command = BuildSolidObjectCommand.fromJson(jsonObject);
+      break;
     case CommandType.addSolidObject:
+      command = AddSolidObjectCommand.fromJson(jsonObject);
+      break;
     case CommandType.addSoftObject:
     case CommandType.removeSoftObject:
     case CommandType.removeFromInventory:

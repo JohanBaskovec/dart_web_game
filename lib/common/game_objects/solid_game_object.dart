@@ -15,7 +15,8 @@ enum SolidGameObjectType {
   ropeTree,
   leafTree,
   barkTree,
-  player
+  player,
+  woodenWall
 }
 
 @JsonSerializable(anyMap: true)
@@ -40,6 +41,8 @@ class SolidGameObject {
         return Tree.fromJson(json);
       case SolidGameObjectType.player:
         return Player.fromJson(json);
+      case SolidGameObjectType.woodenWall:
+        return _$SolidGameObjectFromJson(json);
       case SolidGameObjectType.appleTree:
       case SolidGameObjectType.barkTree:
       case SolidGameObjectType.coconutTree:

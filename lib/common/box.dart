@@ -16,11 +16,11 @@ class Box {
       : right = left + width,
         bottom = top + height;
 
-  bool pointIsInBox(WorldPosition position) {
-    return position.x > left &&
-        position.x < right &&
-        position.y > top &&
-        position.y < bottom;
+  bool pointIsInBox(double x, double y) {
+    return x > left &&
+        x < right &&
+        y > top &&
+        y < bottom;
   }
 
   void move(int x, int y) {
