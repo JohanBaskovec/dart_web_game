@@ -38,14 +38,8 @@ class Renderer {
       solidImages[type].src = '/$type.png';
     }
 
-    _canvas.width = window.innerWidth;
-    _canvas.height = window.innerHeight;
-    buildMenu.moveAndResize(
-        Box(_canvas.width / 10, 100, _canvas.width / 2, _canvas.height / 2));
-    inventory.moveAndResize(Box(20, _canvas.height - _canvas.height / 10,
-        _canvas.width - 20 - _canvas.width / 3, _canvas.height / 11));
-    chat.moveAndResize(Box(inventory.box.right + 20, inventory.box.top - 100,
-        _canvas.width / 3 - 40, 100 + inventory.box.height));
+    resizeWindows();
+
   }
 
   void render(World world) {
@@ -187,5 +181,16 @@ class Renderer {
     final double translateX = x + canvasMiddleWidth * inverseScale;
     final double translateY = y + canvasMiddleHeight * inverseScale;
     cameraPosition = CanvasPosition(translateX, translateY);
+  }
+
+  void resizeWindows() {
+    _canvas.width = window.innerWidth;
+    _canvas.height = window.innerHeight;
+    buildMenu.moveAndResize(
+        Box(_canvas.width / 10, 100, _canvas.width / 2, _canvas.height / 2));
+    inventory.moveAndResize(Box(20, _canvas.height - _canvas.height / 10,
+        _canvas.width - 20 - _canvas.width / 3, _canvas.height / 11));
+    chat.moveAndResize(Box(inventory.box.right + 20, inventory.box.top - 100,
+        _canvas.width / 3 - 40, 100 + inventory.box.height));
   }
 }

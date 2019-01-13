@@ -68,6 +68,12 @@ class InputManager {
         }
       }
     });
+    window.onResize.listen((Event e) {
+      renderer.resizeWindows();
+    });
+    _canvas.onResize.listen((Event e) {
+      renderer.resizeWindows();
+    });
     _canvas.onClick.listen((MouseEvent e) {
       final CanvasPosition canvasPosition =
           renderer.getCursorPositionInCanvas(e);
