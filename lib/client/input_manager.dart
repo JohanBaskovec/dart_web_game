@@ -145,7 +145,7 @@ class InputManager {
       switch (buildMenu.selectedType) {
         case SolidGameObjectType.woodenWall:
           if (playerCanBuild(buildMenu.selectedType, player)) {
-            webSocketClient.webSocket.send(jsonEncode(BuildSolidObjectCommand(player.id, buildMenu.selectedType, tilePosition)));
+            webSocketClient.webSocket.send(jsonEncode(BuildSolidObjectCommand(buildMenu.selectedType, tilePosition)));
           }
           break;
         default:

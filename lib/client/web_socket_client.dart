@@ -3,12 +3,12 @@ import 'dart:html';
 
 import 'package:dart_game/client/input_manager.dart';
 import 'package:dart_game/client/renderer.dart';
-import 'package:dart_game/common/command/client/move_command.dart';
 import 'package:dart_game/common/command/server/add_player_command.dart';
 import 'package:dart_game/common/command/server/add_solid_object_command.dart';
 import 'package:dart_game/common/command/server/add_to_inventory_command.dart';
 import 'package:dart_game/common/command/server/logged_in_command.dart';
 import 'package:dart_game/common/command/server/move_player_command.dart';
+import 'package:dart_game/common/command/server/remove_from_inventory_command.dart';
 import 'package:dart_game/common/command/server/remove_player_command.dart';
 import 'package:dart_game/common/command/server/remove_solid_object_command.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
@@ -44,6 +44,10 @@ class WebSocketClient {
         case ServerCommandType.addToInventory:
           executeAddToInventoryCommand(command as AddToInventoryCommand);
           break;
+        case ServerCommandType.removeFromInventory:
+          executeRemoveFromInventoryCommand(
+              command as RemoveFromInventoryCommand);
+          break;
         case ServerCommandType.removeSolidObject:
           executeRemoveSolidObjectCommand(command as RemoveSolidObjectCommand);
           break;
@@ -53,7 +57,6 @@ class WebSocketClient {
         case ServerCommandType.unknown:
         case ServerCommandType.addSoftObject:
         case ServerCommandType.removeSoftObject:
-        case ServerCommandType.removeFromInventory:
         case ServerCommandType.addTile:
         case ServerCommandType.removeTile:
           print('Received a command that should '
@@ -97,5 +100,14 @@ class WebSocketClient {
   void executeAddSolidObjectCommand(AddSolidObjectCommand command) {
     _world.solidObjectColumns[command.object.tilePosition.x]
         [command.object.tilePosition.y] = command.object;
+  }
+
+  void executeRemoveFromInventoryCommand(RemoveFromInventoryCommand command) {
+    for (int i = 0; i < command.nObjectsToRemoveFromEachStack.length; i++) {
+      if (command.nObjectsToRemoveFromEachStack[i] != 0) {
+        _inputManager.player.inventory
+            .removeFromStack(i, command.nObjectsToRemoveFromEachStack[i]);
+      }
+    }
   }
 }

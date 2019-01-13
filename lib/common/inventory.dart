@@ -10,7 +10,7 @@ class Inventory {
 
   void addItem(SoftGameObject item) {
     var i = 0;
-    for (; i < items.length ; i++) {
+    for (; i < items.length; i++) {
       if (items[i][0].type == item.type) {
         break;
       }
@@ -23,18 +23,27 @@ class Inventory {
     print('Added $item to inventory in stack $i');
     currentlyEquiped ??= item;
   }
-  
-  void removeFromStack(int stackIndex) {
-    items[stackIndex].removeLast();
-    if (items[stackIndex].isEmpty) {
-      items.removeAt(stackIndex);
+
+  void removeFromStack(int stackIndex, [int n = 1]) {
+    if (items[stackIndex].length >= n) {
+      if (items[stackIndex].length == n) {
+        items.removeAt(stackIndex);
+      } else {
+        items[stackIndex]
+            .removeRange(
+            items[stackIndex].length - n, items[stackIndex].length);
+      }
+    } else {
+      print('Attempting to remove $n items from stack $stackIndex'
+          ', but stack\' length is ${items[stackIndex].length}!');
     }
   }
 
   int get size => items.length;
-  
+
   /// Creates a new [Inventory] from a JSON object.
-  static Inventory fromJson(Map<dynamic, dynamic> json) => _$InventoryFromJson(json);
+  static Inventory fromJson(Map<dynamic, dynamic> json) =>
+      _$InventoryFromJson(json);
 
   /// Convert this object to a JSON object.
   @override

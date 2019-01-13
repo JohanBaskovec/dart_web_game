@@ -13,6 +13,7 @@ import 'package:dart_game/common/command/server/add_solid_object_command.dart';
 import 'package:dart_game/common/command/server/add_to_inventory_command.dart';
 import 'package:dart_game/common/command/server/logged_in_command.dart';
 import 'package:dart_game/common/command/server/move_player_command.dart';
+import 'package:dart_game/common/command/server/remove_from_inventory_command.dart';
 import 'package:dart_game/common/command/server/remove_player_command.dart';
 import 'package:dart_game/common/command/server/remove_solid_object_command.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
@@ -67,7 +68,7 @@ class Server {
         print('${configurationFile.path} does not exist!');
       }
       final String configurationFileContent =
-          configurationFile.readAsStringSync();
+      configurationFile.readAsStringSync();
       final YamlMap config = loadYaml(configurationFileContent) as YamlMap;
 
       server = await HttpServer.bind(
@@ -86,7 +87,7 @@ class Server {
           request.response.headers
               .add('Access-Control-Allow-Credentials', 'true');
           final WebSocket newPlayerWebSocket =
-              await WebSocketTransformer.upgrade(request);
+          await WebSocketTransformer.upgrade(request);
           int playerId;
           for (int i = 0; i < clients.length; i++) {
             if (clients[i] == null) {
@@ -116,7 +117,7 @@ class Server {
 
           newPlayerWebSocket.listen((dynamic data) {
             final ClientCommand command =
-                ClientCommand.fromJson(jsonDecode(data as String) as Map);
+            ClientCommand.fromJson(jsonDecode(data as String) as Map);
             switch (command.type) {
               case ClientCommandType.move:
                 executeMoveCommand(command as MoveCommand);
@@ -127,11 +128,11 @@ class Server {
                 break;
               case ClientCommandType.buildSolidObject:
                 executeBuildSolidObjectCommand(
-                    command as BuildSolidObjectCommand);
+                    newClient, command as BuildSolidObjectCommand);
                 break;
               case ClientCommandType.login:
               case ClientCommandType.unknown:
-                // unimplemented, should never happen
+              // unimplemented, should never happen
                 break;
             }
           }, onDone: () {
@@ -159,7 +160,7 @@ class Server {
         .solidObjectColumns[command.targetPosition.x][command.targetPosition.y];
     final Client client = clients[command.playerId];
     final SoftGameObject item =
-        client.player.inventory.items[command.itemIndex][0];
+    client.player.inventory.items[command.itemIndex][0];
     switch (target.type) {
       case SolidGameObjectType.tree:
         useItemOnTree(client, item, target as Tree);
@@ -180,19 +181,20 @@ class Server {
       final SoftGameObject itemCutFromTree = target.cut();
       client.player.inventory.addItem(itemCutFromTree);
       final addToInventoryCommand =
-          AddToInventoryCommand(client.player.id, itemCutFromTree);
+      AddToInventoryCommand(client.player.id, itemCutFromTree);
       client.webSocket.add(jsonEncode(addToInventoryCommand));
 
       if (target.dead) {
         world.solidObjectColumns[target.tilePosition.x][target.tilePosition.y] =
-            null;
+        null;
         final removeCommand = RemoveSolidObjectCommand(target.tilePosition);
         sendCommandToAllClients(removeCommand);
       }
     }
   }
 
-  void executeBuildSolidObjectCommand(BuildSolidObjectCommand command) {
+  void executeBuildSolidObjectCommand(Client client,
+      BuildSolidObjectCommand command) {
     if (world.solidObjectColumns[command.position.x][command.position.y] !=
         null) {
       print(
@@ -200,27 +202,33 @@ class Server {
       return;
     }
 
-    final Player player = world.players[command.playerId];
-    final Map<SoftGameObjectType, int> receipe =
-        solidReceipes[command.objectType];
+    final Player player = client.player;
+
+    final Map<SoftGameObjectType, int> receipe = solidReceipes[command
+        .objectType];
     if (!playerCanBuild(command.objectType, player)) {
       print('Tried to build an object but couldn\'t!');
       return;
     }
+    final removeFromInventoryCommand = RemoveFromInventoryCommand(
+        player.id, []);
     for (var type in receipe.keys) {
       for (int i = 0; i < player.inventory.items.length; i++) {
         // TODO: Stack class
         if (player.inventory.items[i][0].type == type) {
+          removeFromInventoryCommand.nObjectsToRemoveFromEachStack.add(receipe[type]);
           for (int k = 0; k < receipe[type]; k++) {
             player.inventory.removeFromStack(i);
           }
+        } else {
+          removeFromInventoryCommand.nObjectsToRemoveFromEachStack.add(0);
         }
       }
     }
     switch (command.objectType) {
       case SolidGameObjectType.woodenWall:
         final object =
-            SolidGameObject(SolidGameObjectType.woodenWall, command.position);
+        SolidGameObject(SolidGameObjectType.woodenWall, command.position);
         world.solidObjectColumns[command.position.x][command.position.y] =
             object;
         sendCommandToAllClients(AddSolidObjectCommand(object));
@@ -229,5 +237,6 @@ class Server {
         throw Exception('Not implemented!!');
         break;
     }
+    client.sendCommand(removeFromInventoryCommand);
   }
 }

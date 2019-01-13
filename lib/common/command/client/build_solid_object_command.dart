@@ -8,11 +8,10 @@ part 'build_solid_object_command.g.dart';
 
 @JsonSerializable(anyMap: true)
 class BuildSolidObjectCommand extends ClientCommand {
-  int playerId;
   SolidGameObjectType objectType;
   TilePosition position;
 
-  BuildSolidObjectCommand(this.playerId, this.objectType, this.position)
+  BuildSolidObjectCommand(this.objectType, this.position)
       : super(ClientCommandType.buildSolidObject);
 
   /// Creates a new [BuildSolidObjectCommand] from a JSON object.

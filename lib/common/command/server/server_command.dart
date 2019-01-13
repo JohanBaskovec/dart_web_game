@@ -3,6 +3,7 @@ import 'package:dart_game/common/command/server/add_solid_object_command.dart';
 import 'package:dart_game/common/command/server/add_to_inventory_command.dart';
 import 'package:dart_game/common/command/server/logged_in_command.dart';
 import 'package:dart_game/common/command/server/move_player_command.dart';
+import 'package:dart_game/common/command/server/remove_from_inventory_command.dart';
 import 'package:dart_game/common/command/server/remove_player_command.dart';
 import 'package:dart_game/common/command/server/remove_solid_object_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
@@ -35,11 +36,12 @@ class ServerCommand {
         return RemovePlayerCommand.fromJson(json);
       case ServerCommandType.removeSolidObject:
         return RemoveSolidObjectCommand.fromJson(json);
+      case ServerCommandType.removeFromInventory:
+        return RemoveFromInventoryCommand.fromJson(json);
       case ServerCommandType.addTile:
       case ServerCommandType.addSoftObject:
       case ServerCommandType.removeSoftObject:
       case ServerCommandType.removeTile:
-      case ServerCommandType.removeFromInventory:
         throw Exception('Trying to unserialize unimplemented'
             'command of type $type.');
         break;

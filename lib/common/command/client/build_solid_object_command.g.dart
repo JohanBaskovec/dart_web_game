@@ -8,7 +8,6 @@ part of 'build_solid_object_command.dart';
 
 BuildSolidObjectCommand _$BuildSolidObjectCommandFromJson(Map json) {
   return BuildSolidObjectCommand(
-      json['playerId'] as int,
       _$enumDecodeNullable(_$SolidGameObjectTypeEnumMap, json['objectType']),
       json['position'] == null
           ? null
@@ -20,7 +19,6 @@ Map<String, dynamic> _$BuildSolidObjectCommandToJson(
         BuildSolidObjectCommand instance) =>
     <String, dynamic>{
       'type': _$ClientCommandTypeEnumMap[instance.type],
-      'playerId': instance.playerId,
       'objectType': _$SolidGameObjectTypeEnumMap[instance.objectType],
       'position': instance.position
     };
