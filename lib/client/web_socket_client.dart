@@ -17,7 +17,7 @@ import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/ui/chat.dart';
-import 'package:dart_game/common/ui/inventory_menu.dart';
+import 'package:dart_game/common/ui/player_inventory_menu.dart';
 
 class WebSocketClient {
   final WebSocket webSocket;
@@ -25,7 +25,7 @@ class WebSocketClient {
   final InputManager _inputManager;
   final Renderer renderer;
   final Chat chat;
-  final InventoryMenu inventoryMenu;
+  final PlayerInventoryMenu inventoryMenu;
 
   WebSocketClient(this.webSocket, this._world, this._inputManager,
       this.renderer, this.chat, this.inventoryMenu);

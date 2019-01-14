@@ -4,11 +4,14 @@ import 'dart:html';
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/client/renderer.dart';
 import 'package:dart_game/client/web_socket_client.dart';
+import 'package:dart_game/client/windows_manager.dart';
+import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/command/client/build_solid_object_command.dart';
 import 'package:dart_game/common/command/client/move_command.dart';
 import 'package:dart_game/common/command/client/use_object_on_solid_object_command.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/player.dart';
+import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/solid_object_building.dart';
@@ -16,6 +19,7 @@ import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/ui/build_menu.dart';
 import 'package:dart_game/common/ui/chat.dart';
 import 'package:dart_game/common/ui/inventory_menu.dart';
+import 'package:dart_game/common/ui/player_inventory_menu.dart';
 import 'package:dart_game/common/world_position.dart';
 
 class InputManager {
@@ -30,10 +34,11 @@ class InputManager {
   Renderer renderer;
   BuildMenu buildMenu;
   Chat chat;
-  InventoryMenu inventory;
+  PlayerInventoryMenu inventory;
+  WindowsManager windowsManager;
 
   InputManager(this._body, this._canvas, this._world, this.renderer,
-      this.buildMenu, this.chat, this.inventory);
+      this.buildMenu, this.chat, this.inventory, this.windowsManager);
 
   void listen() {
     _body.onClick.listen((MouseEvent e) {
@@ -72,12 +77,18 @@ class InputManager {
     _canvas.onResize.listen((Event e) {
       renderer.resizeWindows();
     });
-    _canvas.onClick.listen((MouseEvent e) {
+    _canvas.onContextMenu.listen((MouseEvent e) {
+      e.preventDefault();
+    });
+    _canvas.onMouseDown.listen((MouseEvent e) {
+      if (e.button == 2) {
+        e.preventDefault();
+      }
       final CanvasPosition canvasPosition =
           renderer.getCursorPositionInCanvas(e);
       if (canClick) {
         if (buildMenu.enabled) {
-          if(!buildMenu.clickAt(canvasPosition)) {
+          if (!buildMenu.clickAt(canvasPosition)) {
             return;
           }
         }
@@ -88,6 +99,15 @@ class InputManager {
         }
         if (!inventory.clickAt(canvasPosition)) {
           return;
+        }
+        for (InventoryMenu inventory in windowsManager.inventoryMenus) {
+          if (e.button == 2) {
+            windowsManager.inventoryMenus.remove(inventory);
+          } else {
+            if (!inventory.clickAt(canvasPosition)) {
+              return;
+            }
+          }
         }
         chat.input.active = false;
         final WorldPosition mousePosition =
@@ -120,9 +140,18 @@ class InputManager {
   }
 
   void clickOnSolidObject(SolidObject object) {
-    final command = UseObjectOnSolidObjectCommand(
-        object.tilePosition, player.inventory.currentlyEquiped.index);
-    webSocketClient.webSocket.send(jsonEncode(command));
+    if (player.inventory.currentlyEquiped.type == SoftObjectType.hand) {
+      if (object.type == SolidObjectType.tree ||
+          object.type == SolidObjectType.woodenChest ||
+          object.type == SolidObjectType.campFire) {
+        final inventoryMenu = InventoryMenu(Box(object.box.left, object.box.top, 600, 100), object, player);
+        windowsManager.inventoryMenus.add(inventoryMenu);
+      }
+    } else {
+      final command = UseObjectOnSolidObjectCommand(
+          object.tilePosition, player.inventory.currentlyEquiped.index);
+      webSocketClient.webSocket.send(jsonEncode(command));
+    }
   }
 
   bool get canClick {

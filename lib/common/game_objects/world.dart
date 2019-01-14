@@ -46,6 +46,14 @@ class World {
           for (int i = 0 ; i < nLogs ; i++) {
             tree.inventory.addItem(SoftGameObject(SoftObjectType.log));
           }
+          final int nLeaves = randomGenerator.nextInt(6) + 1;
+          for (int i = 0 ; i < nLeaves ; i++) {
+            tree.inventory.addItem(SoftGameObject(SoftObjectType.leaves));
+          }
+          final int nSnakes = randomGenerator.nextInt(6) + 1;
+          for (int i = 0 ; i < nSnakes ; i++) {
+            tree.inventory.addItem(SoftGameObject(SoftObjectType.snake));
+          }
           solidObjectColumns[x][y] = tree;
         } else if (rand < 20) {
           final tree = SolidObject(SolidObjectType.appleTree, TilePosition(x, y));

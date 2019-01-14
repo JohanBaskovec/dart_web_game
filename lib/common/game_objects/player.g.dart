@@ -59,5 +59,16 @@ const _$SolidObjectTypeEnumMap = <SolidObjectType, dynamic>{
   SolidObjectType.leafTree: 'leafTree',
   SolidObjectType.barkTree: 'barkTree',
   SolidObjectType.player: 'player',
-  SolidObjectType.woodenWall: 'woodenWall'
+  SolidObjectType.woodenWall: 'woodenWall',
+  SolidObjectType.campFire: 'campFire',
+  SolidObjectType.basicTent: 'basicTent',
+  SolidObjectType.bed: 'bed',
+  SolidObjectType.woodenDoor: 'woodenDoor',
+  SolidObjectType.woodenChest: 'woodenChest',
+  SolidObjectType.ironDeposit: 'ironDeposit',
+  SolidObjectType.ironMine: 'ironMine',
+  SolidObjectType.goldDeposit: 'goldDeposit',
+  SolidObjectType.goldMine: 'goldMine',
+  SolidObjectType.foundry: 'foundry',
+  SolidObjectType.oven: 'oven'
 };

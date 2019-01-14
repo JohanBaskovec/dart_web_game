@@ -1,6 +1,7 @@
 import 'dart:html';
 
 import 'package:dart_game/client/canvas_position.dart';
+import 'package:dart_game/client/windows_manager.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/player.dart';
@@ -8,11 +9,11 @@ import 'package:dart_game/common/game_objects/receipes.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
-import 'package:dart_game/common/message.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/ui/build_menu.dart';
 import 'package:dart_game/common/ui/chat.dart';
 import 'package:dart_game/common/ui/inventory_menu.dart';
+import 'package:dart_game/common/ui/player_inventory_menu.dart';
 import 'package:dart_game/common/world_position.dart';
 
 class Renderer {
@@ -25,9 +26,11 @@ class Renderer {
   Map<SolidObjectType, ImageElement> solidImages = {};
   BuildMenu buildMenu;
   Chat chat;
-  InventoryMenu inventory;
+  PlayerInventoryMenu inventory;
+  WindowsManager windowsManager;
 
-  Renderer(this._canvas, this.buildMenu, this.chat, this.inventory)
+  Renderer(this._canvas, this.buildMenu, this.chat, this.inventory,
+      this.windowsManager)
       : _ctx = _canvas.getContext('2d') as CanvasRenderingContext2D {
     for (SoftObjectType type in SoftObjectType.values) {
       softImages[type] = ImageElement();
@@ -39,7 +42,6 @@ class Renderer {
     }
 
     resizeWindows();
-
   }
 
   void render(World world) {
@@ -93,17 +95,37 @@ class Renderer {
       _ctx.fillRect(buildMenu.box.left, buildMenu.box.top, buildMenu.box.width,
           buildMenu.box.height);
 
-      for (BuildMenuButton button in buildMenu.buttons) {
+      for (int i = 0; i < buildMenu.buttons.length; i++) {
+        final button = buildMenu.buttons[i];
         _ctx.drawImageScaled(solidImages[button.type], button.box.left,
             button.box.top, button.box.width, button.box.height);
         _ctx.fillStyle = 'white';
         var k = 0;
         for (MapEntry<SoftObjectType, int> ingredientList
             in solidReceipes[button.type].entries) {
-          _ctx.fillText('${ingredientList.key}: ${ingredientList.value}',
-              buildMenu.box.left + 40, buildMenu.box.top + 15 * k + 15);
+          _ctx.fillText(
+              '${ingredientList.key}: ${ingredientList.value}',
+              buildMenu.box.left + 40,
+              buildMenu.box.top + button.box.height * i + 15 + k * 10);
           k++;
         }
+        _ctx.fillStyle = 'black';
+      }
+    }
+    for (InventoryMenu inventory in windowsManager.inventoryMenus) {
+      _ctx.fillStyle = 'black';
+      _ctx.fillRect(inventory.box.left, inventory.box.top, inventory.box.width,
+          inventory.box.height);
+      final double widthPerStack = inventory.box.width / 9;
+      for (var i = 0; i < inventory.buttons.length; i++) {
+        final List<SoftGameObject> stack = inventory.buttons[i].stack;
+        final InventoryButton button = inventory.buttons[i];
+        final type = stack[0].type;
+        _ctx.drawImageScaled(softImages[type], button.box.left, button.box.top,
+            button.box.width, button.box.height);
+        _ctx.fillStyle = 'white';
+        _ctx.fillText(
+            stack.length.toString(), button.box.left, inventory.box.bottom);
         _ctx.fillStyle = 'black';
       }
     }
@@ -120,8 +142,9 @@ class Renderer {
       _ctx.fillStyle = 'white';
       num height = 0;
       final List<String> lines = [];
-      for (int i = chat.messages.length - 1; i > -1 ; i--) {
-        final List<String> messageSplitBySpace = chat.messages[i].message.split(' ');
+      for (int i = chat.messages.length - 1; i > -1; i--) {
+        final List<String> messageSplitBySpace =
+            chat.messages[i].message.split(' ');
         num width = 0;
         int j = 0;
         while (j < messageSplitBySpace.length) {
@@ -141,7 +164,7 @@ class Renderer {
           break;
         }
       }
-      for (int i = lines.length - 1; i > -1 ; i--) {
+      for (int i = lines.length - 1; i > -1; i--) {
         _ctx.fillText(lines[i], chat.box.left, chat.input.box.top - 9 * i);
       }
     }

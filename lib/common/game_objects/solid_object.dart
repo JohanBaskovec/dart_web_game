@@ -16,7 +16,18 @@ enum SolidObjectType {
   leafTree,
   barkTree,
   player,
-  woodenWall
+  woodenWall,
+  campFire,
+  basicTent,
+  bed,
+  woodenDoor,
+  woodenChest,
+  ironDeposit,
+  ironMine,
+  goldDeposit,
+  goldMine,
+  foundry,
+  oven,
 }
 
 @JsonSerializable(anyMap: true)

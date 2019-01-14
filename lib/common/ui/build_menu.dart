@@ -13,7 +13,7 @@ class BuildMenuButton extends Button {
 class BuildMenu {
   bool enabled = false;
   Box box = Box(0, 0, 0, 0);
-  List<Button> buttons = [];
+  List<BuildMenuButton> buttons = [];
   SolidObjectType selectedType;
 
   BuildMenu() {
