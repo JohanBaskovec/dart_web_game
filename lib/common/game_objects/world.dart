@@ -9,7 +9,6 @@ import 'package:dart_game/common/inventory.dart';
 import 'package:dart_game/common/size.dart';
 import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/common/tile_position.dart';
-import 'package:dart_game/common/world_position.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'world.g.dart';
@@ -17,39 +16,44 @@ part 'world.g.dart';
 @JsonSerializable(anyMap: true)
 class World {
   Size _dimension;
-  List<List<Tile>> tilesColumn = [];
+  static final componentListSize = worldSize.x * worldSize.y * 100;
+  List<List<Tile>> tilesColumn = List(componentListSize);
   List<List<int>> solidObjectColumns = [];
-  List<Inventory> publicInventories = [];
-  List<Inventory> privateInventories = [];
-  List<Box> boxes = [];
-  List<WorldPosition> worldPositions = [];
-  List<TilePosition> gridPositions = [];
-  List<int> entities = [];
-  List<RenderingComponent> renderingComponents = [];
-  List<UsableComponent> usableComponents = [];
+  List<Inventory> publicInventories = List(componentListSize);
+  List<Inventory> privateInventories = List(componentListSize);
+  List<TilePosition> gridPositions = List(componentListSize);
+  List<int> entities = List(componentListSize);
+  List<RenderingComponent> renderingComponents = List(componentListSize);
+  List<UsableComponent> usableComponents = List(componentListSize);
+  int lastAddedEntityId = 0;
 
   World();
 
   int addGridAlignedEntity(EntityType image, TilePosition position) {
-    final int entityId = addEntity(image);
-    gridPositions[entityId] = position;
     final double x = (position.x * tileSize).toDouble();
     final double y = (position.y * tileSize).toDouble();
-    boxes[entityId] = Box(x, y, tileSize.toDouble(), tileSize.toDouble());
+    final int entityId = addEntity(image);
+    renderingComponents[entityId].box =
+        Box(x, y, tileSize.toDouble(), tileSize.toDouble());
+    gridPositions[entityId] = position;
     solidObjectColumns[position.x][position.y] = entityId;
     return entityId;
   }
 
-  int addEntity(EntityType image) {
-    final int entityId = entities.length;
-    entities.add(entityId);
-    worldPositions.add(null);
-    boxes.add(null);
-    privateInventories.add(null);
-    publicInventories.add(null);
-    renderingComponents.add(RenderingComponent(image));
-    gridPositions.add(null);
-    return entityId;
+  int addEntity(EntityType type) {
+    int entityId;
+    int i = lastAddedEntityId + 1;
+    while (entityId == null && i != lastAddedEntityId) {
+      if (entities[i] == null) {
+        final int entityId = i;
+        renderingComponents[entityId] = RenderingComponent(type, null);
+        entities[entityId] = entityId;
+        lastAddedEntityId = entityId;
+        return entityId;
+      }
+      i++;
+    }
+    return -1;
   }
 
   World.fromConstants(Random randomGenerator)
@@ -72,7 +76,8 @@ class World {
       for (int y = 0; y < solidObjectColumns[x].length; y++) {
         final int rand = randomGenerator.nextInt(100);
         if (rand < 10) {
-          final treeId = addGridAlignedEntity(EntityType.tree, TilePosition(x, y));
+          final treeId =
+              addGridAlignedEntity(EntityType.tree, TilePosition(x, y));
           /*
           final int nLogs = randomGenerator.nextInt(6) + 1;
           for (int i = 0; i < nLogs; i++) {
@@ -146,8 +151,6 @@ class World {
     solidObjectColumns[entityId] = null;
     publicInventories[entityId] = null;
     privateInventories[entityId] = null;
-    boxes[entityId] = null;
-    worldPositions[entityId] = null;
     gridPositions[entityId] = null;
     entities[entityId] = null;
     renderingComponents[entityId] = null;

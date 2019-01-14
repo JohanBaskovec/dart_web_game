@@ -9,7 +9,7 @@ class RenderingComponent {
   EntityType image;
   Box box;
 
-  RenderingComponent(this.image);
+  RenderingComponent(this.image, this.box);
 
   /// Creates a new [RenderingComponent] from a JSON object.
   static RenderingComponent fromJson(Map<dynamic, dynamic> json) =>

@@ -17,16 +17,16 @@ class InputManager {
   final BodyElement _body;
   WebSocketClient webSocketClient;
   bool canvasActive = false;
-  World _world;
   DateTime lastClickTime = DateTime.now();
   Duration minDurationBetweenAction = Duration(milliseconds: 70);
   Renderer renderer;
   BuildMenu buildMenu;
   Chat chat;
+
   PlayerInventoryMenu inventory;
   WindowsManager windowsManager;
 
-  InputManager(this._body, this._canvas, this._world, this.renderer,
+  InputManager(this._body, this._canvas, this.renderer,
       this.buildMenu, this.chat, this.inventory, this.windowsManager);
 
   void listen() {
