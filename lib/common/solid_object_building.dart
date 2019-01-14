@@ -3,9 +3,9 @@ import 'package:dart_game/common/game_objects/receipes.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 
-bool playerCanBuild(SolidObjectType type, Player player) {
-  final Map<SoftObjectType, int> receipe = solidReceipes[type];
-  final Map<SoftObjectType, int> required = Map.from(receipe);
+bool playerCanBuild(EntityType type, Player player) {
+  final Map<EntityType, int> receipe = solidReceipes[type];
+  final Map<EntityType, int> required = Map.from(receipe);
 
   for (var type in receipe.keys) {
     for (int i = 0; i < player.inventory.stacks.length; i++) {

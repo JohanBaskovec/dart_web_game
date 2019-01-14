@@ -99,7 +99,7 @@ class Server {
             }
           }
           final newPlayer = Player(TilePosition(0, 0), 'admin', playerId);
-          newPlayer.inventory.addItem(SoftGameObject(SoftObjectType.hand));
+          newPlayer.inventory.addItem(Entity(EntityType.hand));
           newPlayer.inventory.addItem(Axe());
 
           world.players[playerId] = newPlayer;
@@ -127,13 +127,13 @@ class Server {
                 case ClientCommandType.move:
                   executeMoveCommand(newClient, command as MoveCommand);
                   break;
-                case ClientCommandType.useObjectOnSolidObject:
-                  executeUseObjectOnSolidObjectCommand(
-                      newClient, command as UseObjectOnSolidObjectCommand);
+                case ClientCommandType.useObjectOnEntity:
+                  executeUseObjectOnEntityCommand(
+                      newClient, command as UseObjectOnEntityCommand);
                   break;
-                case ClientCommandType.buildSolidObject:
-                  executeBuildSolidObjectCommand(
-                      newClient, command as BuildSolidObjectCommand);
+                case ClientCommandType.buildEntity:
+                  executeBuildEntityCommand(
+                      newClient, command as BuildEntityCommand);
                   break;
                 case ClientCommandType.sendMessage:
                   executeSendMessageCommand(
@@ -167,18 +167,18 @@ class Server {
     }
   }
 
-  void executeUseObjectOnSolidObjectCommand(
-      Client client, UseObjectOnSolidObjectCommand command) {
-    final SolidObject target = world
+  void executeUseObjectOnEntityCommand(
+      Client client, UseObjectOnEntityCommand command) {
+    final Entity target = world
         .solidObjectColumns[command.targetPosition.x][command.targetPosition.y];
-    final SoftGameObject item =
+    final Entity item =
         client.player.inventory.stacks[command.itemIndex][0];
-    useItemOnSolidObject(client, item, target);
+    useItemOnEntity(client, item, target);
   }
 
-  void useItemOnSolidObject(
-      Client client, SoftGameObject item, SolidObject target) {
-    final SoftGameObject itemReceivedFromAction = target.useItem(item);
+  void useItemOnEntity(
+      Client client, Entity item, Entity target) {
+    final Entity itemReceivedFromAction = target.useItem(item);
     if (itemReceivedFromAction != null) {
       client.player.inventory.addItem(itemReceivedFromAction);
       final addToInventoryCommand =
@@ -188,14 +188,14 @@ class Server {
       if (!target.alive) {
         world.solidObjectColumns[target.tilePosition.x][target.tilePosition.y] =
             null;
-        final removeCommand = RemoveSolidObjectCommand(target.tilePosition);
+        final removeCommand = RemoveEntityCommand(target.tilePosition);
         sendCommandToAllClients(removeCommand);
       }
     }
   }
 
-  void executeBuildSolidObjectCommand(
-      Client client, BuildSolidObjectCommand command) {
+  void executeBuildEntityCommand(
+      Client client, BuildEntityCommand command) {
     if (world.solidObjectColumns[command.position.x][command.position.y] !=
         null) {
       print(
@@ -205,8 +205,8 @@ class Server {
 
     final Player player = client.player;
 
-    final Map<SoftObjectType, int> receipe = solidReceipes[command.objectType];
-    if (!playerCanBuild(command.objectType, player)) {
+    final Map<EntityType, int> receipe = solidReceipes[command.entityType];
+    if (!playerCanBuild(command.entityType, player)) {
       print('Tried to build an object but couldn\'t!');
       return;
     }
@@ -225,13 +225,13 @@ class Server {
         }
       }
     }
-    switch (command.objectType) {
-      case SolidObjectType.woodenWall:
+    switch (command.entityType) {
+      case EntityType.woodenWall:
         final object =
-            SolidObject(SolidObjectType.woodenWall, command.position);
+            Entity(EntityType.woodenWall, command.position);
         world.solidObjectColumns[command.position.x][command.position.y] =
             object;
-        sendCommandToAllClients(AddSolidObjectCommand(object));
+        sendCommandToAllClients(AddEntityCommand(object));
         break;
       default:
         throw Exception('Not implemented!!');

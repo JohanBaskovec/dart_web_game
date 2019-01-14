@@ -1,12 +1,12 @@
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 
-final Map<SolidObjectType, Map<SoftObjectType, int>> solidReceipes = {
-  SolidObjectType.woodenWall: {
-    SoftObjectType.log: 5
+final Map<EntityType, Map<EntityType, int>> solidReceipes = {
+  EntityType.woodenWall: {
+    EntityType.log: 5
   },
-  SolidObjectType.campFire: {
-    SoftObjectType.log: 1,
-    SoftObjectType.leaves: 2
+  EntityType.campFire: {
+    EntityType.log: 1,
+    EntityType.leaves: 2
   }
 };

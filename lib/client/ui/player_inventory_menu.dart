@@ -5,7 +5,7 @@ import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/client/ui/button.dart';
 
 class InventoryButton extends Button {
-  List<SoftGameObject> stack;
+  List<Entity> stack;
 
   InventoryButton(this.stack);
 }

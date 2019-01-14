@@ -1,21 +1,22 @@
-import 'package:dart_game/common/game_objects/soft_object.dart';
+import 'package:dart_game/common/game_objects/entity.dart';
+import 'package:dart_game/common/game_objects/entity_type.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'inventory.g.dart';
 
 class InventoryPopResult {
   int itemsLeft;
-  SoftGameObject object;
+  Entity object;
 
   InventoryPopResult(this.itemsLeft, this.object);
 }
 
 @JsonSerializable(anyMap: true)
 class Inventory {
-  SoftGameObject currentlyEquiped;
-  List<List<SoftGameObject>> stacks = [];
+  Entity currentlyEquiped;
+  List<List<Entity>> stacks = [];
 
-  void addItem(SoftGameObject item) {
+  void addItem(Entity item) {
     var i = 0;
     for (; i < stacks.length; i++) {
       if (stacks[i][0].type == item.type) {
@@ -25,7 +26,7 @@ class Inventory {
     if (i == stacks.length) {
       stacks.add([]);
     }
-    item.index = i;
+    item.id = i;
     stacks[i].add(item);
     print('Added $item to inventory in stack $i');
     currentlyEquiped ??= item;
@@ -45,11 +46,11 @@ class Inventory {
     }
   }
 
-  SoftGameObject popFromStack(int stackIndex) {
+  Entity popFromStack(int stackIndex) {
     return stacks[stackIndex].removeLast();
   }
 
-  InventoryPopResult popFirstOfType(SoftObjectType type) {
+  InventoryPopResult popFirstOfType(EntityType type) {
     for (int i = 0; i < stacks.length; i++) {
       if (stacks[i][0].type == type) {
         final InventoryPopResult result =

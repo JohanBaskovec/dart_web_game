@@ -6,15 +6,15 @@ part of 'remove_solid_object_command.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-RemoveSolidObjectCommand _$RemoveSolidObjectCommandFromJson(Map json) {
-  return RemoveSolidObjectCommand(json['position'] == null
+RemoveEntityCommand _$RemoveEntityCommandFromJson(Map json) {
+  return RemoveEntityCommand(json['position'] == null
       ? null
       : TilePosition.fromJson(json['position'] as Map))
     ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type']);
 }
 
-Map<String, dynamic> _$RemoveSolidObjectCommandToJson(
-        RemoveSolidObjectCommand instance) =>
+Map<String, dynamic> _$RemoveEntityCommandToJson(
+        RemoveEntityCommand instance) =>
     <String, dynamic>{
       'type': _$ServerCommandTypeEnumMap[instance.type],
       'position': instance.position
@@ -45,8 +45,8 @@ const _$ServerCommandTypeEnumMap = <ServerCommandType, dynamic>{
   ServerCommandType.addPlayer: 'addPlayer',
   ServerCommandType.removePlayer: 'removePlayer',
   ServerCommandType.movePlayer: 'movePlayer',
-  ServerCommandType.removeSolidObject: 'removeSolidObject',
-  ServerCommandType.addSolidObject: 'addSolidObject',
+  ServerCommandType.removeEntity: 'removeEntity',
+  ServerCommandType.addEntity: 'addEntity',
   ServerCommandType.addToInventory: 'addToInventory',
   ServerCommandType.removeFromInventory: 'removeFromInventory',
   ServerCommandType.addSoftObject: 'addSoftObject',

@@ -6,9 +6,8 @@ part of 'use_object_on_solid_object_command.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-UseObjectOnSolidObjectCommand _$UseObjectOnSolidObjectCommandFromJson(
-    Map json) {
-  return UseObjectOnSolidObjectCommand(
+UseObjectOnEntityCommand _$UseObjectOnEntityCommandFromJson(Map json) {
+  return UseObjectOnEntityCommand(
       json['targetPosition'] == null
           ? null
           : TilePosition.fromJson(json['targetPosition'] as Map),
@@ -16,8 +15,8 @@ UseObjectOnSolidObjectCommand _$UseObjectOnSolidObjectCommandFromJson(
     ..type = _$enumDecodeNullable(_$ClientCommandTypeEnumMap, json['type']);
 }
 
-Map<String, dynamic> _$UseObjectOnSolidObjectCommandToJson(
-        UseObjectOnSolidObjectCommand instance) =>
+Map<String, dynamic> _$UseObjectOnEntityCommandToJson(
+        UseObjectOnEntityCommand instance) =>
     <String, dynamic>{
       'type': _$ClientCommandTypeEnumMap[instance.type],
       'targetPosition': instance.targetPosition,
@@ -47,8 +46,8 @@ T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
 const _$ClientCommandTypeEnumMap = <ClientCommandType, dynamic>{
   ClientCommandType.login: 'login',
   ClientCommandType.move: 'move',
-  ClientCommandType.useObjectOnSolidObject: 'useObjectOnSolidObject',
-  ClientCommandType.buildSolidObject: 'buildSolidObject',
+  ClientCommandType.useObjectOnEntity: 'useObjectOnEntity',
+  ClientCommandType.buildEntity: 'buildEntity',
   ClientCommandType.sendMessage: 'sendMessage',
   ClientCommandType.unknown: 'unknown'
 };

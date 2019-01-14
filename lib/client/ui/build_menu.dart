@@ -5,7 +5,7 @@ import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/client/ui/button.dart';
 
 class BuildMenuButton extends Button {
-  SolidObjectType type;
+  EntityType type;
 
   BuildMenuButton(this.type);
 }
@@ -14,10 +14,10 @@ class BuildMenu {
   bool enabled = false;
   Box box = Box(0, 0, 0, 0);
   List<BuildMenuButton> buttons = [];
-  SolidObjectType selectedType;
+  EntityType selectedType;
 
   BuildMenu() {
-    for (SolidObjectType type in solidReceipes.keys) {
+    for (EntityType type in solidReceipes.keys) {
       buttons.add(BuildMenuButton(type));
     }
   }

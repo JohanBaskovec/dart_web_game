@@ -7,7 +7,7 @@ import 'package:dart_game/client/ui/player_inventory_menu.dart';
 class InventoryMenu {
   Box box = Box(0, 0, 0, 0);
   List<InventoryButton> buttons = [];
-  SolidObject owner;
+  Entity owner;
   Player player;
 
   InventoryMenu(Box box, this.owner, this.player) {

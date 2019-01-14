@@ -1,8 +1,8 @@
 enum ClientCommandType {
   login,
   move,
-  useObjectOnSolidObject,
-  buildSolidObject,
+  useObjectOnEntity,
+  buildEntity,
   sendMessage,
   unknown
 }

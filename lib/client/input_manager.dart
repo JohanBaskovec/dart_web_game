@@ -124,7 +124,7 @@ class InputManager {
           if (object == null) {
             clickOnGround(tilePosition);
           } else {
-            clickOnSolidObject(object);
+            clickOnEntity(object);
           }
         }
       }
@@ -139,16 +139,16 @@ class InputManager {
     webSocketClient.webSocket.send(jsonEncode(command));
   }
 
-  void clickOnSolidObject(SolidObject object) {
-    if (player.inventory.currentlyEquiped.type == SoftObjectType.hand) {
-      if (object.type == SolidObjectType.tree ||
-          object.type == SolidObjectType.woodenChest ||
-          object.type == SolidObjectType.campFire) {
+  void clickOnEntity(Entity object) {
+    if (player.inventory.currentlyEquiped.type == EntityType.hand) {
+      if (object.type == EntityType.tree ||
+          object.type == EntityType.woodenChest ||
+          object.type == EntityType.campFire) {
         final inventoryMenu = InventoryMenu(Box(object.box.left, object.box.top, 600, 100), object, player);
         windowsManager.inventoryMenus.add(inventoryMenu);
       }
     } else {
-      final command = UseObjectOnSolidObjectCommand(
+      final command = UseObjectOnEntityCommand(
           object.tilePosition, player.inventory.currentlyEquiped.index);
       webSocketClient.webSocket.send(jsonEncode(command));
     }
@@ -171,10 +171,10 @@ class InputManager {
   void clickOnGround(TilePosition tilePosition) {
     if (buildMenu.enabled && buildMenu.selectedType != null) {
       switch (buildMenu.selectedType) {
-        case SolidObjectType.woodenWall:
+        case EntityType.woodenWall:
           if (playerCanBuild(buildMenu.selectedType, player)) {
             webSocketClient.webSocket.send(jsonEncode(
-                BuildSolidObjectCommand(buildMenu.selectedType, tilePosition)));
+                BuildEntityCommand(buildMenu.selectedType, tilePosition)));
           }
           break;
         default:
