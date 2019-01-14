@@ -56,8 +56,8 @@ class Server {
         targetY >= 0 &&
         world.solidObjectColumns[targetX][targetY] == null) {
       world.players[playerId].move(command.x, command.y);
-      final serverCommand = MovePlayerCommand(
-          playerId, world.players[playerId].tilePosition);
+      final serverCommand =
+          MovePlayerCommand(playerId, world.players[playerId].tilePosition);
       sendCommandToAllClients(serverCommand);
     }
   }
@@ -120,28 +120,33 @@ class Server {
           newPlayerWebSocket.add(jsonCommand);
 
           newPlayerWebSocket.listen((dynamic data) {
-            final ClientCommand command =
-                ClientCommand.fromJson(jsonDecode(data as String) as Map);
-            switch (command.type) {
-              case ClientCommandType.move:
-                executeMoveCommand(newClient, command as MoveCommand);
-                break;
-              case ClientCommandType.useObjectOnSolidObject:
-                executeUseObjectOnSolidObjectCommand(
-                    newClient, command as UseObjectOnSolidObjectCommand);
-                break;
-              case ClientCommandType.buildSolidObject:
-                executeBuildSolidObjectCommand(
-                    newClient, command as BuildSolidObjectCommand);
-                break;
-              case ClientCommandType.sendMessage:
-                executeSendMessageCommand(
-                    newClient, command as SendMessageCommand);
-                break;
-              case ClientCommandType.login:
-              case ClientCommandType.unknown:
-                // unimplemented, should never happen
-                break;
+            try {
+              final ClientCommand command =
+                  ClientCommand.fromJson(jsonDecode(data as String) as Map);
+              switch (command.type) {
+                case ClientCommandType.move:
+                  executeMoveCommand(newClient, command as MoveCommand);
+                  break;
+                case ClientCommandType.useObjectOnSolidObject:
+                  executeUseObjectOnSolidObjectCommand(
+                      newClient, command as UseObjectOnSolidObjectCommand);
+                  break;
+                case ClientCommandType.buildSolidObject:
+                  executeBuildSolidObjectCommand(
+                      newClient, command as BuildSolidObjectCommand);
+                  break;
+                case ClientCommandType.sendMessage:
+                  executeSendMessageCommand(
+                      newClient, command as SendMessageCommand);
+                  break;
+                case ClientCommandType.login:
+                case ClientCommandType.unknown:
+                  // unimplemented, should never happen
+                  break;
+              }
+            } catch (e, s) {
+              print(e);
+              print(s);
             }
           }, onDone: () {
             print('Client disconnected.');
