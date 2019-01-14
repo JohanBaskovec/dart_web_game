@@ -281,10 +281,11 @@
   <component name="PhpServers">
     <servers />
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
-    <option name="x" value="1920" />
-    <option name="width" value="1914" />
-    <option name="height" value="1049" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1936" />
+    <option name="height" value="1056" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -390,7 +391,7 @@
     </option>
   </component>
   <component name="RunManager" selected="JavaScript Debug.http://localhost:8080">
-    <configuration default="true" type="Applet" factoryName="Applet">
+    <configuration default="true" type="Applet">
       <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -418,12 +419,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="http://localhost:8080" type="JavascriptDebugType" factoryName="JavaScript Debug" uri="http://localhost:8080">
+    <configuration name="http://localhost:8080" type="JavascriptDebugType" uri="http://localhost:8080">
       <mapping url="http://localhost:8080/package/dart_game_common" local-file="$PROJECT_DIR$/../dart_game_common/lib" />
       <mapping url="http://localhost:8080/packages/dart_game_frontend" local-file="$PROJECT_DIR$/../dart_game_frontend/lib" />
       <method v="2" />
     </configuration>
-    <configuration default="true" type="TestNG" factoryName="TestNG">
+    <configuration default="true" type="TestNG">
       <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
       <properties />
       <listeners />
@@ -431,19 +432,19 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
+    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType">
       <module name="" />
       <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
       <option name="PROGRAM_PARAMETERS" />
-      <predefined_log_file id="idea.log" enabled="true" />
+      <predefined_log_file enabled="true" id="idea.log" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <list>
-      <item itemvalue="JavaScript Debug.http://localhost:8080" />
       <item itemvalue="Dart Command Line App.main.dart" />
       <item itemvalue="Dart Test.tests in dart_web_game" />
+      <item itemvalue="JavaScript Debug.http://localhost:8080" />
     </list>
     <recent_temporary>
       <list>
