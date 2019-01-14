@@ -1,10 +1,10 @@
 import 'dart:math';
 
+import 'package:dart_game/client/component/rendering_component.dart';
+import 'package:dart_game/client/component/usable_component.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/constants.dart';
-import 'package:dart_game/common/game_objects/entity.dart';
 import 'package:dart_game/common/game_objects/entity_type.dart';
-import 'package:dart_game/common/game_objects/player.dart';
 import 'package:dart_game/common/inventory.dart';
 import 'package:dart_game/common/size.dart';
 import 'package:dart_game/common/tile.dart';
@@ -18,21 +18,44 @@ part 'world.g.dart';
 class World {
   Size _dimension;
   List<List<Tile>> tilesColumn = [];
-  List<List<Entity>> solidObjectColumns = [];
-  List<Player> players = [];
+  List<List<int>> solidObjectColumns = [];
   List<Inventory> publicInventories = [];
   List<Inventory> privateInventories = [];
   List<Box> boxes = [];
-  List<WorldPosition> positions = [];
-  List<Entity> entities = [];
+  List<WorldPosition> worldPositions = [];
+  List<TilePosition> gridPositions = [];
+  List<int> entities = [];
+  List<RenderingComponent> renderingComponents = [];
+  List<UsableComponent> usableComponents = [];
 
   World();
+
+  int addGridAlignedEntity(EntityType image, TilePosition position) {
+    final int entityId = addEntity(image);
+    gridPositions[entityId] = position;
+    final double x = (position.x * tileSize).toDouble();
+    final double y = (position.y * tileSize).toDouble();
+    boxes[entityId] = Box(x, y, tileSize.toDouble(), tileSize.toDouble());
+    solidObjectColumns[position.x][position.y] = entityId;
+    return entityId;
+  }
+
+  int addEntity(EntityType image) {
+    final int entityId = entities.length;
+    entities.add(entityId);
+    worldPositions.add(null);
+    boxes.add(null);
+    privateInventories.add(null);
+    publicInventories.add(null);
+    renderingComponents.add(RenderingComponent(image));
+    gridPositions.add(null);
+    return entityId;
+  }
 
   World.fromConstants(Random randomGenerator)
       : _dimension = worldSize,
         tilesColumn = List(worldSize.x),
-        solidObjectColumns = List(worldSize.x),
-        players = List(maxPlayers) {
+        solidObjectColumns = List(worldSize.x) {
     for (int x = 0; x < _dimension.x; x++) {
       tilesColumn[x] = List(_dimension.y);
     }
@@ -49,11 +72,13 @@ class World {
       for (int y = 0; y < solidObjectColumns[x].length; y++) {
         final int rand = randomGenerator.nextInt(100);
         if (rand < 10) {
-          final tree = Entity(EntityType.tree, TilePosition(x, y));
+          final treeId = addGridAlignedEntity(EntityType.tree, TilePosition(x, y));
+          /*
           final int nLogs = randomGenerator.nextInt(6) + 1;
           for (int i = 0; i < nLogs; i++) {
-            tree.inventory.addItem(Entity(EntityType.log));
+            privateInventories[treeId].addItem(addEntity(EntityType.log));
           }
+          usableComponents[treeId] = UsableComponent();
           final int nLeaves = randomGenerator.nextInt(6) + 1;
           for (int i = 0; i < nLeaves; i++) {
             tree.inventory.addItem(Entity(EntityType.leaves));
@@ -63,7 +88,9 @@ class World {
             tree.inventory.addItem(Entity(EntityType.snake));
           }
           solidObjectColumns[x][y] = tree;
+          */
         } else if (rand < 20) {
+          /*
           final tree = Entity(EntityType.appleTree, TilePosition(x, y));
           final int nLogs = randomGenerator.nextInt(6) + 1;
           for (int i = 0; i < nLogs; i++) {
@@ -74,11 +101,13 @@ class World {
             tree.inventory.addItem(Entity(EntityType.apple));
           }
           solidObjectColumns[x][y] = tree;
+          */
         }
       }
     }
   }
 
+  /*
   Entity useItem(Entity source, Entity target) {
     final WorldPosition position = positions[target.id];
     final TilePosition tilePosition = TilePosition(
@@ -101,6 +130,7 @@ class World {
     }
     return null;
   }
+  */
 
   Size get dimension => _dimension;
 
@@ -110,4 +140,17 @@ class World {
   /// Convert this object to a JSON object.
   @override
   Map<String, dynamic> toJson() => _$WorldToJson(this);
+
+  void removeEntity(int entityId) {
+    tilesColumn[entityId] = null;
+    solidObjectColumns[entityId] = null;
+    publicInventories[entityId] = null;
+    privateInventories[entityId] = null;
+    boxes[entityId] = null;
+    worldPositions[entityId] = null;
+    gridPositions[entityId] = null;
+    entities[entityId] = null;
+    renderingComponents[entityId] = null;
+    usableComponents[entityId] = null;
+  }
 }

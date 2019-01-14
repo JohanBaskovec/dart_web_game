@@ -1,4 +1,3 @@
-import 'package:dart_game/common/game_objects/entity.dart';
 import 'package:dart_game/common/game_objects/entity_type.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -6,17 +5,18 @@ part 'inventory.g.dart';
 
 class InventoryPopResult {
   int itemsLeft;
-  Entity object;
+  List<int> object;
 
   InventoryPopResult(this.itemsLeft, this.object);
 }
 
 @JsonSerializable(anyMap: true)
 class Inventory {
-  Entity currentlyEquiped;
-  List<List<Entity>> stacks = [];
+  int currentlyEquiped;
+  List<List<int>> stacks = [];
 
-  void addItem(Entity item) {
+  void addItem(int item) {
+    /*
     var i = 0;
     for (; i < stacks.length; i++) {
       if (stacks[i][0].type == item.type) {
@@ -30,9 +30,11 @@ class Inventory {
     stacks[i].add(item);
     print('Added $item to inventory in stack $i');
     currentlyEquiped ??= item;
+    */
   }
 
   void removeFromStack(int stackIndex, [int n = 1]) {
+    /*
     if (stacks[stackIndex].length >= n) {
       if (stacks[stackIndex].length == n) {
         stacks.removeAt(stackIndex);
@@ -44,13 +46,16 @@ class Inventory {
       print('Attempting to remove $n items from stack $stackIndex'
           ', but stack\' length is ${stacks[stackIndex].length}!');
     }
+    */
   }
 
-  Entity popFromStack(int stackIndex) {
-    return stacks[stackIndex].removeLast();
+  int popFromStack(int stackIndex) {
+    //return stacks[stackIndex].removeLast();
+    return 0;
   }
 
   InventoryPopResult popFirstOfType(EntityType type) {
+    /*
     for (int i = 0; i < stacks.length; i++) {
       if (stacks[i][0].type == type) {
         final InventoryPopResult result =
@@ -61,6 +66,7 @@ class Inventory {
         return result;
       }
     }
+    */
     return null;
   }
 

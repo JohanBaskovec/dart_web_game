@@ -1,5 +1,4 @@
-import 'package:dart_game/common/game_objects/soft_object.dart';
-import 'package:dart_game/common/game_objects/solid_object.dart';
+import 'package:dart_game/common/game_objects/entity_type.dart';
 
 final Map<EntityType, Map<EntityType, int>> solidReceipes = {
   EntityType.woodenWall: {

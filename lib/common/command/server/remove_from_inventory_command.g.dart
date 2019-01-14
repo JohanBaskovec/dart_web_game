@@ -45,17 +45,15 @@ T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
 
 const _$ServerCommandTypeEnumMap = <ServerCommandType, dynamic>{
   ServerCommandType.loggedIn: 'loggedIn',
-  ServerCommandType.addPlayer: 'addPlayer',
-  ServerCommandType.removePlayer: 'removePlayer',
-  ServerCommandType.movePlayer: 'movePlayer',
-  ServerCommandType.removeEntity: 'removeEntity',
   ServerCommandType.addEntity: 'addEntity',
+  ServerCommandType.addEntityWithRendering: 'addEntityWithRendering',
+  ServerCommandType.addGridAlignedEntity: 'addGridAlignedEntity',
+  ServerCommandType.moveGridAlignedEntity: 'moveGridAlignedEntity',
+  ServerCommandType.removeEntity: 'removeEntity',
   ServerCommandType.addToInventory: 'addToInventory',
   ServerCommandType.removeFromInventory: 'removeFromInventory',
-  ServerCommandType.addSoftObject: 'addSoftObject',
-  ServerCommandType.removeSoftObject: 'removeSoftObject',
-  ServerCommandType.addTile: 'addTile',
-  ServerCommandType.removeTile: 'removeTile',
+  ServerCommandType.addRenderingComponent: 'addRenderingComponent',
+  ServerCommandType.removeRenderingComponent: 'removeRenderingComponent',
   ServerCommandType.addMessage: 'addMessage',
   ServerCommandType.unknown: 'unknown'
 };

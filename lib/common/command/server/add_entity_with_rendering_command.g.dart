@@ -1,21 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'add_message_command.dart';
+part of 'add_entity_with_rendering_command.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-AddMessageCommand _$AddMessageCommandFromJson(Map json) {
-  return AddMessageCommand(
-      json['message'] == null ? null : Message.fromJson(json['message'] as Map))
-    ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type']);
+AddEntityWithRenderingCommand _$AddEntityWithRenderingCommandFromJson(
+    Map json) {
+  return AddEntityWithRenderingCommand()
+    ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type'])
+    ..entityId = json['entityId'] as int
+    ..rendering = json['rendering'] == null
+        ? null
+        : RenderingComponent.fromJson(json['rendering'] as Map);
 }
 
-Map<String, dynamic> _$AddMessageCommandToJson(AddMessageCommand instance) =>
+Map<String, dynamic> _$AddEntityWithRenderingCommandToJson(
+        AddEntityWithRenderingCommand instance) =>
     <String, dynamic>{
       'type': _$ServerCommandTypeEnumMap[instance.type],
-      'message': instance.message
+      'entityId': instance.entityId,
+      'rendering': instance.rendering
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {
