@@ -6,9 +6,9 @@ import 'package:dart_game/client/renderer.dart';
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/client/windows_manager.dart';
 import 'package:dart_game/common/game_objects/world.dart';
-import 'package:dart_game/common/ui/build_menu.dart';
-import 'package:dart_game/common/ui/chat.dart';
-import 'package:dart_game/common/ui/player_inventory_menu.dart';
+import 'package:dart_game/client/ui/build_menu.dart';
+import 'package:dart_game/client/ui/chat.dart';
+import 'package:dart_game/client/ui/player_inventory_menu.dart';
 
 class Game {
   void run() {

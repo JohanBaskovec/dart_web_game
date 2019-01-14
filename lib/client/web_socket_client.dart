@@ -16,8 +16,8 @@ import 'package:dart_game/common/command/server/remove_solid_object_command.dart
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
 import 'package:dart_game/common/game_objects/world.dart';
-import 'package:dart_game/common/ui/chat.dart';
-import 'package:dart_game/common/ui/player_inventory_menu.dart';
+import 'package:dart_game/client/ui/chat.dart';
+import 'package:dart_game/client/ui/player_inventory_menu.dart';
 
 class WebSocketClient {
   final WebSocket webSocket;

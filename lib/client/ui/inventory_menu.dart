@@ -2,7 +2,7 @@ import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/game_objects/player.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
-import 'package:dart_game/common/ui/player_inventory_menu.dart';
+import 'package:dart_game/client/ui/player_inventory_menu.dart';
 
 class InventoryMenu {
   Box box = Box(0, 0, 0, 0);

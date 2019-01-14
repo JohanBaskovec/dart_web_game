@@ -10,10 +10,10 @@ import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/tile_position.dart';
-import 'package:dart_game/common/ui/build_menu.dart';
-import 'package:dart_game/common/ui/chat.dart';
-import 'package:dart_game/common/ui/inventory_menu.dart';
-import 'package:dart_game/common/ui/player_inventory_menu.dart';
+import 'package:dart_game/client/ui/build_menu.dart';
+import 'package:dart_game/client/ui/chat.dart';
+import 'package:dart_game/client/ui/inventory_menu.dart';
+import 'package:dart_game/client/ui/player_inventory_menu.dart';
 import 'package:dart_game/common/world_position.dart';
 
 class Renderer {

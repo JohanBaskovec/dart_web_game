@@ -2,7 +2,7 @@ import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/game_objects/player.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
-import 'package:dart_game/common/ui/button.dart';
+import 'package:dart_game/client/ui/button.dart';
 
 class InventoryButton extends Button {
   List<SoftGameObject> stack;
