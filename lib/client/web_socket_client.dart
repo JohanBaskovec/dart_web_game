@@ -19,7 +19,7 @@ import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/world.dart';
-import 'package:dart_game/common/world_position.dart';
+import 'package:dart_game/common/tile_position.dart';
 
 class WebSocketClient {
   final WebSocket webSocket;
@@ -135,6 +135,13 @@ class WebSocketClient {
   }
 
   void executeMoveGridAlignedEntity(MoveGridAlignedEntityCommand command) {
+    final TilePosition origin = world.gridPositions[command.entityId];
+    world.solidObjectColumns[origin.x][origin.y] = null;
     world.gridPositions[command.entityId] = command.destination;
+    world.renderingComponents[command.entityId].box.moveTo(
+        (command.destination.x * tileSize).toDouble(),
+        (command.destination.y * tileSize).toDouble());
+    world.solidObjectColumns[command.destination.x][command.destination.y] =
+        command.entityId;
   }
 }

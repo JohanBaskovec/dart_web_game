@@ -3,6 +3,7 @@ import 'dart:html';
 
 import 'package:dart_game/client/input_manager.dart';
 import 'package:dart_game/client/renderer.dart';
+import 'package:dart_game/client/session.dart';
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/client/windows_manager.dart';
 import 'package:dart_game/common/game_objects/world.dart';
@@ -24,6 +25,7 @@ class Game {
     final windowsManager = WindowsManager();
     final renderer = Renderer(canvas, buildMenu, chat, inventory, windowsManager);
     final world = World();
+    final session = Session();
 
     Timer.periodic(Duration(milliseconds: (1000 / 60).floor()), (Timer timer) {
       renderer.render(world);
@@ -31,7 +33,7 @@ class Game {
 
 
     final inputManager = InputManager(document.body, canvas, renderer,
-        buildMenu, chat, inventory, windowsManager);
+        buildMenu, chat, inventory, windowsManager, session);
     inputManager.listen();
 
     final webSocketClient = WebSocketClient(WebSocket('ws:127.0.0.1:8083/ws'),
