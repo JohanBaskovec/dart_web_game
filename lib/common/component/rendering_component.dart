@@ -6,6 +6,7 @@ part 'rendering_component.g.dart';
 
 @JsonSerializable(anyMap: true)
 class RenderingComponent {
+  int id;
   EntityType image;
   Box box;
 

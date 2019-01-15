@@ -1,18 +1,15 @@
 import 'dart:html';
 
 import 'package:dart_game/client/canvas_position.dart';
-import 'package:dart_game/client/component/rendering_component.dart';
-import 'package:dart_game/client/windows_manager.dart';
-import 'package:dart_game/common/box.dart';
-import 'package:dart_game/common/constants.dart';
-import 'package:dart_game/common/game_objects/entity_type.dart';
-import 'package:dart_game/common/game_objects/receipes.dart';
-import 'package:dart_game/common/game_objects/world.dart';
-import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/client/ui/build_menu.dart';
 import 'package:dart_game/client/ui/chat.dart';
-import 'package:dart_game/client/ui/inventory_menu.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
+import 'package:dart_game/client/windows_manager.dart';
+import 'package:dart_game/common/component/rendering_component.dart';
+import 'package:dart_game/common/constants.dart';
+import 'package:dart_game/common/game_objects/entity_type.dart';
+import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/world_position.dart';
 
 class Renderer {
@@ -52,14 +49,11 @@ class Renderer {
     }
     _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
 
-    for (RenderingComponent rendering in world.renderingComponents) {
+    for (int i = 0; i < world.renderingComponents.length; i++) {
+      final RenderingComponent rendering = world.renderingComponents[i];
       if (rendering != null && rendering.box != null) {
-        _ctx.drawImageScaled(
-            solidImages[rendering.image],
-            rendering.box.left,
-            rendering.box.top,
-            rendering.box.width,
-            rendering.box.height);
+        _ctx.drawImageScaled(solidImages[rendering.image], rendering.box.left,
+            rendering.box.top, rendering.box.width, rendering.box.height);
       }
     }
     /*
@@ -180,14 +174,14 @@ class Renderer {
 
   CanvasPosition getCursorPositionInCanvas(MouseEvent event) {
     final rect = _canvas.getBoundingClientRect();
-    final double x = event.client.x - rect.left;
-    final double y = event.client.y - rect.top;
+    final int x = event.client.x - rect.left;
+    final int y = event.client.y - rect.top;
     return CanvasPosition(x, y);
   }
 
   WorldPosition getWorldPositionFromCanvasPosition(CanvasPosition position) {
-    return WorldPosition((position.x * (1 / scale)) - cameraPosition.x,
-        (position.y * (1 / scale)) - cameraPosition.y);
+    return WorldPosition((position.x * (1 / scale)).toInt() - cameraPosition.x,
+        (position.y * (1 / scale)).toInt() - cameraPosition.y);
   }
 
   WorldPosition getCursorPositionInWorld(MouseEvent event) {
@@ -202,8 +196,8 @@ class Renderer {
     final double canvasMiddleWidth = _canvas.width / 2.0;
     final double canvasMiddleHeight = _canvas.height / 2.0;
 
-    final double translateX = x + canvasMiddleWidth * inverseScale;
-    final double translateY = y + canvasMiddleHeight * inverseScale;
+    final int translateX = (x + canvasMiddleWidth * inverseScale).toInt();
+    final int translateY = (y + canvasMiddleHeight * inverseScale).toInt();
     cameraPosition = CanvasPosition(translateX, translateY);
   }
 

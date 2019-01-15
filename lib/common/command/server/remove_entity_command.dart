@@ -1,14 +1,15 @@
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
+import 'package:dart_game/common/entity.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'remove_entity_command.g.dart';
 
 @JsonSerializable(anyMap: true)
 class RemoveEntityCommand extends ServerCommand {
-  int entityId;
+  Entity entity;
 
-  RemoveEntityCommand(this.entityId)
+  RemoveEntityCommand(this.entity)
       : super(ServerCommandType.removeEntity);
 
   /// Creates a new [RemoveEntityCommand] from a JSON object.

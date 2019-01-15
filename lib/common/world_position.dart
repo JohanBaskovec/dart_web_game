@@ -4,8 +4,8 @@ part 'world_position.g.dart';
 
 @JsonSerializable(anyMap: true)
 class WorldPosition {
-  double x;
-  double y;
+  int x;
+  int y;
 
   WorldPosition([this.x, this.y]);
   

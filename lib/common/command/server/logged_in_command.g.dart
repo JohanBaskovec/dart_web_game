@@ -7,8 +7,17 @@ part of 'logged_in_command.dart';
 // **************************************************************************
 
 LoggedInCommand _$LoggedInCommandFromJson(Map json) {
-  return LoggedInCommand(json['playerId'] as int,
-      json['world'] == null ? null : World.fromJson(json['world'] as Map))
+  return LoggedInCommand(
+      json['playerId'] as int,
+      (json['renderingComponents'] as List)
+          ?.map((e) => e == null ? null : RenderingComponent.fromJson(e as Map))
+          ?.toList(),
+      (json['collisionComponents'] as List)
+          ?.map((e) => e == null ? null : CollisionComponent.fromJson(e as Map))
+          ?.toList(),
+      (json['entities'] as List)
+          ?.map((e) => e == null ? null : Entity.fromJson(e as Map))
+          ?.toList())
     ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type']);
 }
 
@@ -16,7 +25,9 @@ Map<String, dynamic> _$LoggedInCommandToJson(LoggedInCommand instance) =>
     <String, dynamic>{
       'type': _$ServerCommandTypeEnumMap[instance.type],
       'playerId': instance.playerId,
-      'world': instance.world
+      'renderingComponents': instance.renderingComponents,
+      'collisionComponents': instance.collisionComponents,
+      'entities': instance.entities
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {

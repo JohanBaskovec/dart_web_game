@@ -12,14 +12,12 @@ import 'package:dart_game/common/command/server/add_grid_aligned_entity_command.
 import 'package:dart_game/common/command/server/add_message_command.dart';
 import 'package:dart_game/common/command/server/add_to_inventory_command.dart';
 import 'package:dart_game/common/command/server/logged_in_command.dart';
-import 'package:dart_game/common/command/server/move_grid_aligned_entity_command.dart';
+import 'package:dart_game/common/command/server/move_rendering_and_collision_components_command.dart';
 import 'package:dart_game/common/command/server/remove_entity_command.dart';
 import 'package:dart_game/common/command/server/remove_from_inventory_command.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
-import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/world.dart';
-import 'package:dart_game/common/tile_position.dart';
 
 class WebSocketClient {
   final WebSocket webSocket;
@@ -53,6 +51,14 @@ class WebSocketClient {
         case ServerCommandType.addEntity:
           executeAddEntityCommand(command as AddEntityCommand);
           break;
+          /*
+        case ServerCommandType.addCollisionComponent:
+          executeAddCollisionCommand(command as AddCollisionComponent);
+          break;
+          */
+        case ServerCommandType.addRenderingComponent:
+          //executeAddRenderingCommand(command as AddRenderingComponent);
+          break;
         case ServerCommandType.addMessage:
           executeAddMessageCommand(command as AddMessageCommand);
           break;
@@ -64,9 +70,9 @@ class WebSocketClient {
           executeAddGridAlignedEntity(command as AddGridAlignedEntityCommand);
           break;
         case ServerCommandType.moveGridAlignedEntity:
-          executeMoveGridAlignedEntity(command as MoveGridAlignedEntityCommand);
+          world.executeMoveGridAlignedEntity(
+              command as MoveRenderingAndCollisionComponentsCommand);
           break;
-        case ServerCommandType.addRenderingComponent:
         case ServerCommandType.removeRenderingComponent:
         case ServerCommandType.unknown:
           print('Received a command that should '
@@ -82,18 +88,13 @@ class WebSocketClient {
   }
 
   void executeLoggedInCommand(LoggedInCommand command) {
-    world.solidObjectColumns = command.world.solidObjectColumns;
-    world.tilesColumn = command.world.tilesColumn;
-    world.publicInventories = command.world.publicInventories;
-    world.privateInventories = command.world.privateInventories;
-    world.gridPositions = command.world.gridPositions;
-    world.tilesColumn = command.world.tilesColumn;
-    world.renderingComponents = command.world.renderingComponents;
-    world.entities = command.world.entities;
+    world.renderingComponents = command.renderingComponents;
+    world.entities = command.entities;
+    world.collisionComponents = command.collisionComponents;
   }
 
   void executeRemoveEntityCommand(RemoveEntityCommand command) {
-    world.removeEntity(command.entityId);
+    world.removeEntity(command.entity);
   }
 
   void executeAddToInventoryCommand(AddToInventoryCommand command) {
@@ -104,11 +105,7 @@ class WebSocketClient {
   }
 
   void executeAddEntityCommand(AddEntityCommand command) {
-    world.entities[command.entityId] = command.entityId;
-    /*
-    world.solidObjectColumns[command.object.tilePosition.x]
-        [command.object.tilePosition.y] = command.object;
-        */
+    world.setEntity(command.entity);
   }
 
   void executeRemoveFromInventoryCommand(RemoveFromInventoryCommand command) {
@@ -132,16 +129,5 @@ class WebSocketClient {
 
   void executeAddGridAlignedEntity(AddGridAlignedEntityCommand command) {
     world.addGridAlignedEntity(command.image, command.position);
-  }
-
-  void executeMoveGridAlignedEntity(MoveGridAlignedEntityCommand command) {
-    final TilePosition origin = world.gridPositions[command.entityId];
-    world.solidObjectColumns[origin.x][origin.y] = null;
-    world.gridPositions[command.entityId] = command.destination;
-    world.renderingComponents[command.entityId].box.moveTo(
-        (command.destination.x * tileSize).toDouble(),
-        (command.destination.y * tileSize).toDouble());
-    world.solidObjectColumns[command.destination.x][command.destination.y] =
-        command.entityId;
   }
 }

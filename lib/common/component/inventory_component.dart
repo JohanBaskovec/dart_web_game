@@ -1,7 +1,8 @@
+import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/game_objects/entity_type.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'inventory.g.dart';
+part 'inventory_component.g.dart';
 
 class InventoryPopResult {
   int itemsLeft;
@@ -11,11 +12,11 @@ class InventoryPopResult {
 }
 
 @JsonSerializable(anyMap: true)
-class Inventory {
+class InventoryComponent {
   int currentlyEquiped;
   List<List<int>> stacks = [];
 
-  void addItem(int item) {
+  void addItem(Entity item) {
     /*
     var i = 0;
     for (; i < stacks.length; i++) {
@@ -72,11 +73,11 @@ class Inventory {
 
   int get size => stacks.length;
 
-  /// Creates a new [Inventory] from a JSON object.
-  static Inventory fromJson(Map<dynamic, dynamic> json) =>
-      _$InventoryFromJson(json);
+  /// Creates a new [InventoryComponent] from a JSON object.
+  static InventoryComponent fromJson(Map<dynamic, dynamic> json) =>
+      _$InventoryComponentFromJson(json);
 
   /// Convert this object to a JSON object.
   @override
-  Map<String, dynamic> toJson() => _$InventoryToJson(this);
+  Map<String, dynamic> toJson() => _$InventoryComponentToJson(this);
 }

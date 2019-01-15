@@ -7,13 +7,10 @@ part of 'box.dart';
 // **************************************************************************
 
 Box _$BoxFromJson(Map json) {
-  return Box(
-      (json['left'] as num)?.toDouble(),
-      (json['top'] as num)?.toDouble(),
-      (json['width'] as num)?.toDouble(),
-      (json['height'] as num)?.toDouble())
-    ..right = (json['right'] as num)?.toDouble()
-    ..bottom = (json['bottom'] as num)?.toDouble();
+  return Box(json['left'] as int, json['top'] as int, json['width'] as int,
+      json['height'] as int)
+    ..right = json['right'] as int
+    ..bottom = json['bottom'] as int;
 }
 
 Map<String, dynamic> _$BoxToJson(Box instance) => <String, dynamic>{

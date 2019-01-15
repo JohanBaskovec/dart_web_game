@@ -1,22 +1,23 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'remove_entity_command.dart';
+part of 'add_rendering_component_command.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-RemoveEntityCommand _$RemoveEntityCommandFromJson(Map json) {
-  return RemoveEntityCommand(
-      json['entity'] == null ? null : Entity.fromJson(json['entity'] as Map))
+AddRenderingComponent _$AddRenderingComponentFromJson(Map json) {
+  return AddRenderingComponent(json['component'] == null
+      ? null
+      : RenderingComponent.fromJson(json['component'] as Map))
     ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type']);
 }
 
-Map<String, dynamic> _$RemoveEntityCommandToJson(
-        RemoveEntityCommand instance) =>
+Map<String, dynamic> _$AddRenderingComponentToJson(
+        AddRenderingComponent instance) =>
     <String, dynamic>{
       'type': _$ServerCommandTypeEnumMap[instance.type],
-      'entity': instance.entity
+      'component': instance.component
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {
