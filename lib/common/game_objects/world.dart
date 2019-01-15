@@ -46,15 +46,24 @@ class World {
 
   /// Set entity at its id. Should only be called by the client.
   void setEntity(Entity entity) {
+    if (entities.length < entity.id + 1) {
+      entities.length = entity.id + 1;
+    }
     entities[entity.id] = entity;
   }
 
   /// Set component at its id. Should only be called by the client.
   void setRenderingComponent(RenderingComponent component) {
+    if (renderingComponents.length < component.id + 1) {
+      renderingComponents.length = component.id + 1;
+    }
     renderingComponents[component.id] = component;
   }
 
   void setCollisionComponent(CollisionComponent component) {
+    if (collisionComponents.length < component.id + 1) {
+      collisionComponents.length = component.id + 1;
+    }
     collisionComponents[component.id] = component;
   }
 
@@ -137,17 +146,6 @@ class World {
       }
     }
     */
-    Timer.periodic(Duration(milliseconds: 1500), (Timer timer) {
-      final Entity entity = addGridAlignedEntity(
-          EntityType.tree,
-          TilePosition(randomGenerator.nextInt(worldSizeTile.x),
-              randomGenerator.nextInt(worldSizeTile.y)));
-      final int r = randomGenerator.nextInt(entities.length);
-      if (entities[r] != null && entities[r].type != EntityType.player) {
-        removeEntity(entities[r]);
-      }
-
-    });
     for (int x = 0; x < _dimension.x; x++) {
       for (int y = 0; y < _dimension.y; y++) {
         final int rand = randomGenerator.nextInt(100);
