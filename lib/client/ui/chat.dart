@@ -1,10 +1,10 @@
 import 'package:dart_game/client/canvas_position.dart';
+import 'package:dart_game/client/ui/button.dart';
+import 'package:dart_game/client/ui/input.dart';
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/command/client/send_message_command.dart';
 import 'package:dart_game/common/message.dart';
-import 'package:dart_game/client/ui/button.dart';
-import 'package:dart_game/client/ui/input.dart';
 
 class Chat {
   bool enabled = true;
@@ -17,11 +17,11 @@ class Chat {
   Chat();
 
   void moveAndResize(Box box) {
-    final double sendButtonWidth = box.width / 10;
+    final int sendButtonWidth = box.width ~/ 10;
     sendButton.box =
         Box(box.right - sendButtonWidth, box.bottom - 40, sendButtonWidth, 40);
-    input.box =
-        Box(box.left, box.bottom - box.height / 10, box.width, box.height / 10);
+    input.box = Box(box.left, (box.bottom - box.height / 10).toInt(), box.width,
+        box.height ~/ 10);
     this.box = box;
   }
 
@@ -46,7 +46,7 @@ class Chat {
     }
   }
 
-    void addMessage(Message message) {
-      messages.add(message);
-    }
+  void addMessage(Message message) {
+    messages.add(message);
   }
+}

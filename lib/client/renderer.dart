@@ -17,7 +17,6 @@ import 'package:dart_game/common/stack.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/world_position.dart';
 
-
 class Renderer {
   final CanvasElement _canvas;
   final CanvasRenderingContext2D _ctx;
@@ -59,12 +58,10 @@ class Renderer {
     }
     _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
 
-    for (List<SolidObject> column in world.solidObjectColumns) {
-      for (SolidObject object in column) {
-        if (object != null) {
-          _ctx.drawImageScaled(solidImages[object.type], object.box.left,
-              object.box.top, object.box.width, object.box.height);
-        }
+    for (SolidObject object in world.solidObjects) {
+      if (object != null) {
+        _ctx.drawImageScaled(solidImages[object.type], object.box.left,
+            object.box.top, object.box.width, object.box.height);
       }
     }
     _ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -77,8 +74,8 @@ class Renderer {
       for (var i = 0; i < session.player.inventory.stacks.length; i++) {
         final Stack stack = session.player.inventory.stacks[i];
         final double left = i * widthPerStack + inventory.box.left;
-        _ctx.drawImageScaled(softImages[stack.objectType], left, inventory.box.top,
-            widthPerStack, inventory.box.height);
+        _ctx.drawImageScaled(softImages[stack.objectType], left,
+            inventory.box.top, widthPerStack, inventory.box.height);
         _ctx.fillStyle = 'white';
         _ctx.fillText(stack.length.toString(), left, inventory.box.bottom);
         _ctx.fillStyle = 'black';
@@ -205,11 +202,11 @@ class Renderer {
   void resizeWindows() {
     _canvas.width = window.innerWidth;
     _canvas.height = window.innerHeight;
-    buildMenu.moveAndResize(
-        Box(_canvas.width / 10, 100, _canvas.width / 2, _canvas.height / 2));
-    inventory.moveAndResize(Box(20, _canvas.height - _canvas.height / 10,
-        _canvas.width - 20 - _canvas.width / 3, _canvas.height / 11));
+    buildMenu.moveAndResize(Box(_canvas.width ~/ 10, 100,
+        _canvas.width ~/ 2, _canvas.height ~/ 2));
+    inventory.moveAndResize(Box(20, (_canvas.height - _canvas.height / 10).toInt(),
+        (_canvas.width - 20 - _canvas.width / 3).toInt(), _canvas.height ~/ 11));
     chat.moveAndResize(Box(inventory.box.right + 20, inventory.box.top - 100,
-        _canvas.width / 3 - 40, 100 + inventory.box.height));
+        (_canvas.width / 3 - 40).toInt(), 100 + inventory.box.height));
   }
 }

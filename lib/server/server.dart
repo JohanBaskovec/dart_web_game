@@ -30,6 +30,7 @@ import 'package:dart_game/common/gathering.dart';
 import 'package:dart_game/common/message.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/stack.dart';
+import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/server/client.dart';
 import 'package:yaml/yaml.dart';
 
@@ -49,14 +50,14 @@ class Server {
 
   void executeMoveCommand(Client client, MoveCommand command) {
     final SolidObject player = client.session.player;
-    final targetX = player.tilePosition.x + command.x;
-    final targetY = player.tilePosition.y + command.y;
-    if (targetX < worldSize.x &&
-        targetX >= 0 &&
-        targetY < worldSize.y &&
-        targetY >= 0 &&
-        world.solidObjectColumns[targetX][targetY] == null) {
-      player.move(command.x, command.y);
+    final target = TilePosition(
+        player.tilePosition.x + command.x, player.tilePosition.y + command.y);
+    if (target.x < worldSize.x &&
+        target.x >= 0 &&
+        target.y < worldSize.y &&
+        target.y >= 0 &&
+        world.solidObjectColumns[target.x][target.y] == null) {
+      moveSolidObject(player, target);
       final serverCommand =
           MoveSolidObjectCommand(player.id, player.tilePosition);
       sendCommandToAllClients(serverCommand);
@@ -128,7 +129,21 @@ class Server {
           final WebSocket newPlayerWebSocket =
               await WebSocketTransformer.upgrade(request);
 
-          final newPlayer = makePlayer(0, 0);
+          SolidObject newPlayer;
+          for (int x = 0; x < worldSize.x; x++) {
+            for (int y = 0; y < worldSize.y; y++) {
+              if (world.solidObjectColumns[x][y] == null) {
+                newPlayer = makePlayer(x, y);
+                break;
+              }
+            }
+            if (newPlayer != null) {
+              break;
+            }
+          }
+          if (newPlayer == null) {
+            return;
+          }
           addSolidObject(newPlayer);
           final hand = SoftObject(SoftObjectType.hand);
           final axe = SoftObject(SoftObjectType.axe);
@@ -144,8 +159,7 @@ class Server {
           print('Client connected!');
 
           sendCommandToAllClients(addNewPlayer);
-          final newClient =
-          Client(Session(newPlayer), newPlayerWebSocket);
+          final newClient = Client(Session(newPlayer), newPlayerWebSocket);
           clients.add(newClient);
           final jsonCommand = jsonEncode(loggedInCommand.toJson());
           newPlayerWebSocket.add(jsonCommand);
@@ -209,8 +223,7 @@ class Server {
 
   void executeUseObjectOnSolidObjectCommand(
       Client client, UseObjectOnSolidObjectCommand command) {
-    final SolidObject target = world
-        .solidObjectColumns[command.targetPosition.x][command.targetPosition.y];
+    final SolidObject target = world.solidObjects[command.targetId];
     final SoftObject item =
         world.softObjects[client.session.player.inventory.currentlyEquiped];
     useItemOnSolidObject(client, item, target);
@@ -295,7 +308,8 @@ class Server {
     newClient.session.player.inventory.addItem(objectTaken);
     final List<int> nItemsToRemove = List(target.inventory.stacks.length);
     nItemsToRemove[command.inventoryIndex] = 1;
-    final removeFromInventoryCommand = RemoveFromInventoryCommand(nItemsToRemove);
+    final removeFromInventoryCommand =
+        RemoveFromInventoryCommand(nItemsToRemove);
     newClient.sendCommand(removeFromInventoryCommand);
     final serverCommand = AddToInventoryCommand(objectTaken.id);
     newClient.sendCommand(serverCommand);
@@ -323,23 +337,32 @@ class Server {
         'this should never happen, there is exactly enough '
         'space in solidObject to hold every object.');
     final int id = world.freeSolidObjectIds.removeLast();
-    final SolidObject objectAtPosition =
-        world.solidObjectColumns[object.tilePosition.x][object.tilePosition.y];
-    assert(objectAtPosition == null);
-    world.solidObjectColumns[object.tilePosition.x][object.tilePosition.y] =
-        object;
     object.id = id;
+    final int objectAtPositionId =
+        world.solidObjectColumns[object.tilePosition.x][object.tilePosition.y];
+    assert(objectAtPositionId == null);
+    world.solidObjectColumns[object.tilePosition.x][object.tilePosition.y] =
+        object.id;
     assert(world.solidObjects[id] == null);
     world.solidObjects[id] = object;
   }
 
   void removeSolidObject(SolidObject object) {
-    assert(world.solidObjectColumns[object.tilePosition.x][object.tilePosition.y] != null);
+    assert(world.solidObjectColumns[object.tilePosition.x]
+            [object.tilePosition.y] !=
+        null);
     assert(world.solidObjects[object.id] != null);
-    world.solidObjectColumns[object.tilePosition.x][object.tilePosition.y] = null;
+    world.solidObjectColumns[object.tilePosition.x][object.tilePosition.y] =
+        null;
     world.freeSolidObjectIds.add(object.id);
     world.solidObjects[object.id] = null;
-    object.id = null;
+  }
+
+  void moveSolidObject(SolidObject object, TilePosition position) {
+    world.solidObjectColumns[object.tilePosition.x][object.tilePosition.y] =
+        null;
+    object.moveTo(position);
+    world.solidObjectColumns[position.x][position.y] = object.id;
   }
 
   void executeSetEquippedItemCommand(

@@ -8,9 +8,7 @@ part of 'use_object_on_solid_object_command.dart';
 
 UseObjectOnSolidObjectCommand _$UseObjectOnSolidObjectCommandFromJson(
     Map json) {
-  return UseObjectOnSolidObjectCommand(json['targetPosition'] == null
-      ? null
-      : TilePosition.fromJson(json['targetPosition'] as Map))
+  return UseObjectOnSolidObjectCommand(json['targetId'] as int)
     ..type = _$enumDecodeNullable(_$ClientCommandTypeEnumMap, json['type']);
 }
 
@@ -18,7 +16,7 @@ Map<String, dynamic> _$UseObjectOnSolidObjectCommandToJson(
         UseObjectOnSolidObjectCommand instance) =>
     <String, dynamic>{
       'type': _$ClientCommandTypeEnumMap[instance.type],
-      'targetPosition': instance.targetPosition
+      'targetId': instance.targetId
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {

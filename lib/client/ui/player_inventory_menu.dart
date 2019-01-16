@@ -42,10 +42,10 @@ class PlayerInventoryMenu {
     if (session == null) {
       return;
     }
-    final double widthPerStack = box.width / 9;
+    final int widthPerStack = box.width ~/ 9;
     buttons = [];
     for (var i = 0; i < session.player.inventory.stacks.length; i++) {
-      final double left = i * widthPerStack + box.left;
+      final int left = i * widthPerStack + box.left;
       final newButton =
           InventoryButton(session.player.inventory.stacks[i]);
       newButton.box = Box(left, box.top, widthPerStack, box.height);

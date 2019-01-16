@@ -126,8 +126,9 @@ class InputManager {
             tilePosition.x < worldSize.x &&
             tilePosition.y >= 0 &&
             tilePosition.y < worldSize.y) {
-          final object =
+          final objectId =
           _world.solidObjectColumns[tilePosition.x][tilePosition.y];
+          final object = _world.solidObjects[objectId];
           if (object == null) {
             clickOnGround(tilePosition);
           } else {
@@ -161,7 +162,7 @@ class InputManager {
         windowsManager.inventoryMenus.add(inventoryMenu);
       }
     } else {
-      final command = UseObjectOnSolidObjectCommand(object.tilePosition);
+      final command = UseObjectOnSolidObjectCommand(object.id);
       webSocketClient.webSocket.send(jsonEncode(command));
     }
   }

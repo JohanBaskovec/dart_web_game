@@ -7,11 +7,10 @@ part 'use_object_on_solid_object_command.g.dart';
 
 @JsonSerializable(anyMap: true)
 class UseObjectOnSolidObjectCommand extends ClientCommand {
-  /// Position of the target object
-  TilePosition targetPosition;
+  int targetId;
 
   UseObjectOnSolidObjectCommand(
-      this.targetPosition)
+      this.targetId)
       : super(ClientCommandType.useObjectOnSolidObject);
 
   /// Creates a new [UseObjectOnSolidObjectCommand] from a JSON object.

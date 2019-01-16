@@ -109,7 +109,7 @@ class WebSocketClient {
 
   void executeAddSolidObjectCommand(AddSolidObjectCommand command) {
     _world.solidObjectColumns[command.object.tilePosition.x]
-        [command.object.tilePosition.y] = command.object;
+        [command.object.tilePosition.y] = command.object.id;
     _world.solidObjects[command.object.id] = command.object;
   }
 
@@ -146,9 +146,11 @@ class WebSocketClient {
     assert(command.position != null);
     assert(command.position.x != null);
     assert(command.position.y != null);
-    _world.solidObjects[command.objectId]
-        .move(command.position.x, command.position.y);
+    final SolidObject object = _world.solidObjects[command.objectId];
+    _world.solidObjectColumns[object.tilePosition.x][object.tilePosition.y] =
+        null;
+    _world.solidObjects[command.objectId].moveTo(command.position);
     _world.solidObjectColumns[command.position.x][command.position.y] =
-        _world.solidObjects[command.objectId];
+        command.objectId;
   }
 }

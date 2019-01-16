@@ -59,6 +59,7 @@ class SolidObject {
 
   void moveTo(TilePosition position) {
     tilePosition = position;
+    box.moveTo(position.x * tileSize, position.y * tileSize);
   }
 
   TilePosition get tilePosition => _tilePosition;
@@ -67,10 +68,10 @@ class SolidObject {
     _tilePosition = value;
     if (value != null) {
       box = Box(
-          (tilePosition.x * tileSize).toDouble(),
-          (tilePosition.y * tileSize).toDouble(),
-          tileSize.toDouble(),
-          tileSize.toDouble());
+          tilePosition.x * tileSize,
+          tilePosition.y * tileSize,
+          tileSize,
+          tileSize);
     }
   }
 

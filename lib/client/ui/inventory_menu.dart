@@ -17,10 +17,10 @@ class InventoryMenu {
   }
   void moveAndResize(Box box) {
     this.box = box;
-    final double widthPerStack = box.width / 9;
+    final int widthPerStack = box.width ~/ 9;
     buttons = [];
     for (var i = 0; i < owner.inventory.stacks.length; i++) {
-      final double left = box.left + i * widthPerStack + box.left;
+      final int left = box.left + i * widthPerStack + box.left;
       final newButton = InventoryButton(owner.inventory.stacks[i]);
       newButton.box = Box(left, box.top, widthPerStack, box.height);
       buttons.add(newButton);

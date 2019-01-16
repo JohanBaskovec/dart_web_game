@@ -13,7 +13,7 @@ part 'world.g.dart';
 class World {
   Size _dimension;
   List<List<Tile>> tilesColumn = [];
-  List<List<SolidObject>> solidObjectColumns = [];
+  List<List<int>> solidObjectColumns = [];
   List<SolidObject> solidObjects = List(worldSize.x * worldSize.y);
   List<int> freeSolidObjectIds = [];
   List<SoftObject> softObjects = [];
