@@ -13,14 +13,12 @@ import 'package:dart_game/common/command/client/set_equipped_item_client_command
 import 'package:dart_game/common/command/client/take_from_inventory_command.dart';
 import 'package:dart_game/common/command/client/use_object_on_solid_object_command.dart';
 import 'package:dart_game/common/command/server/add_message_command.dart';
-import 'package:dart_game/common/command/server/add_player_command.dart';
 import 'package:dart_game/common/command/server/add_soft_object_command.dart';
 import 'package:dart_game/common/command/server/add_solid_object_command.dart';
 import 'package:dart_game/common/command/server/add_to_inventory_command.dart';
 import 'package:dart_game/common/command/server/logged_in_command.dart';
-import 'package:dart_game/common/command/server/move_player_command.dart';
+import 'package:dart_game/common/command/server/move_solid_object_command.dart';
 import 'package:dart_game/common/command/server/remove_from_inventory_command.dart';
-import 'package:dart_game/common/command/server/remove_player_command.dart';
 import 'package:dart_game/common/command/server/remove_solid_object_command.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/command/server/set_equipped_item_server_command.dart';
@@ -37,7 +35,7 @@ import 'package:yaml/yaml.dart';
 
 class Server {
   HttpServer server;
-  final List<Client> clients = List(maxPlayers);
+  final List<Client> clients = [];
   Random randomGenerator = Random.secure();
   World world;
 
@@ -50,17 +48,17 @@ class Server {
   }
 
   void executeMoveCommand(Client client, MoveCommand command) {
-    final int playerId = client.session.id;
-    final targetX = world.players[playerId].tilePosition.x + command.x;
-    final targetY = world.players[playerId].tilePosition.y + command.y;
+    final SolidObject player = client.session.player;
+    final targetX = player.tilePosition.x + command.x;
+    final targetY = player.tilePosition.y + command.y;
     if (targetX < worldSize.x &&
         targetX >= 0 &&
         targetY < worldSize.y &&
         targetY >= 0 &&
         world.solidObjectColumns[targetX][targetY] == null) {
-      world.players[playerId].move(command.x, command.y);
+      player.move(command.x, command.y);
       final serverCommand =
-          MovePlayerCommand(playerId, world.players[playerId].tilePosition);
+          MoveSolidObjectCommand(player.id, player.tilePosition);
       sendCommandToAllClients(serverCommand);
     }
   }
@@ -117,10 +115,9 @@ class Server {
         }
       }
 
-      int nPlayers = 0;
       server.listen((HttpRequest request) async {
         try {
-          if (nPlayers == maxPlayers) {
+          if (world.freeSolidObjectIds.isEmpty) {
             // TODO: ErrorCommand
             return;
           }
@@ -130,14 +127,9 @@ class Server {
               .add('Access-Control-Allow-Credentials', 'true');
           final WebSocket newPlayerWebSocket =
               await WebSocketTransformer.upgrade(request);
-          int playerId;
-          for (int i = 0; i < clients.length; i++) {
-            if (clients[i] == null) {
-              playerId = i;
-              break;
-            }
-          }
+
           final newPlayer = makePlayer(0, 0);
+          addSolidObject(newPlayer);
           final hand = SoftObject(SoftObjectType.hand);
           final axe = SoftObject(SoftObjectType.axe);
           addSoftObject(hand);
@@ -145,21 +137,16 @@ class Server {
           newPlayer.inventory.addItem(hand);
           newPlayer.inventory.addItem(axe);
 
-          world.players[playerId] = newPlayer;
-          nPlayers++;
-          final newClient =
-              Client(Session(newPlayer, playerId), newPlayerWebSocket);
           // TODO: prevent synchro modification of clients,
           // because we may send wrong id to user otherwise
-          final addNewPlayer = AddPlayerCommand(newPlayer);
-          final loggedInCommand = LoggedInCommand(playerId, world);
+          final addNewPlayer = AddSolidObjectCommand(newPlayer);
+          final loggedInCommand = LoggedInCommand(newPlayer.id, world);
           print('Client connected!');
-          for (var i = 0; i < clients.length; i++) {
-            if (clients[i] != null) {
-              clients[i].webSocket.add(jsonEncode(addNewPlayer));
-            }
-          }
-          clients[playerId] = newClient;
+
+          sendCommandToAllClients(addNewPlayer);
+          final newClient =
+          Client(Session(newPlayer), newPlayerWebSocket);
+          clients.add(newClient);
           final jsonCommand = jsonEncode(loggedInCommand.toJson());
           newPlayerWebSocket.add(jsonCommand);
 
@@ -202,12 +189,12 @@ class Server {
               print(s);
             }
           }, onDone: () {
+            removeSolidObject(newPlayer);
             print('Client disconnected.');
-            final removeCommand = RemovePlayerCommand(playerId);
+            final removeCommand = RemoveSolidObjectCommand(newPlayer.id);
             sendCommandToAllClients(removeCommand);
             newPlayerWebSocket.close();
-            clients[playerId] = null;
-            world.players[playerId] = null;
+            clients.remove(newClient);
           });
         } catch (e, s) {
           print(e);
@@ -249,9 +236,8 @@ class Server {
     client.sendCommand(addToInventoryCommand);
 
     if (target.nGatherableItems == 0) {
-      world.solidObjectColumns[target.tilePosition.x][target.tilePosition.y] =
-          null;
-      final removeCommand = RemoveSolidObjectCommand(target.tilePosition);
+      removeSolidObject(target);
+      final removeCommand = RemoveSolidObjectCommand(target.id);
       sendCommandToAllClients(removeCommand);
     }
   }
@@ -287,7 +273,7 @@ class Server {
       }
     }
     final object = SolidObject(command.objectType, command.position);
-    world.solidObjectColumns[command.position.x][command.position.y] = object;
+    addSolidObject(object);
     sendCommandToAllClients(AddSolidObjectCommand(object));
     client.sendCommand(removeFromInventoryCommand);
   }
@@ -299,15 +285,18 @@ class Server {
 
   void executeTakeFromInventoryCommand(
       Client newClient, TakeFromInventoryCommand command) {
-    final SolidObject target = world.solidObjectColumns[command.tilePosition.x]
-        [command.tilePosition.y];
-    final Stack stack = target.inventory.stacks[command.index];
+    final SolidObject target = world.solidObjects[command.ownerId];
+    final Stack stack = target.inventory.stacks[command.inventoryIndex];
     if (stack.isEmpty) {
       // concurrent access?
       return;
     }
     final SoftObject objectTaken = world.softObjects[stack.removeLast()];
     newClient.session.player.inventory.addItem(objectTaken);
+    final List<int> nItemsToRemove = List(target.inventory.stacks.length);
+    nItemsToRemove[command.inventoryIndex] = 1;
+    final removeFromInventoryCommand = RemoveFromInventoryCommand(nItemsToRemove);
+    newClient.sendCommand(removeFromInventoryCommand);
     final serverCommand = AddToInventoryCommand(objectTaken.id);
     newClient.sendCommand(serverCommand);
   }
@@ -349,7 +338,7 @@ class Server {
     assert(world.solidObjects[object.id] != null);
     world.solidObjectColumns[object.tilePosition.x][object.tilePosition.y] = null;
     world.freeSolidObjectIds.add(object.id);
-    world.solidObjects[object.id] = null;;
+    world.solidObjects[object.id] = null;
     object.id = null;
   }
 

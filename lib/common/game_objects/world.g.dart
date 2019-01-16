@@ -18,9 +18,6 @@ World _$WorldFromJson(Map json) {
             ?.map((e) => e == null ? null : SolidObject.fromJson(e as Map))
             ?.toList())
         ?.toList()
-    ..players = (json['players'] as List)
-        ?.map((e) => e == null ? null : SolidObject.fromJson(e as Map))
-        ?.toList()
     ..solidObjects = (json['solidObjects'] as List)
         ?.map((e) => e == null ? null : SolidObject.fromJson(e as Map))
         ?.toList()
@@ -36,7 +33,6 @@ World _$WorldFromJson(Map json) {
 Map<String, dynamic> _$WorldToJson(World instance) => <String, dynamic>{
       'tilesColumn': instance.tilesColumn,
       'solidObjectColumns': instance.solidObjectColumns,
-      'players': instance.players,
       'solidObjects': instance.solidObjects,
       'freeSolidObjectIds': instance.freeSolidObjectIds,
       'softObjects': instance.softObjects,

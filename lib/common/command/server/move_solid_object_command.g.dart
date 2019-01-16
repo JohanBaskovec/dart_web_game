@@ -1,25 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'move_player_command.dart';
+part of 'move_solid_object_command.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-MovePlayerCommand _$MovePlayerCommandFromJson(Map json) {
-  return MovePlayerCommand(
-      json['playerId'] as int,
-      json['targetPosition'] == null
+MoveSolidObjectCommand _$MoveSolidObjectCommandFromJson(Map json) {
+  return MoveSolidObjectCommand(
+      json['objectId'] as int,
+      json['position'] == null
           ? null
-          : TilePosition.fromJson(json['targetPosition'] as Map))
+          : TilePosition.fromJson(json['position'] as Map))
     ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type']);
 }
 
-Map<String, dynamic> _$MovePlayerCommandToJson(MovePlayerCommand instance) =>
+Map<String, dynamic> _$MoveSolidObjectCommandToJson(
+        MoveSolidObjectCommand instance) =>
     <String, dynamic>{
       'type': _$ServerCommandTypeEnumMap[instance.type],
-      'targetPosition': instance.targetPosition,
-      'playerId': instance.playerId
+      'objectId': instance.objectId,
+      'position': instance.position
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {
@@ -44,11 +45,9 @@ T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
 
 const _$ServerCommandTypeEnumMap = <ServerCommandType, dynamic>{
   ServerCommandType.loggedIn: 'loggedIn',
-  ServerCommandType.addPlayer: 'addPlayer',
-  ServerCommandType.removePlayer: 'removePlayer',
-  ServerCommandType.movePlayer: 'movePlayer',
   ServerCommandType.removeSolidObject: 'removeSolidObject',
   ServerCommandType.addSolidObject: 'addSolidObject',
+  ServerCommandType.moveSolidObject: 'moveSolidObject',
   ServerCommandType.addToInventory: 'addToInventory',
   ServerCommandType.removeFromInventory: 'removeFromInventory',
   ServerCommandType.addSoftObject: 'addSoftObject',

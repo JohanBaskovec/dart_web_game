@@ -7,9 +7,9 @@ part 'remove_solid_object_command.g.dart';
 
 @JsonSerializable(anyMap: true)
 class RemoveSolidObjectCommand extends ServerCommand {
-  TilePosition position;
+  int id;
 
-  RemoveSolidObjectCommand(this.position)
+  RemoveSolidObjectCommand(this.id)
       : super(ServerCommandType.removeSolidObject);
 
   /// Creates a new [RemoveSolidObjectCommand] from a JSON object.

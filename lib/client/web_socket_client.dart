@@ -6,19 +6,18 @@ import 'package:dart_game/client/ui/chat.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
 import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/command/server/add_message_command.dart';
-import 'package:dart_game/common/command/server/add_player_command.dart';
 import 'package:dart_game/common/command/server/add_soft_object_command.dart';
 import 'package:dart_game/common/command/server/add_solid_object_command.dart';
 import 'package:dart_game/common/command/server/add_to_inventory_command.dart';
 import 'package:dart_game/common/command/server/logged_in_command.dart';
-import 'package:dart_game/common/command/server/move_player_command.dart';
+import 'package:dart_game/common/command/server/move_solid_object_command.dart';
 import 'package:dart_game/common/command/server/remove_from_inventory_command.dart';
-import 'package:dart_game/common/command/server/remove_player_command.dart';
 import 'package:dart_game/common/command/server/remove_solid_object_command.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
 import 'package:dart_game/common/command/server/set_equipped_item_server_command.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
+import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/session.dart';
 
@@ -38,15 +37,6 @@ class WebSocketClient {
       final ServerCommand command =
           ServerCommand.fromJson(jsonDecode(e.data as String) as Map);
       switch (command.type) {
-        case ServerCommandType.movePlayer:
-          executeMoveCommand(command as MovePlayerCommand);
-          break;
-        case ServerCommandType.addPlayer:
-          executeAddPlayerCommand(command as AddPlayerCommand);
-          break;
-        case ServerCommandType.removePlayer:
-          executeRemovePlayerCommand(command as RemovePlayerCommand);
-          break;
         case ServerCommandType.loggedIn:
           executeLoggedInCommand(command as LoggedInCommand);
           break;
@@ -72,6 +62,9 @@ class WebSocketClient {
         case ServerCommandType.addSoftObject:
           executeAddSoftObjectCommand(command as AddSoftObjectCommand);
           break;
+        case ServerCommandType.moveSolidObject:
+          executeMoveSolidObjectCommand(command as MoveSolidObjectCommand);
+          break;
         case ServerCommandType.unknown:
         case ServerCommandType.removeSoftObject:
         case ServerCommandType.addTile:
@@ -88,32 +81,22 @@ class WebSocketClient {
     webSocket.send(jsonEncode(command));
   }
 
-  void executeMoveCommand(MovePlayerCommand command) {
-    _world.players[command.playerId].moveTo(command.targetPosition);
-  }
-
-  void executeAddPlayerCommand(AddPlayerCommand command) {
-    _world.players.add(command.player);
-  }
-
-  void executeRemovePlayerCommand(RemovePlayerCommand command) {
-    _world.players[command.id] = null;
-  }
-
   void executeLoggedInCommand(LoggedInCommand command) {
     assert(command.playerId != null);
     _world.softObjects = command.world.softObjects;
     _world.solidObjects = command.world.solidObjects;
     _world.solidObjectColumns = command.world.solidObjectColumns;
-    _world.players = command.world.players;
     _world.tilesColumn = command.world.tilesColumn;
-    session.player = _world.players[command.playerId];
+    session.player = _world.solidObjects[command.playerId];
     assert(session.player != null);
-    session.id = command.playerId;
+    session.player = _world.solidObjects[command.playerId];
   }
 
   void executeRemoveSolidObjectCommand(RemoveSolidObjectCommand command) {
-    _world.solidObjectColumns[command.position.x][command.position.y] = null;
+    final SolidObject object = _world.solidObjects[command.id];
+    _world.solidObjectColumns[object.tilePosition.x][object.tilePosition.y] =
+        null;
+    _world.solidObjects[command.id] = null;
   }
 
   void executeAddToInventoryCommand(AddToInventoryCommand command) {
@@ -127,6 +110,7 @@ class WebSocketClient {
   void executeAddSolidObjectCommand(AddSolidObjectCommand command) {
     _world.solidObjectColumns[command.object.tilePosition.x]
         [command.object.tilePosition.y] = command.object;
+    _world.solidObjects[command.object.id] = command.object;
   }
 
   void executeRemoveFromInventoryCommand(RemoveFromInventoryCommand command) {
@@ -155,5 +139,16 @@ class WebSocketClient {
       _world.softObjects.length = command.object.id + 1;
     }
     _world.softObjects[command.object.id] = command.object;
+  }
+
+  void executeMoveSolidObjectCommand(MoveSolidObjectCommand command) {
+    assert(command.objectId != null);
+    assert(command.position != null);
+    assert(command.position.x != null);
+    assert(command.position.y != null);
+    _world.solidObjects[command.objectId]
+        .move(command.position.x, command.position.y);
+    _world.solidObjectColumns[command.position.x][command.position.y] =
+        _world.solidObjects[command.objectId];
   }
 }

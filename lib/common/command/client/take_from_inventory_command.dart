@@ -7,13 +7,15 @@ part 'take_from_inventory_command.g.dart';
 
 @JsonSerializable(anyMap: true)
 class TakeFromInventoryCommand extends ClientCommand {
-  TilePosition tilePosition;
-  int index;
+  int ownerId;
+  int inventoryIndex;
 
-  TakeFromInventoryCommand(this.tilePosition, this.index) : super(ClientCommandType.takeFromInventory);
+  TakeFromInventoryCommand(this.ownerId, this.inventoryIndex)
+      : super(ClientCommandType.takeFromInventory);
 
   /// Creates a new [TakeFromInventoryCommand] from a JSON object.
-  static TakeFromInventoryCommand fromJson(Map<dynamic, dynamic> json) => _$TakeFromInventoryCommandFromJson(json);
+  static TakeFromInventoryCommand fromJson(Map<dynamic, dynamic> json) =>
+      _$TakeFromInventoryCommandFromJson(json);
 
   /// Convert this object to a JSON object.
   @override

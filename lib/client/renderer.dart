@@ -59,17 +59,6 @@ class Renderer {
     }
     _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
 
-    for (var player in world.players) {
-      if (player != null) {
-        _ctx.drawImageScaled(
-            solidImages[SolidObjectType.player],
-            player.box.left,
-            player.box.top,
-            player.box.width,
-            player.box.height);
-      }
-    }
-
     for (List<SolidObject> column in world.solidObjectColumns) {
       for (SolidObject object in column) {
         if (object != null) {

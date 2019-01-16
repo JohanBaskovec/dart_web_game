@@ -38,7 +38,7 @@ class InventoryMenu {
   bool clickAt(CanvasPosition canvasPosition) {
     for (int i = 0 ; i < buttons.length ; i++) {
       if (buttons[i].box.pointIsInBox(canvasPosition.x, canvasPosition.y)) {
-        webSocketClient.sendCommand(TakeFromInventoryCommand(owner.tilePosition, i));
+        webSocketClient.sendCommand(TakeFromInventoryCommand(owner.id, i));
         return false;
       }
     }

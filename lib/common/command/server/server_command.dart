@@ -1,12 +1,10 @@
 import 'package:dart_game/common/command/server/add_message_command.dart';
-import 'package:dart_game/common/command/server/add_player_command.dart';
 import 'package:dart_game/common/command/server/add_soft_object_command.dart';
 import 'package:dart_game/common/command/server/add_solid_object_command.dart';
 import 'package:dart_game/common/command/server/add_to_inventory_command.dart';
 import 'package:dart_game/common/command/server/logged_in_command.dart';
-import 'package:dart_game/common/command/server/move_player_command.dart';
+import 'package:dart_game/common/command/server/move_solid_object_command.dart';
 import 'package:dart_game/common/command/server/remove_from_inventory_command.dart';
-import 'package:dart_game/common/command/server/remove_player_command.dart';
 import 'package:dart_game/common/command/server/remove_solid_object_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
 import 'package:dart_game/common/command/server/set_equipped_item_server_command.dart';
@@ -25,20 +23,16 @@ class ServerCommand {
     final ServerCommandType type =
         _$enumDecode(_$ServerCommandTypeEnumMap, json['type']);
     switch (type) {
-      case ServerCommandType.addPlayer:
-        return AddPlayerCommand.fromJson(json);
       case ServerCommandType.addSolidObject:
         return AddSolidObjectCommand.fromJson(json);
       case ServerCommandType.loggedIn:
         return LoggedInCommand.fromJson(json);
-      case ServerCommandType.movePlayer:
-        return MovePlayerCommand.fromJson(json);
       case ServerCommandType.addToInventory:
         return AddToInventoryCommand.fromJson(json);
-      case ServerCommandType.removePlayer:
-        return RemovePlayerCommand.fromJson(json);
       case ServerCommandType.removeSolidObject:
         return RemoveSolidObjectCommand.fromJson(json);
+      case ServerCommandType.moveSolidObject:
+        return MoveSolidObjectCommand.fromJson(json);
       case ServerCommandType.removeFromInventory:
         return RemoveFromInventoryCommand.fromJson(json);
       case ServerCommandType.addMessage:

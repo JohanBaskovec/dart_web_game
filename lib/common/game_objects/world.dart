@@ -14,7 +14,6 @@ class World {
   Size _dimension;
   List<List<Tile>> tilesColumn = [];
   List<List<SolidObject>> solidObjectColumns = [];
-  List<SolidObject> players = [];
   List<SolidObject> solidObjects = List(worldSize.x * worldSize.y);
   List<int> freeSolidObjectIds = [];
   List<SoftObject> softObjects = [];
@@ -26,8 +25,7 @@ class World {
   World.fromConstants()
       : _dimension = worldSize,
         tilesColumn = List(worldSize.x),
-        solidObjectColumns = List(worldSize.x),
-        players = List(maxPlayers) {
+        solidObjectColumns = List(worldSize.x) {
     for (int x = 0 ; x < _dimension.x ; x++) {
       tilesColumn[x] = List(_dimension.y);
     }

@@ -22,7 +22,7 @@ class Game {
     final chat = Chat();
     final CanvasElement canvas = document.getElementById('canvas');
     final windowsManager = WindowsManager();
-    final session = Session(null, null);
+    final session = Session(null);
     final inventory = PlayerInventoryMenu(session, null);
     final renderer =
         Renderer(canvas, buildMenu, chat, inventory, windowsManager, session);

@@ -7,9 +7,7 @@ part of 'remove_solid_object_command.dart';
 // **************************************************************************
 
 RemoveSolidObjectCommand _$RemoveSolidObjectCommandFromJson(Map json) {
-  return RemoveSolidObjectCommand(json['position'] == null
-      ? null
-      : TilePosition.fromJson(json['position'] as Map))
+  return RemoveSolidObjectCommand(json['id'] as int)
     ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type']);
 }
 
@@ -17,7 +15,7 @@ Map<String, dynamic> _$RemoveSolidObjectCommandToJson(
         RemoveSolidObjectCommand instance) =>
     <String, dynamic>{
       'type': _$ServerCommandTypeEnumMap[instance.type],
-      'position': instance.position
+      'id': instance.id
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {
@@ -42,11 +40,9 @@ T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
 
 const _$ServerCommandTypeEnumMap = <ServerCommandType, dynamic>{
   ServerCommandType.loggedIn: 'loggedIn',
-  ServerCommandType.addPlayer: 'addPlayer',
-  ServerCommandType.removePlayer: 'removePlayer',
-  ServerCommandType.movePlayer: 'movePlayer',
   ServerCommandType.removeSolidObject: 'removeSolidObject',
   ServerCommandType.addSolidObject: 'addSolidObject',
+  ServerCommandType.moveSolidObject: 'moveSolidObject',
   ServerCommandType.addToInventory: 'addToInventory',
   ServerCommandType.removeFromInventory: 'removeFromInventory',
   ServerCommandType.addSoftObject: 'addSoftObject',

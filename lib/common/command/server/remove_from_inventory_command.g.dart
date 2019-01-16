@@ -11,13 +11,15 @@ RemoveFromInventoryCommand _$RemoveFromInventoryCommandFromJson(Map json) {
       (json['nObjectsToRemoveFromEachStack'] as List)
           ?.map((e) => e as int)
           ?.toList())
-    ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type']);
+    ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type'])
+    ..ownerId = json['ownerId'] as int;
 }
 
 Map<String, dynamic> _$RemoveFromInventoryCommandToJson(
         RemoveFromInventoryCommand instance) =>
     <String, dynamic>{
       'type': _$ServerCommandTypeEnumMap[instance.type],
+      'ownerId': instance.ownerId,
       'nObjectsToRemoveFromEachStack': instance.nObjectsToRemoveFromEachStack
     };
 
@@ -43,11 +45,9 @@ T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
 
 const _$ServerCommandTypeEnumMap = <ServerCommandType, dynamic>{
   ServerCommandType.loggedIn: 'loggedIn',
-  ServerCommandType.addPlayer: 'addPlayer',
-  ServerCommandType.removePlayer: 'removePlayer',
-  ServerCommandType.movePlayer: 'movePlayer',
   ServerCommandType.removeSolidObject: 'removeSolidObject',
   ServerCommandType.addSolidObject: 'addSolidObject',
+  ServerCommandType.moveSolidObject: 'moveSolidObject',
   ServerCommandType.addToInventory: 'addToInventory',
   ServerCommandType.removeFromInventory: 'removeFromInventory',
   ServerCommandType.addSoftObject: 'addSoftObject',

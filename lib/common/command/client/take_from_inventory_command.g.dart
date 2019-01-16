@@ -8,10 +8,7 @@ part of 'take_from_inventory_command.dart';
 
 TakeFromInventoryCommand _$TakeFromInventoryCommandFromJson(Map json) {
   return TakeFromInventoryCommand(
-      json['tilePosition'] == null
-          ? null
-          : TilePosition.fromJson(json['tilePosition'] as Map),
-      json['index'] as int)
+      json['ownerId'] as int, json['inventoryIndex'] as int)
     ..type = _$enumDecodeNullable(_$ClientCommandTypeEnumMap, json['type']);
 }
 
@@ -19,8 +16,8 @@ Map<String, dynamic> _$TakeFromInventoryCommandToJson(
         TakeFromInventoryCommand instance) =>
     <String, dynamic>{
       'type': _$ClientCommandTypeEnumMap[instance.type],
-      'tilePosition': instance.tilePosition,
-      'index': instance.index
+      'ownerId': instance.ownerId,
+      'inventoryIndex': instance.inventoryIndex
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {

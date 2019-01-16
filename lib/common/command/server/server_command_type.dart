@@ -1,10 +1,8 @@
 enum ServerCommandType {
   loggedIn,
-  addPlayer,
-  removePlayer,
-  movePlayer,
   removeSolidObject,
   addSolidObject,
+  moveSolidObject,
   addToInventory,
   removeFromInventory,
   addSoftObject,
