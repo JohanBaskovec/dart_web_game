@@ -29,14 +29,7 @@ class Box {
     right = left + width;
     bottom = top + height;
   }
-
-  void moveTo(double x, double y) {
-    left = x;
-    top = y;
-    right = left + width;
-    bottom = top + height;
-  }
-
+  
   /// Creates a new [Box] from a JSON object.
   static Box fromJson(Map<dynamic, dynamic> json) => _$BoxFromJson(json);
 

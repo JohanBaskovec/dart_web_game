@@ -3,14 +3,14 @@ import 'dart:html';
 
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/client/renderer.dart';
-import 'package:dart_game/client/session.dart';
-import 'package:dart_game/client/ui/build_menu.dart';
-import 'package:dart_game/client/ui/chat.dart';
-import 'package:dart_game/client/ui/player_inventory_menu.dart';
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/client/windows_manager.dart';
 import 'package:dart_game/common/command/client/move_command.dart';
+import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/tile_position.dart';
+import 'package:dart_game/client/ui/build_menu.dart';
+import 'package:dart_game/client/ui/chat.dart';
+import 'package:dart_game/client/ui/player_inventory_menu.dart';
 
 class InputManager {
   final CanvasElement _canvas;
@@ -25,10 +25,9 @@ class InputManager {
 
   PlayerInventoryMenu inventory;
   WindowsManager windowsManager;
-  Session session;
 
-  InputManager(this._body, this._canvas, this.renderer, this.buildMenu,
-      this.chat, this.inventory, this.windowsManager, this.session);
+  InputManager(this._body, this._canvas, this.renderer,
+      this.buildMenu, this.chat, this.inventory, this.windowsManager);
 
   void listen() {
     _body.onClick.listen((MouseEvent e) {

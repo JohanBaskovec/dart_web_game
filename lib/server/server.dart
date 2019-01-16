@@ -39,15 +39,15 @@ class Server {
 
   void executeMoveCommand(Client client, MoveCommand command) {
     final int playerId = client.playerId;
-    final origin = world.gridPositions[playerId];
-    final target = TilePosition(origin.x + command.x, origin.y + command.y);
+
+    final target = TilePosition(
+        (world.renderingComponents[playerId].box.left / tileSize).floor(),
+        (world.renderingComponents[playerId].box.top / tileSize).floor());
     if (target.x < worldSize.x &&
         target.x >= 0 &&
         target.y < worldSize.y &&
         target.y >= 0 &&
         world.solidObjectColumns[target.x][target.y] == null) {
-      world.solidObjectColumns[origin.x][origin.y] = null;
-      world.gridPositions[playerId] = target;
       world.renderingComponents[playerId].box
           .move(command.x * tileSize, command.y * tileSize);
       world.solidObjectColumns[target.x][target.y] = playerId;
