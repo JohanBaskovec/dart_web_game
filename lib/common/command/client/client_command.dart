@@ -17,12 +17,12 @@ class ClientCommand {
   static ClientCommand fromJson(Map<dynamic, dynamic> json) {
     final ClientCommandType type = _$enumDecode(_$ClientCommandTypeEnumMap, json['type']);
     switch (type) {
-      case ClientCommandType.buildEntity:
-        return BuildEntityCommand.fromJson(json);
+      case ClientCommandType.buildSolidObject:
+        return BuildSolidObjectCommand.fromJson(json);
       case ClientCommandType.move:
         return MoveCommand.fromJson(json);
-      case ClientCommandType.useObjectOnEntity:
-        return UseObjectOnEntityCommand.fromJson(json);
+      case ClientCommandType.useObjectOnSolidObject:
+        return UseObjectOnSolidObjectCommand.fromJson(json);
       case ClientCommandType.sendMessage:
         return SendMessageCommand.fromJson(json);
       case ClientCommandType.login:

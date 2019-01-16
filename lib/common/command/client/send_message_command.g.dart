@@ -40,8 +40,8 @@ T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
 const _$ClientCommandTypeEnumMap = <ClientCommandType, dynamic>{
   ClientCommandType.login: 'login',
   ClientCommandType.move: 'move',
-  ClientCommandType.useObjectOnEntity: 'useObjectOnEntity',
-  ClientCommandType.buildEntity: 'buildEntity',
+  ClientCommandType.useObjectOnSolidObject: 'useObjectOnSolidObject',
+  ClientCommandType.buildSolidObject: 'buildSolidObject',
   ClientCommandType.sendMessage: 'sendMessage',
   ClientCommandType.unknown: 'unknown'
 };

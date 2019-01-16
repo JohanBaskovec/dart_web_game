@@ -1,21 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'add_message_command.dart';
+part of 'add_to_inventory_command.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-AddMessageCommand _$AddMessageCommandFromJson(Map json) {
-  return AddMessageCommand(
-      json['message'] == null ? null : Message.fromJson(json['message'] as Map))
+AddToInventoryCommand _$AddToInventoryCommandFromJson(Map json) {
+  return AddToInventoryCommand(
+      json['playerId'] as int,
+      json['object'] == null
+          ? null
+          : SoftGameObject.fromJson(json['object'] as Map))
     ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type']);
 }
 
-Map<String, dynamic> _$AddMessageCommandToJson(AddMessageCommand instance) =>
+Map<String, dynamic> _$AddToInventoryCommandToJson(
+        AddToInventoryCommand instance) =>
     <String, dynamic>{
       'type': _$ServerCommandTypeEnumMap[instance.type],
-      'message': instance.message
+      'playerId': instance.playerId,
+      'object': instance.object
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {

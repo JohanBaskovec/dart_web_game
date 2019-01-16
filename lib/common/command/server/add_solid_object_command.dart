@@ -6,16 +6,16 @@ import 'package:json_annotation/json_annotation.dart';
 part 'add_solid_object_command.g.dart';
 
 @JsonSerializable(anyMap: true)
-class AddEntityCommand extends ServerCommand {
-  Entity object;
+class AddSolidObjectCommand extends ServerCommand {
+  SolidObject object;
 
-  AddEntityCommand(this.object) : super(ServerCommandType.addEntity);
+  AddSolidObjectCommand(this.object) : super(ServerCommandType.addSolidObject);
 
-  /// Creates a new [AddEntityCommand] from a JSON object.
-  static AddEntityCommand fromJson(Map<dynamic, dynamic> json) =>
-      _$AddEntityCommandFromJson(json);
+  /// Creates a new [AddSolidObjectCommand] from a JSON object.
+  static AddSolidObjectCommand fromJson(Map<dynamic, dynamic> json) =>
+      _$AddSolidObjectCommandFromJson(json);
 
   /// Convert this object to a JSON object.
   @override
-  Map<String, dynamic> toJson() => _$AddEntityCommandToJson(this);
+  Map<String, dynamic> toJson() => _$AddSolidObjectCommandToJson(this);
 }

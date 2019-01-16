@@ -1,19 +1,17 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'player.dart';
+part of 'solid_object.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-Player _$PlayerFromJson(Map json) {
-  return Player(
+SolidObject _$SolidObjectFromJson(Map json) {
+  return SolidObject(
+      _$enumDecodeNullable(_$SolidObjectTypeEnumMap, json['type']),
       json['tilePosition'] == null
           ? null
-          : TilePosition.fromJson(json['tilePosition'] as Map),
-      json['name'] as String,
-      json['id'] as int)
-    ..type = _$enumDecodeNullable(_$SolidObjectTypeEnumMap, json['type'])
+          : TilePosition.fromJson(json['tilePosition'] as Map))
     ..inventory = json['inventory'] == null
         ? null
         : Inventory.fromJson(json['inventory'] as Map)
@@ -21,14 +19,13 @@ Player _$PlayerFromJson(Map json) {
     ..alive = json['alive'] as bool;
 }
 
-Map<String, dynamic> _$PlayerToJson(Player instance) => <String, dynamic>{
+Map<String, dynamic> _$SolidObjectToJson(SolidObject instance) =>
+    <String, dynamic>{
       'type': _$SolidObjectTypeEnumMap[instance.type],
       'inventory': instance.inventory,
       'box': instance.box,
       'alive': instance.alive,
-      'tilePosition': instance.tilePosition,
-      'name': instance.name,
-      'id': instance.id
+      'tilePosition': instance.tilePosition
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {

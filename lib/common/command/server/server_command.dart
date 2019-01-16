@@ -25,8 +25,8 @@ class ServerCommand {
     switch (type) {
       case ServerCommandType.addPlayer:
         return AddPlayerCommand.fromJson(json);
-      case ServerCommandType.addEntity:
-        return AddEntityCommand.fromJson(json);
+      case ServerCommandType.addSolidObject:
+        return AddSolidObjectCommand.fromJson(json);
       case ServerCommandType.loggedIn:
         return LoggedInCommand.fromJson(json);
       case ServerCommandType.movePlayer:
@@ -35,8 +35,8 @@ class ServerCommand {
         return AddToInventoryCommand.fromJson(json);
       case ServerCommandType.removePlayer:
         return RemovePlayerCommand.fromJson(json);
-      case ServerCommandType.removeEntity:
-        return RemoveEntityCommand.fromJson(json);
+      case ServerCommandType.removeSolidObject:
+        return RemoveSolidObjectCommand.fromJson(json);
       case ServerCommandType.removeFromInventory:
         return RemoveFromInventoryCommand.fromJson(json);
       case ServerCommandType.addMessage:

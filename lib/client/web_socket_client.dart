@@ -54,11 +54,11 @@ class WebSocketClient {
           executeRemoveFromInventoryCommand(
               command as RemoveFromInventoryCommand);
           break;
-        case ServerCommandType.removeEntity:
-          executeRemoveEntityCommand(command as RemoveEntityCommand);
+        case ServerCommandType.removeSolidObject:
+          executeRemoveSolidObjectCommand(command as RemoveSolidObjectCommand);
           break;
-        case ServerCommandType.addEntity:
-          executeAddEntityCommand(command as AddEntityCommand);
+        case ServerCommandType.addSolidObject:
+          executeAddSolidObjectCommand(command as AddSolidObjectCommand);
           break;
         case ServerCommandType.addMessage:
           executeAddMessageCommand(command as AddMessageCommand);
@@ -103,7 +103,7 @@ class WebSocketClient {
     inventoryMenu.player = _inputManager.player;
   }
 
-  void executeRemoveEntityCommand(RemoveEntityCommand command) {
+  void executeRemoveSolidObjectCommand(RemoveSolidObjectCommand command) {
     _world.solidObjectColumns[command.position.x][command.position.y] = null;
   }
 
@@ -112,7 +112,7 @@ class WebSocketClient {
     inventoryMenu.update();
   }
 
-  void executeAddEntityCommand(AddEntityCommand command) {
+  void executeAddSolidObjectCommand(AddSolidObjectCommand command) {
     _world.solidObjectColumns[command.object.tilePosition.x]
         [command.object.tilePosition.y] = command.object;
   }

@@ -10,12 +10,12 @@ import 'package:json_annotation/json_annotation.dart';
 part 'player.g.dart';
 
 @JsonSerializable(anyMap: true)
-class Player extends Entity {
+class Player extends SolidObject {
   String name;
   int id;
 
   Player([TilePosition tilePosition, this.name, this.id])
-      : super(EntityType.player, tilePosition);
+      : super(SolidObjectType.player, tilePosition);
 
   void move(int x, int y) {
     tilePosition.x += x;

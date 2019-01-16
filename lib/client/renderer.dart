@@ -22,8 +22,8 @@ class Renderer {
   double scale = 1;
   CanvasPosition cameraPosition;
   Player player;
-  Map<EntityType, ImageElement> softImages = {};
-  Map<EntityType, ImageElement> solidImages = {};
+  Map<SoftObjectType, ImageElement> softImages = {};
+  Map<SolidObjectType, ImageElement> solidImages = {};
   BuildMenu buildMenu;
   Chat chat;
   PlayerInventoryMenu inventory;
@@ -32,11 +32,11 @@ class Renderer {
   Renderer(this._canvas, this.buildMenu, this.chat, this.inventory,
       this.windowsManager)
       : _ctx = _canvas.getContext('2d') as CanvasRenderingContext2D {
-    for (EntityType type in EntityType.values) {
+    for (SoftObjectType type in SoftObjectType.values) {
       softImages[type] = ImageElement();
       softImages[type].src = '/$type.png';
     }
-    for (EntityType type in EntityType.values) {
+    for (SolidObjectType type in SolidObjectType.values) {
       solidImages[type] = ImageElement();
       solidImages[type].src = '/$type.png';
     }
@@ -57,7 +57,7 @@ class Renderer {
     for (var player in world.players) {
       if (player != null) {
         _ctx.drawImageScaled(
-            solidImages[EntityType.player],
+            solidImages[SolidObjectType.player],
             player.box.left,
             player.box.top,
             player.box.width,
@@ -65,8 +65,8 @@ class Renderer {
       }
     }
 
-    for (List<Entity> column in world.solidObjectColumns) {
-      for (Entity object in column) {
+    for (List<SolidObject> column in world.solidObjectColumns) {
+      for (SolidObject object in column) {
         if (object != null) {
           _ctx.drawImageScaled(solidImages[object.type], object.box.left,
               object.box.top, object.box.width, object.box.height);
@@ -81,7 +81,7 @@ class Renderer {
           inventory.box.height);
       final double widthPerStack = inventory.box.width / 9;
       for (var i = 0; i < player.inventory.stacks.length; i++) {
-        final List<Entity> stack = player.inventory.stacks[i];
+        final List<SoftGameObject> stack = player.inventory.stacks[i];
         final double left = i * widthPerStack + inventory.box.left;
         _ctx.drawImageScaled(softImages[stack[0].type], left, inventory.box.top,
             widthPerStack, inventory.box.height);
@@ -101,7 +101,7 @@ class Renderer {
             button.box.top, button.box.width, button.box.height);
         _ctx.fillStyle = 'white';
         var k = 0;
-        for (MapEntry<EntityType, int> ingredientList
+        for (MapEntry<SoftObjectType, int> ingredientList
             in solidReceipes[button.type].entries) {
           _ctx.fillText(
               '${ingredientList.key}: ${ingredientList.value}',
@@ -118,7 +118,7 @@ class Renderer {
           inventory.box.height);
       final double widthPerStack = inventory.box.width / 9;
       for (var i = 0; i < inventory.buttons.length; i++) {
-        final List<Entity> stack = inventory.buttons[i].stack;
+        final List<SoftGameObject> stack = inventory.buttons[i].stack;
         final InventoryButton button = inventory.buttons[i];
         final type = stack[0].type;
         _ctx.drawImageScaled(softImages[type], button.box.left, button.box.top,
