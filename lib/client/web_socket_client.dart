@@ -128,8 +128,6 @@ class WebSocketClient {
   }
 
   void executeAddGridAlignedEntity(AddGridAlignedEntityCommand command) {
-    world.setEntity(command.entity);
-    world.setCollisionComponent(command.collisionComponent);
-    world.setRenderingComponent(command.renderingComponent);
+    world.addGridAlignedEntity(command.image, command.position);
   }
 }

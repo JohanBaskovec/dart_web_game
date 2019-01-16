@@ -9,7 +9,6 @@ import 'package:dart_game/common/command/client/client_command_type.dart';
 import 'package:dart_game/common/command/client/move_command.dart';
 import 'package:dart_game/common/command/client/send_message_command.dart';
 import 'package:dart_game/common/command/client/use_object_on_solid_object_command.dart';
-import 'package:dart_game/common/command/server/add_grid_aligned_entity_command.dart';
 import 'package:dart_game/common/command/server/add_message_command.dart';
 import 'package:dart_game/common/command/server/logged_in_command.dart';
 import 'package:dart_game/common/command/server/move_rendering_and_collision_components_command.dart';
@@ -85,25 +84,6 @@ class Server {
       world = World.fromConstants(randomGenerator);
 
       int nPlayers = 0;
-
-      Timer.periodic(Duration(milliseconds: 120), (Timer timer) {
-        final Entity entity = world.addGridAlignedEntity(
-            EntityType.tree,
-            TilePosition(randomGenerator.nextInt(worldSizeTile.x),
-                randomGenerator.nextInt(worldSizeTile.y)));
-        final command = AddGridAlignedEntityCommand(
-            entity,
-            world.collisionComponents[entity.collisionComponentId],
-            world.renderingComponents[entity.renderingComponentId]);
-        sendCommandToAllClients(command);
-        final int r = randomGenerator.nextInt(world.entities.length);
-        if (world.entities[r] != null &&
-            world.entities[r].type != EntityType.player) {
-          final command = RemoveEntityCommand(world.entities[r]);
-          world.removeEntity(world.entities[r]);
-          sendCommandToAllClients(command);
-        }
-      });
       server.listen((HttpRequest request) async {
         try {
           if (nPlayers == maxPlayers) {
