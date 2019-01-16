@@ -1,26 +1,20 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'use_object_on_solid_object_command.dart';
+part of 'click_command.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-UseObjectOnEntityCommand _$UseObjectOnEntityCommandFromJson(Map json) {
-  return UseObjectOnEntityCommand(
-      json['targetPosition'] == null
-          ? null
-          : TilePosition.fromJson(json['targetPosition'] as Map),
-      json['itemIndex'] as int)
+ClickCommand _$ClickCommandFromJson(Map json) {
+  return ClickCommand(json['clickableComponentId'] as int)
     ..type = _$enumDecodeNullable(_$ClientCommandTypeEnumMap, json['type']);
 }
 
-Map<String, dynamic> _$UseObjectOnEntityCommandToJson(
-        UseObjectOnEntityCommand instance) =>
+Map<String, dynamic> _$ClickCommandToJson(ClickCommand instance) =>
     <String, dynamic>{
       'type': _$ClientCommandTypeEnumMap[instance.type],
-      'targetPosition': instance.targetPosition,
-      'itemIndex': instance.itemIndex
+      'clickableComponentId': instance.clickableComponentId
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {

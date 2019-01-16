@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:json_annotation/json_annotation.dart';
 
 part 'world_position.g.dart';
@@ -8,6 +10,10 @@ class WorldPosition {
   int y;
 
   WorldPosition([this.x, this.y]);
+
+  num distanceFrom(WorldPosition b) {
+    return sqrt(pow(b.x - x, 2) + pow(b.y - y, 2)).abs();
+  }
   
   /// Creates a new [WorldPosition] from a JSON object.
   static WorldPosition fromJson(Map<dynamic, dynamic> json) =>

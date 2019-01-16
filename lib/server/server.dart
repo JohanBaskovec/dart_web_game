@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:dart_game/common/command/client/build_entity_command.dart';
+import 'package:dart_game/common/command/client/click_command.dart';
 import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/command/client/client_command_type.dart';
 import 'package:dart_game/common/command/client/move_command.dart';
@@ -87,14 +88,13 @@ class Server {
       int nPlayers = 0;
 
       Timer.periodic(Duration(milliseconds: 120), (Timer timer) {
-        final Entity entity = world.addGridAlignedEntity(
-            EntityType.tree,
+        final Entity tree = world.addTree(
             TilePosition(randomGenerator.nextInt(worldSizeTile.x),
                 randomGenerator.nextInt(worldSizeTile.y)));
         final command = AddGridAlignedEntityCommand(
-            entity,
-            world.collisionComponents[entity.collisionComponentId],
-            world.renderingComponents[entity.renderingComponentId]);
+            tree,
+            world.collisionComponents[tree.collisionComponentId],
+            world.renderingComponents[tree.renderingComponentId]);
         sendCommandToAllClients(command);
         final int r = randomGenerator.nextInt(world.entities.length);
         if (world.entities[r] != null &&
@@ -169,6 +169,9 @@ class Server {
                 case ClientCommandType.sendMessage:
                   executeSendMessageCommand(
                       newClient, command as SendMessageCommand);
+                  break;
+                case ClientCommandType.click:
+                  executeClickCommand(newClient, command as ClickCommand);
                   break;
                 case ClientCommandType.login:
                 case ClientCommandType.unknown:
@@ -278,5 +281,9 @@ class Server {
   void executeSendMessageCommand(Client newClient, SendMessageCommand command) {
     sendCommandToAllClients(
         AddMessageCommand(Message(newClient.player.id, command.message)));
+  }
+
+  void executeClickCommand(Client newClient, ClickCommand command) {
+    print(command);
   }
 }
