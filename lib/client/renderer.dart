@@ -53,7 +53,7 @@ class Renderer {
     _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
 
     for (RenderingComponent rendering in world.renderingComponents) {
-      if (rendering != null && rendering.box != null) {
+      if (rendering != null) {
         _ctx.drawImageScaled(
             solidImages[rendering.image],
             rendering.box.left,

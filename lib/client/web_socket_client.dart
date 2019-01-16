@@ -86,10 +86,12 @@ class WebSocketClient {
     world.tilesColumn = command.world.tilesColumn;
     world.publicInventories = command.world.publicInventories;
     world.privateInventories = command.world.privateInventories;
+    world.worldPositions = command.world.worldPositions;
     world.gridPositions = command.world.gridPositions;
     world.tilesColumn = command.world.tilesColumn;
     world.renderingComponents = command.world.renderingComponents;
     world.entities = command.world.entities;
+    world.boxes = command.world.boxes;
   }
 
   void executeRemoveEntityCommand(RemoveEntityCommand command) {
@@ -136,5 +138,8 @@ class WebSocketClient {
 
   void executeMoveGridAlignedEntity(MoveGridAlignedEntityCommand command) {
     world.gridPositions[command.entityId] = command.destination;
+    world.worldPositions[command.entityId] = WorldPosition(
+        (command.destination.x * tileSize).toDouble(),
+        (command.destination.y * tileSize).toDouble());
   }
 }

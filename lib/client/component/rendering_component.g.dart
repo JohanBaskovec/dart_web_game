@@ -8,8 +8,8 @@ part of 'rendering_component.dart';
 
 RenderingComponent _$RenderingComponentFromJson(Map json) {
   return RenderingComponent(
-      _$enumDecodeNullable(_$EntityTypeEnumMap, json['image']),
-      json['box'] == null ? null : Box.fromJson(json['box'] as Map));
+      _$enumDecodeNullable(_$EntityTypeEnumMap, json['image']))
+    ..box = json['box'] == null ? null : Box.fromJson(json['box'] as Map);
 }
 
 Map<String, dynamic> _$RenderingComponentToJson(RenderingComponent instance) =>

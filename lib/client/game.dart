@@ -30,7 +30,7 @@ class Game {
     });
 
 
-    final inputManager = InputManager(document.body, canvas, renderer,
+    final inputManager = InputManager(document.body, canvas, world, renderer,
         buildMenu, chat, inventory, windowsManager);
     inputManager.listen();
 
