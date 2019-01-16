@@ -3,7 +3,9 @@ import 'package:dart_game/common/command/client/client_command_type.dart';
 import 'package:dart_game/common/command/client/move_command.dart';
 import 'package:dart_game/common/command/client/send_message_command.dart';
 import 'package:dart_game/common/command/client/set_equipped_item_client_command.dart';
+import 'package:dart_game/common/command/client/take_from_inventory_command.dart';
 import 'package:dart_game/common/command/client/use_object_on_solid_object_command.dart';
+import 'package:dart_game/common/command/server/add_to_inventory_command.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'client_command.g.dart';
@@ -28,8 +30,9 @@ class ClientCommand {
         return SendMessageCommand.fromJson(json);
       case ClientCommandType.setEquippedItem:
         return SetEquippedItemClientCommand.fromJson(json);
-      case ClientCommandType.addToInventory:
       case ClientCommandType.takeFromInventory:
+        return TakeFromInventoryCommand.fromJson(json);
+      case ClientCommandType.addToInventory:
       case ClientCommandType.login:
       case ClientCommandType.unknown:
         break;

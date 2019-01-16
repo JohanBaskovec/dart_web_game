@@ -12,6 +12,7 @@ SolidObject _$SolidObjectFromJson(Map json) {
       json['tilePosition'] == null
           ? null
           : TilePosition.fromJson(json['tilePosition'] as Map))
+    ..id = json['id'] as int
     ..name = json['name'] as String
     ..inventory = json['inventory'] == null
         ? null
@@ -24,6 +25,7 @@ SolidObject _$SolidObjectFromJson(Map json) {
 Map<String, dynamic> _$SolidObjectToJson(SolidObject instance) =>
     <String, dynamic>{
       'type': _$SolidObjectTypeEnumMap[instance.type],
+      'id': instance.id,
       'name': instance.name,
       'inventory': instance.inventory,
       'nGatherableItems': instance.nGatherableItems,

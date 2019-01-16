@@ -16,6 +16,7 @@ class World {
   List<List<SolidObject>> solidObjectColumns = [];
   List<SolidObject> players = [];
   List<SolidObject> solidObjects = List(worldSize.x * worldSize.y);
+  List<int> freeSolidObjectIds = [];
   List<SoftObject> softObjects = [];
   List<int> freeSoftObjectIds = [];
 
@@ -38,6 +39,9 @@ class World {
 
     for (int x = 0 ; x < _dimension.x ; x++) {
       solidObjectColumns[x] = List(_dimension.y);
+    }
+    for (int i = 0 ; i < _dimension.x * _dimension.y ; i++) {
+      freeSolidObjectIds.add(i);
     }
   }
 

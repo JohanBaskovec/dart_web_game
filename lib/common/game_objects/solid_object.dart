@@ -32,6 +32,7 @@ enum SolidObjectType {
 @JsonSerializable(anyMap: true)
 class SolidObject {
   SolidObjectType type;
+  int id;
   String name;
 
   TilePosition _tilePosition;

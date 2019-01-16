@@ -86,6 +86,7 @@ class Server {
           final int rand = randomGenerator.nextInt(100);
           if (rand < 10) {
             final tree = makeTree(x, y);
+            addSolidObject(tree);
             final int nLeaves = randomGenerator.nextInt(6) + 1;
             for (int i = 0; i < nLeaves; i++) {
               final leaves = SoftObject(SoftObjectType.leaves);
@@ -99,9 +100,9 @@ class Server {
               addSoftObject(snake);
               tree.inventory.addItem(snake);
             }
-            world.solidObjectColumns[x][y] = tree;
           } else if (rand < 20) {
             final tree = makeAppleTree(x, y);
+            addSolidObject(tree);
             final int nLogs = randomGenerator.nextInt(6) + 1;
             /*
             for (int i = 0 ; i < nLogs ; i++) {
@@ -112,7 +113,6 @@ class Server {
               tree.inventory.addItem(SoftGameObject(SoftObjectType.apple));
             }
             */
-            world.solidObjectColumns[x][y] = tree;
           }
         }
       }
@@ -238,8 +238,7 @@ class Server {
       return;
     }
 
-    final SoftObject gatheredItem =
-        SoftObject(config.gatherableItemsType);
+    final SoftObject gatheredItem = SoftObject(config.gatherableItemsType);
     target.nGatherableItems--;
 
     addSoftObject(gatheredItem);
@@ -327,6 +326,31 @@ class Server {
   void removeSoftObject(SoftObject object) {
     world.freeSoftObjectIds.add(object.id);
     world.softObjects.removeAt(object.id);
+  }
+
+  void addSolidObject(SolidObject object) {
+    assert(
+        world.freeSolidObjectIds.isNotEmpty,
+        'this should never happen, there is exactly enough '
+        'space in solidObject to hold every object.');
+    final int id = world.freeSolidObjectIds.removeLast();
+    final SolidObject objectAtPosition =
+        world.solidObjectColumns[object.tilePosition.x][object.tilePosition.y];
+    assert(objectAtPosition == null);
+    world.solidObjectColumns[object.tilePosition.x][object.tilePosition.y] =
+        object;
+    object.id = id;
+    assert(world.solidObjects[id] == null);
+    world.solidObjects[id] = object;
+  }
+
+  void removeSolidObject(SolidObject object) {
+    assert(world.solidObjectColumns[object.tilePosition.x][object.tilePosition.y] != null);
+    assert(world.solidObjects[object.id] != null);
+    world.solidObjectColumns[object.tilePosition.x][object.tilePosition.y] = null;
+    world.freeSolidObjectIds.add(object.id);
+    world.solidObjects[object.id] = null;;
+    object.id = null;
   }
 
   void executeSetEquippedItemCommand(
