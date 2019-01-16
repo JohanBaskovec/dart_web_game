@@ -1,6 +1,5 @@
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
-import 'package:dart_game/common/component/clickable_component.dart';
 import 'package:dart_game/common/component/collision_component.dart';
 import 'package:dart_game/common/component/rendering_component.dart';
 import 'package:dart_game/common/entity.dart';
@@ -14,7 +13,6 @@ class LoggedInCommand extends ServerCommand {
   List<RenderingComponent> renderingComponents;
   List<CollisionComponent> collisionComponents;
   List<Entity> entities;
-  List<ClickableComponent> clickableComponents;
 
   LoggedInCommand([this.playerId, this.renderingComponents, this.collisionComponents, this.entities])
       : super(ServerCommandType.loggedIn);

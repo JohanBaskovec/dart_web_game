@@ -33,7 +33,7 @@ class Game {
 
 
     final inputManager = InputManager(document.body, canvas, renderer,
-        buildMenu, chat, inventory, windowsManager, session, world);
+        buildMenu, chat, inventory, windowsManager, session);
     inputManager.listen();
 
     final webSocketClient = WebSocketClient(WebSocket('ws:127.0.0.1:8083/ws'),

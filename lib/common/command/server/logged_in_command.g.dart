@@ -18,10 +18,7 @@ LoggedInCommand _$LoggedInCommandFromJson(Map json) {
       (json['entities'] as List)
           ?.map((e) => e == null ? null : Entity.fromJson(e as Map))
           ?.toList())
-    ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type'])
-    ..clickableComponents = (json['clickableComponents'] as List)
-        ?.map((e) => e == null ? null : ClickableComponent.fromJson(e as Map))
-        ?.toList();
+    ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type']);
 }
 
 Map<String, dynamic> _$LoggedInCommandToJson(LoggedInCommand instance) =>
@@ -30,8 +27,7 @@ Map<String, dynamic> _$LoggedInCommandToJson(LoggedInCommand instance) =>
       'playerId': instance.playerId,
       'renderingComponents': instance.renderingComponents,
       'collisionComponents': instance.collisionComponents,
-      'entities': instance.entities,
-      'clickableComponents': instance.clickableComponents
+      'entities': instance.entities
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {

@@ -9,15 +9,9 @@ import 'package:dart_game/client/ui/chat.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/client/windows_manager.dart';
-import 'package:dart_game/common/command/client/click_command.dart';
 import 'package:dart_game/common/command/client/move_command.dart';
-import 'package:dart_game/common/component/clickable_component.dart';
-import 'package:dart_game/common/component/collision_component.dart';
 import 'package:dart_game/common/constants.dart';
-import 'package:dart_game/common/entity.dart';
-import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/tile_position.dart';
-import 'package:dart_game/common/world_position.dart';
 
 class InputManager {
   final CanvasElement _canvas;
@@ -29,14 +23,13 @@ class InputManager {
   Renderer renderer;
   BuildMenu buildMenu;
   Chat chat;
-  World world;
 
   PlayerInventoryMenu inventory;
   WindowsManager windowsManager;
   Session session;
 
   InputManager(this._body, this._canvas, this.renderer, this.buildMenu,
-      this.chat, this.inventory, this.windowsManager, this.session, this.world);
+      this.chat, this.inventory, this.windowsManager, this.session);
 
   void listen() {
     _body.onClick.listen((MouseEvent e) {
@@ -109,36 +102,24 @@ class InputManager {
           }
         }
         chat.input.active = false;
-        */
         final WorldPosition mousePosition =
             renderer.getWorldPositionFromCanvasPosition(canvasPosition);
-
-        final Entity player = world.entities[session.playerId];
-        final CollisionComponent playerCollision =
-            world.collisionComponents[player.collisionComponentId];
-        final WorldPosition middlePlayer = playerCollision.box.middle();
-        Entity targetEntity;
-        // pick the component at mouse position with highest z index
-        ClickableComponent componentToClick;
-        for (ClickableComponent clickableComponent
-            in world.clickableComponents) {
-          if (clickableComponent != null) {
-            final WorldPosition middleClickable =
-                clickableComponent.box.middle();
-            if (middleClickable.distanceFrom(middlePlayer) < 60 &&
-                clickableComponent.box
-                    .pointIsInBox(mousePosition.x, mousePosition.y)) {
-              if (componentToClick == null ||
-                  componentToClick.box.z < clickableComponent.box.z) {
-                componentToClick = clickableComponent;
-              }
-            }
+        final TilePosition tilePosition = TilePosition(
+            (mousePosition.x / tileSize).floor(),
+            (mousePosition.y / tileSize).floor());
+        if (tilePosition.x >= 0 &&
+            tilePosition.x < worldSize.x &&
+            tilePosition.y >= 0 &&
+            tilePosition.y < worldSize.y) {
+          final object =
+              _world.solidObjectColumns[tilePosition.x][tilePosition.y];
+          if (object == null) {
+            clickOnGround(tilePosition);
+          } else {
+            clickOnEntity(object);
           }
         }
-        if (componentToClick != null) {
-          final command = ClickCommand(componentToClick.id);
-          webSocketClient.sendCommand(command);
-        }
+        */
       }
     });
     _canvas.onMouseWheel.listen((WheelEvent e) {
@@ -151,14 +132,13 @@ class InputManager {
     webSocketClient.webSocket.send(jsonEncode(command));
   }
 
-  /*
   void clickOnEntity(int entityId) {
+    /*
     if (player.inventory.currentlyEquiped.type == EntityType.hand) {
       if (object.type == EntityType.tree ||
           object.type == EntityType.woodenChest ||
           object.type == EntityType.campFire) {
-        final inventoryMenu = InventoryMenu(
-            Box(object.box.left, object.box.top, 600, 100), object, player);
+        final inventoryMenu = InventoryMenu(Box(object.box.left, object.box.top, 600, 100), object, player);
         windowsManager.inventoryMenus.add(inventoryMenu);
       }
     } else {
@@ -166,8 +146,8 @@ class InputManager {
           object.tilePosition, player.inventory.currentlyEquiped.index);
       webSocketClient.webSocket.send(jsonEncode(command));
     }
+    */
   }
-  */
 
   bool get canClick {
     return DateTime.now()

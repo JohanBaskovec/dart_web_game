@@ -12,7 +12,6 @@ class Entity {
   int usableComponentId;
   int collisionComponentId;
   EntityType type;
-  int clickableComponentId;
 
   Entity(this.id, this.type);
 

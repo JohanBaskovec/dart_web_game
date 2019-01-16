@@ -49,6 +49,5 @@ const _$ClientCommandTypeEnumMap = <ClientCommandType, dynamic>{
   ClientCommandType.useObjectOnEntity: 'useObjectOnEntity',
   ClientCommandType.buildEntity: 'buildEntity',
   ClientCommandType.sendMessage: 'sendMessage',
-  ClientCommandType.click: 'click',
   ClientCommandType.unknown: 'unknown'
 };

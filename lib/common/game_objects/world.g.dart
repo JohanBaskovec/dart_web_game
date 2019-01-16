@@ -20,12 +20,6 @@ World _$WorldFromJson(Map json) {
     ..collisionComponentFreeIds = (json['collisionComponentFreeIds'] as List)
         ?.map((e) => e as int)
         ?.toList()
-    ..clickableComponents = (json['clickableComponents'] as List)
-        ?.map((e) => e == null ? null : ClickableComponent.fromJson(e as Map))
-        ?.toList()
-    ..clickableComponentFreeIds = (json['clickableComponentFreeIds'] as List)
-        ?.map((e) => e as int)
-        ?.toList()
     ..entities = (json['entities'] as List)
         ?.map((e) => e == null ? null : Entity.fromJson(e as Map))
         ?.toList()
@@ -38,8 +32,6 @@ Map<String, dynamic> _$WorldToJson(World instance) => <String, dynamic>{
       'renderingComponentFreeIds': instance.renderingComponentFreeIds,
       'collisionComponents': instance.collisionComponents,
       'collisionComponentFreeIds': instance.collisionComponentFreeIds,
-      'clickableComponents': instance.clickableComponents,
-      'clickableComponentFreeIds': instance.clickableComponentFreeIds,
       'entities': instance.entities,
       'entitiesFreeIds': instance.entitiesFreeIds
     };

@@ -11,9 +11,8 @@ class Box {
   int bottom;
   int width;
   int height;
-  int z;
 
-  Box(this.left, this.top, this.width, this.height, [this.z = 0])
+  Box(this.left, this.top, this.width, this.height)
       : right = left + width,
         bottom = top + height;
 
@@ -36,10 +35,6 @@ class Box {
     top = y;
     right = left + width;
     bottom = top + height;
-  }
-
-  WorldPosition middle() {
-    return WorldPosition(left + (width / 2).floor(), top + (height / 2).floor());
   }
 
   /// Creates a new [Box] from a JSON object.

@@ -13,8 +13,7 @@ Entity _$EntityFromJson(Map json) {
     ..publicInventoryId = json['publicInventoryId'] as int
     ..privateInventoryId = json['privateInventoryId'] as int
     ..usableComponentId = json['usableComponentId'] as int
-    ..collisionComponentId = json['collisionComponentId'] as int
-    ..clickableComponentId = json['clickableComponentId'] as int;
+    ..collisionComponentId = json['collisionComponentId'] as int;
 }
 
 Map<String, dynamic> _$EntityToJson(Entity instance) => <String, dynamic>{
@@ -24,8 +23,7 @@ Map<String, dynamic> _$EntityToJson(Entity instance) => <String, dynamic>{
       'privateInventoryId': instance.privateInventoryId,
       'usableComponentId': instance.usableComponentId,
       'collisionComponentId': instance.collisionComponentId,
-      'type': _$EntityTypeEnumMap[instance.type],
-      'clickableComponentId': instance.clickableComponentId
+      'type': _$EntityTypeEnumMap[instance.type]
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {

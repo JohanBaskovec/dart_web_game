@@ -3,8 +3,9 @@ import 'package:dart_game/common/command/server/server_command_type.dart';
 import 'package:dart_game/common/component/collision_component.dart';
 import 'package:dart_game/common/component/rendering_component.dart';
 import 'package:dart_game/common/entity.dart';
+import 'package:dart_game/common/game_objects/entity_type.dart';
+import 'package:dart_game/common/tile_position.dart';
 import 'package:json_annotation/json_annotation.dart';
-
 
 part 'add_grid_aligned_entity_command.g.dart';
 

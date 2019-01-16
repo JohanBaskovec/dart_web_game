@@ -1,5 +1,4 @@
 import 'package:dart_game/common/command/client/build_entity_command.dart';
-import 'package:dart_game/common/command/client/click_command.dart';
 import 'package:dart_game/common/command/client/client_command_type.dart';
 import 'package:dart_game/common/command/client/move_command.dart';
 import 'package:dart_game/common/command/client/send_message_command.dart';
@@ -26,8 +25,6 @@ class ClientCommand {
         return UseObjectOnEntityCommand.fromJson(json);
       case ClientCommandType.sendMessage:
         return SendMessageCommand.fromJson(json);
-      case ClientCommandType.click:
-        return ClickCommand.fromJson(json);
       case ClientCommandType.login:
       case ClientCommandType.unknown:
         break;

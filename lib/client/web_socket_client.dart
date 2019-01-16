@@ -91,7 +91,6 @@ class WebSocketClient {
     world.renderingComponents = command.renderingComponents;
     world.entities = command.entities;
     world.collisionComponents = command.collisionComponents;
-    world.clickableComponents = command.clickableComponents;
   }
 
   void executeRemoveEntityCommand(RemoveEntityCommand command) {

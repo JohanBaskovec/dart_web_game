@@ -4,7 +4,6 @@ enum ClientCommandType {
   useObjectOnEntity,
   buildEntity,
   sendMessage,
-  click,
   unknown
 }
 
