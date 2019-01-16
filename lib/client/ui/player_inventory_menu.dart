@@ -1,17 +1,16 @@
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/common/box.dart';
+import 'package:dart_game/common/game_objects/player.dart';
+import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/client/ui/button.dart';
 
 class InventoryButton extends Button {
-  /*
   List<Entity> stack;
 
   InventoryButton(this.stack);
-  */
 }
 
 class PlayerInventoryMenu {
-  /*
   Box box = Box(0, 0, 0, 0);
   List<InventoryButton> buttons = [];
   Player player;
@@ -42,5 +41,4 @@ class PlayerInventoryMenu {
       buttons.add(newButton);
     }
   }
-  */
 }

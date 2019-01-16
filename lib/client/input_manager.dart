@@ -5,17 +5,28 @@ import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/client/renderer.dart';
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/client/windows_manager.dart';
+import 'package:dart_game/common/box.dart';
+import 'package:dart_game/common/command/client/build_solid_object_command.dart';
 import 'package:dart_game/common/command/client/move_command.dart';
+import 'package:dart_game/common/command/client/use_object_on_solid_object_command.dart';
+import 'package:dart_game/common/constants.dart';
+import 'package:dart_game/common/game_objects/player.dart';
+import 'package:dart_game/common/game_objects/soft_object.dart';
+import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/solid_object_building.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/client/ui/build_menu.dart';
 import 'package:dart_game/client/ui/chat.dart';
+import 'package:dart_game/client/ui/inventory_menu.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
+import 'package:dart_game/common/world_position.dart';
 
 class InputManager {
   final CanvasElement _canvas;
   final BodyElement _body;
   WebSocketClient webSocketClient;
+  Player _player;
   bool canvasActive = false;
   World _world;
   DateTime lastClickTime = DateTime.now();
@@ -36,7 +47,7 @@ class InputManager {
       }
     });
     _body.onKeyDown.listen((KeyboardEvent e) {
-      if (canvasActive) {
+      if (canvasActive && player != null) {
         if (chat.enabled && chat.input.active) {
           chat.type(e.key);
         } else {
@@ -76,7 +87,6 @@ class InputManager {
       final CanvasPosition canvasPosition =
           renderer.getCursorPositionInCanvas(e);
       if (canClick) {
-        /*
         if (buildMenu.enabled) {
           if (!buildMenu.clickAt(canvasPosition)) {
             return;
@@ -117,7 +127,6 @@ class InputManager {
             clickOnEntity(object);
           }
         }
-        */
       }
     });
     _canvas.onMouseWheel.listen((WheelEvent e) {
@@ -130,8 +139,7 @@ class InputManager {
     webSocketClient.webSocket.send(jsonEncode(command));
   }
 
-  void clickOnEntity(int entityId) {
-    /*
+  void clickOnEntity(Entity object) {
     if (player.inventory.currentlyEquiped.type == EntityType.hand) {
       if (object.type == EntityType.tree ||
           object.type == EntityType.woodenChest ||
@@ -144,7 +152,6 @@ class InputManager {
           object.tilePosition, player.inventory.currentlyEquiped.index);
       webSocketClient.webSocket.send(jsonEncode(command));
     }
-    */
   }
 
   bool get canClick {
@@ -153,18 +160,15 @@ class InputManager {
         .isAfter(lastClickTime);
   }
 
-  /*
-  int get playerId => _player;
+  Player get player => _player;
 
   set player(Player value) {
     _player = value;
     renderer.player = value;
     renderer.moveCameraToPlayerPosition(value.tilePosition);
   }
-  */
 
   void clickOnGround(TilePosition tilePosition) {
-    /*
     if (buildMenu.enabled && buildMenu.selectedType != null) {
       switch (buildMenu.selectedType) {
         case EntityType.woodenWall:
@@ -178,6 +182,5 @@ class InputManager {
           break;
       }
     }
-    */
   }
 }

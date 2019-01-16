@@ -1,21 +1,21 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'add_entity_command.dart';
+part of 'remove_player_command.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-AddEntityCommand _$AddEntityCommandFromJson(Map json) {
-  return AddEntityCommand()
-    ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type'])
-    ..entityId = json['entityId'] as int;
+RemovePlayerCommand _$RemovePlayerCommandFromJson(Map json) {
+  return RemovePlayerCommand(json['id'] as int)
+    ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type']);
 }
 
-Map<String, dynamic> _$AddEntityCommandToJson(AddEntityCommand instance) =>
+Map<String, dynamic> _$RemovePlayerCommandToJson(
+        RemovePlayerCommand instance) =>
     <String, dynamic>{
       'type': _$ServerCommandTypeEnumMap[instance.type],
-      'entityId': instance.entityId
+      'id': instance.id
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {
@@ -40,15 +40,17 @@ T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
 
 const _$ServerCommandTypeEnumMap = <ServerCommandType, dynamic>{
   ServerCommandType.loggedIn: 'loggedIn',
-  ServerCommandType.addEntity: 'addEntity',
-  ServerCommandType.addEntityWithRendering: 'addEntityWithRendering',
-  ServerCommandType.addGridAlignedEntity: 'addGridAlignedEntity',
-  ServerCommandType.moveGridAlignedEntity: 'moveGridAlignedEntity',
+  ServerCommandType.addPlayer: 'addPlayer',
+  ServerCommandType.removePlayer: 'removePlayer',
+  ServerCommandType.movePlayer: 'movePlayer',
   ServerCommandType.removeEntity: 'removeEntity',
+  ServerCommandType.addEntity: 'addEntity',
   ServerCommandType.addToInventory: 'addToInventory',
   ServerCommandType.removeFromInventory: 'removeFromInventory',
-  ServerCommandType.addRenderingComponent: 'addRenderingComponent',
-  ServerCommandType.removeRenderingComponent: 'removeRenderingComponent',
+  ServerCommandType.addSoftObject: 'addSoftObject',
+  ServerCommandType.removeSoftObject: 'removeSoftObject',
+  ServerCommandType.addTile: 'addTile',
+  ServerCommandType.removeTile: 'removeTile',
   ServerCommandType.addMessage: 'addMessage',
   ServerCommandType.unknown: 'unknown'
 };

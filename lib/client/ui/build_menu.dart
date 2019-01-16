@@ -1,21 +1,19 @@
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/game_objects/receipes.dart';
+import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/client/ui/button.dart';
 
 class BuildMenuButton extends Button {
-  /*
   EntityType type;
 
   BuildMenuButton(this.type);
-  */
 }
 
 class BuildMenu {
   bool enabled = false;
   Box box = Box(0, 0, 0, 0);
   List<BuildMenuButton> buttons = [];
-  /*
   EntityType selectedType;
 
   BuildMenu() {
@@ -41,5 +39,4 @@ class BuildMenu {
     }
     return true;
   }
-  */
 }

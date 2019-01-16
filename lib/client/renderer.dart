@@ -1,12 +1,13 @@
 import 'dart:html';
 
 import 'package:dart_game/client/canvas_position.dart';
-import 'package:dart_game/client/component/rendering_component.dart';
 import 'package:dart_game/client/windows_manager.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/constants.dart';
-import 'package:dart_game/common/game_objects/entity_type.dart';
+import 'package:dart_game/common/game_objects/player.dart';
 import 'package:dart_game/common/game_objects/receipes.dart';
+import 'package:dart_game/common/game_objects/soft_object.dart';
+import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/client/ui/build_menu.dart';
@@ -20,6 +21,7 @@ class Renderer {
   final CanvasRenderingContext2D _ctx;
   double scale = 1;
   CanvasPosition cameraPosition;
+  Player player;
   Map<EntityType, ImageElement> softImages = {};
   Map<EntityType, ImageElement> solidImages = {};
   BuildMenu buildMenu;
@@ -52,17 +54,16 @@ class Renderer {
     }
     _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
 
-    for (RenderingComponent rendering in world.renderingComponents) {
-      if (rendering != null) {
+    for (var player in world.players) {
+      if (player != null) {
         _ctx.drawImageScaled(
-            solidImages[rendering.image],
-            rendering.box.left,
-            rendering.box.top,
-            rendering.box.width,
-            rendering.box.height);
+            solidImages[EntityType.player],
+            player.box.left,
+            player.box.top,
+            player.box.width,
+            player.box.height);
       }
     }
-    /*
 
     for (List<Entity> column in world.solidObjectColumns) {
       for (Entity object in column) {
@@ -167,7 +168,6 @@ class Renderer {
         _ctx.fillText(lines[i], chat.box.left, chat.input.box.top - 9 * i);
       }
     }
-    */
   }
 
   void increaseScale(double increase) {
@@ -175,7 +175,7 @@ class Renderer {
     if (scale < 0.05) {
       scale = 0.05;
     }
-    //moveCameraToPlayerPosition(player.tilePosition);
+    moveCameraToPlayerPosition(player.tilePosition);
   }
 
   CanvasPosition getCursorPositionInCanvas(MouseEvent event) {
@@ -210,13 +210,11 @@ class Renderer {
   void resizeWindows() {
     _canvas.width = window.innerWidth;
     _canvas.height = window.innerHeight;
-    /*
     buildMenu.moveAndResize(
         Box(_canvas.width / 10, 100, _canvas.width / 2, _canvas.height / 2));
     inventory.moveAndResize(Box(20, _canvas.height - _canvas.height / 10,
         _canvas.width - 20 - _canvas.width / 3, _canvas.height / 11));
     chat.moveAndResize(Box(inventory.box.right + 20, inventory.box.top - 100,
         _canvas.width / 3 - 40, 100 + inventory.box.height));
-        */
   }
 }

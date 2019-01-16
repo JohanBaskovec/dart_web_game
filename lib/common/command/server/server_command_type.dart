@@ -1,14 +1,16 @@
 enum ServerCommandType {
   loggedIn,
-  addEntity,
-  addEntityWithRendering,
-  addGridAlignedEntity,
-  moveGridAlignedEntity,
+  addPlayer,
+  removePlayer,
+  movePlayer,
   removeEntity,
+  addEntity,
   addToInventory,
   removeFromInventory,
-  addRenderingComponent,
-  removeRenderingComponent,
+  addSoftObject,
+  removeSoftObject,
+  addTile,
+  removeTile,
   addMessage,
   unknown
 }

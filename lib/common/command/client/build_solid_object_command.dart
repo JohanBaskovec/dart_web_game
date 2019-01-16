@@ -4,12 +4,12 @@ import 'package:dart_game/common/game_objects/entity_type.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'build_entity_command.g.dart';
+part 'build_solid_object_command.g.dart';
 
 @JsonSerializable(anyMap: true)
 class BuildEntityCommand extends ClientCommand {
-  TilePosition position;
   EntityType entityType;
+  TilePosition position;
 
   BuildEntityCommand(this.entityType, this.position)
       : super(ClientCommandType.buildEntity);
