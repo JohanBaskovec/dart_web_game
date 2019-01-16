@@ -1,12 +1,24 @@
-import 'package:dart_game/common/game_objects/receipes.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 
-bool playerCanBuild(SolidObjectType type, SolidObject player) {
-  final Map<SoftObjectType, int> receipe = solidReceipes[type];
-  final Map<SoftObjectType, int> required = Map.from(receipe);
+final Map<SolidObjectType, Map<SoftObjectType, int>> buildingRecipes = {
+  SolidObjectType.woodenWall: {
+    SoftObjectType.log: 5
+  },
+  SolidObjectType.campFire: {
+    SoftObjectType.log: 1,
+    SoftObjectType.leaves: 2
+  }
+};
 
-  for (var type in receipe.keys) {
+bool playerCanBuild(SolidObjectType type, SolidObject player) {
+  final Map<SoftObjectType, int> recipe = buildingRecipes[type];
+  if (recipe == null) {
+    return false;
+  }
+  final Map<SoftObjectType, int> required = Map.from(recipe);
+
+  for (var type in recipe.keys) {
     for (int i = 0; i < player.inventory.stacks.length; i++) {
       if (player.inventory.stacks[i][0].type == type) {
         required[type] -= player.inventory.stacks[i].length;

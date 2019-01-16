@@ -1,5 +1,7 @@
 import 'package:dart_game/client/canvas_position.dart';
+import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/common/box.dart';
+import 'package:dart_game/common/command/client/take_fron_inventory_command.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
 
@@ -8,8 +10,9 @@ class InventoryMenu {
   List<InventoryButton> buttons = [];
   SolidObject owner;
   SolidObject player;
+  WebSocketClient webSocketClient;
 
-  InventoryMenu(Box box, this.owner, this.player) {
+  InventoryMenu(Box box, this.owner, this.player, this.webSocketClient) {
     moveAndResize(box);
   }
   void moveAndResize(Box box) {
@@ -24,13 +27,18 @@ class InventoryMenu {
     }
   }
 
+  void update() {
+    for (var i = 0; i < owner.inventory.stacks.length; i++) {
+      if (owner.inventory.stacks[i].isEmpty) {
+        buttons.removeAt(i);
+      }
+    }
+  }
+
   bool clickAt(CanvasPosition canvasPosition) {
     for (int i = 0 ; i < buttons.length ; i++) {
       if (buttons[i].box.pointIsInBox(canvasPosition.x, canvasPosition.y)) {
-        player.inventory.addItem(buttons[i].stack.removeLast());
-        if (buttons[i].stack.isEmpty) {
-          buttons.removeAt(i);
-        }
+        webSocketClient.sendCommand(TakeFromInventoryCommand(owner.tilePosition, i));
         return false;
       }
     }

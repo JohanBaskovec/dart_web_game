@@ -7,14 +7,15 @@ import 'package:dart_game/client/ui/inventory_menu.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
 import 'package:dart_game/client/windows_manager.dart';
 import 'package:dart_game/common/box.dart';
+import 'package:dart_game/common/building.dart';
 import 'package:dart_game/common/constants.dart';
-import 'package:dart_game/common/game_objects/receipes.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/world_position.dart';
+
 
 class Renderer {
   final CanvasElement _canvas;
@@ -106,7 +107,7 @@ class Renderer {
         _ctx.fillStyle = 'white';
         var k = 0;
         for (MapEntry<SoftObjectType, int> ingredientList
-            in solidReceipes[button.type].entries) {
+            in buildingRecipes[button.type].entries) {
           _ctx.fillText(
               '${ingredientList.key}: ${ingredientList.value}',
               buildMenu.box.left + 40,
@@ -117,6 +118,7 @@ class Renderer {
       }
     }
     for (InventoryMenu inventory in windowsManager.inventoryMenus) {
+      inventory.update();
       _ctx.fillStyle = 'black';
       _ctx.fillRect(inventory.box.left, inventory.box.top, inventory.box.width,
           inventory.box.height);

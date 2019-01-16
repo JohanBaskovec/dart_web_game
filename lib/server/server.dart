@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:dart_game/common/building.dart';
 import 'package:dart_game/common/command/client/build_solid_object_command.dart';
 import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/command/client/client_command_type.dart';
 import 'package:dart_game/common/command/client/move_command.dart';
 import 'package:dart_game/common/command/client/send_message_command.dart';
+import 'package:dart_game/common/command/client/take_fron_inventory_command.dart';
 import 'package:dart_game/common/command/client/use_object_on_solid_object_command.dart';
 import 'package:dart_game/common/command/server/add_message_command.dart';
 import 'package:dart_game/common/command/server/add_player_command.dart';
@@ -20,14 +22,12 @@ import 'package:dart_game/common/command/server/remove_player_command.dart';
 import 'package:dart_game/common/command/server/remove_solid_object_command.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/constants.dart';
-import 'package:dart_game/common/game_objects/receipes.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/gathering.dart';
 import 'package:dart_game/common/message.dart';
 import 'package:dart_game/common/session.dart';
-import 'package:dart_game/common/solid_object_building.dart';
 import 'package:dart_game/server/client.dart';
 import 'package:yaml/yaml.dart';
 
@@ -139,6 +139,10 @@ class Server {
                   executeSendMessageCommand(
                       newClient, command as SendMessageCommand);
                   break;
+                case ClientCommandType.takeFromInventory:
+                  executeTakeFromInventoryCommand(
+                      newClient, command as TakeFromInventoryCommand);
+                  break;
                 case ClientCommandType.login:
                 case ClientCommandType.unknown:
                   // unimplemented, should never happen
@@ -212,18 +216,18 @@ class Server {
 
     final SolidObject player = client.session.player;
 
-    final Map<SoftObjectType, int> receipe = solidReceipes[command.objectType];
+    final Map<SoftObjectType, int> recipe = buildingRecipes[command.objectType];
     if (!playerCanBuild(command.objectType, player)) {
       print('Tried to build an object but couldn\'t!');
       return;
     }
     final removeFromInventoryCommand = RemoveFromInventoryCommand([]);
-    for (var type in receipe.keys) {
+    for (var type in recipe.keys) {
       for (int i = 0; i < player.inventory.stacks.length; i++) {
         if (player.inventory.stacks[i][0].type == type) {
           removeFromInventoryCommand.nObjectsToRemoveFromEachStack
-              .add(receipe[type]);
-          for (int k = 0; k < receipe[type]; k++) {
+              .add(recipe[type]);
+          for (int k = 0; k < recipe[type]; k++) {
             player.inventory.removeFromStack(i);
           }
         } else {
@@ -231,23 +235,27 @@ class Server {
         }
       }
     }
-    switch (command.objectType) {
-      case SolidObjectType.woodenWall:
-        final object =
-            SolidObject(SolidObjectType.woodenWall, command.position);
-        world.solidObjectColumns[command.position.x][command.position.y] =
-            object;
-        sendCommandToAllClients(AddSolidObjectCommand(object));
-        break;
-      default:
-        throw Exception('Not implemented!!');
-        break;
-    }
+    final object = SolidObject(command.objectType, command.position);
+    world.solidObjectColumns[command.position.x][command.position.y] = object;
+    sendCommandToAllClients(AddSolidObjectCommand(object));
     client.sendCommand(removeFromInventoryCommand);
   }
 
   void executeSendMessageCommand(Client newClient, SendMessageCommand command) {
     sendCommandToAllClients(AddMessageCommand(
         Message(newClient.session.player.name, command.message)));
+  }
+
+  void executeTakeFromInventoryCommand(
+      Client newClient, TakeFromInventoryCommand command) {
+    final SolidObject target = world.solidObjectColumns[command.tilePosition.x]
+        [command.tilePosition.y];
+    final List<SoftGameObject> stack = target.inventory.stacks[command.index];
+    if (stack.isEmpty) {
+      // concurrent access?
+      return;
+    }
+    final SoftGameObject objectTaken = stack.removeLast();
+    newClient.session.player.inventory.addItem(objectTaken);
   }
 }

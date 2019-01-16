@@ -1,6 +1,6 @@
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/common/box.dart';
-import 'package:dart_game/common/game_objects/receipes.dart';
+import 'package:dart_game/common/building.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/client/ui/button.dart';
 
@@ -17,7 +17,7 @@ class BuildMenu {
   SolidObjectType selectedType;
 
   BuildMenu() {
-    for (SolidObjectType type in solidReceipes.keys) {
+    for (SolidObjectType type in buildingRecipes.keys) {
       buttons.add(BuildMenuButton(type));
     }
   }

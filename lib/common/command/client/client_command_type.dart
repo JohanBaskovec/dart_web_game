@@ -4,6 +4,8 @@ enum ClientCommandType {
   useObjectOnSolidObject,
   buildSolidObject,
   sendMessage,
+  takeFromInventory,
+  addToInventory,
   unknown
 }
 
