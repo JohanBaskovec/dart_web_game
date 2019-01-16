@@ -46,6 +46,7 @@ const _$ClientCommandTypeEnumMap = <ClientCommandType, dynamic>{
   ClientCommandType.move: 'move',
   ClientCommandType.useObjectOnSolidObject: 'useObjectOnSolidObject',
   ClientCommandType.buildSolidObject: 'buildSolidObject',
+  ClientCommandType.setEquippedItem: 'setEquippedItem',
   ClientCommandType.sendMessage: 'sendMessage',
   ClientCommandType.takeFromInventory: 'takeFromInventory',
   ClientCommandType.addToInventory: 'addToInventory',

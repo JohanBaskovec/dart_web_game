@@ -52,6 +52,7 @@ const _$ServerCommandTypeEnumMap = <ServerCommandType, dynamic>{
   ServerCommandType.removeSoftObject: 'removeSoftObject',
   ServerCommandType.addTile: 'addTile',
   ServerCommandType.removeTile: 'removeTile',
+  ServerCommandType.setEquippedItem: 'setEquippedItem',
   ServerCommandType.addMessage: 'addMessage',
   ServerCommandType.unknown: 'unknown'
 };

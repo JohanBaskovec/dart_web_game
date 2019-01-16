@@ -2,6 +2,7 @@ import 'package:dart_game/common/command/client/build_solid_object_command.dart'
 import 'package:dart_game/common/command/client/client_command_type.dart';
 import 'package:dart_game/common/command/client/move_command.dart';
 import 'package:dart_game/common/command/client/send_message_command.dart';
+import 'package:dart_game/common/command/client/set_equipped_item_client_command.dart';
 import 'package:dart_game/common/command/client/use_object_on_solid_object_command.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -25,6 +26,8 @@ class ClientCommand {
         return UseObjectOnSolidObjectCommand.fromJson(json);
       case ClientCommandType.sendMessage:
         return SendMessageCommand.fromJson(json);
+      case ClientCommandType.setEquippedItem:
+        return SetEquippedItemClientCommand.fromJson(json);
       case ClientCommandType.addToInventory:
       case ClientCommandType.takeFromInventory:
       case ClientCommandType.login:

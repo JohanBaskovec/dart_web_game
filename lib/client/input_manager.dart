@@ -37,8 +37,7 @@ class InputManager {
   WindowsManager windowsManager;
   final Session session;
 
-  InputManager(
-      this._body,
+  InputManager(this._body,
       this._canvas,
       this._world,
       this.renderer,
@@ -93,7 +92,7 @@ class InputManager {
         e.preventDefault();
       }
       final CanvasPosition canvasPosition =
-          renderer.getCursorPositionInCanvas(e);
+      renderer.getCursorPositionInCanvas(e);
       if (canClick) {
         if (buildMenu.enabled) {
           if (!buildMenu.clickAt(canvasPosition)) {
@@ -119,7 +118,7 @@ class InputManager {
         }
         chat.input.active = false;
         final WorldPosition mousePosition =
-            renderer.getWorldPositionFromCanvasPosition(canvasPosition);
+        renderer.getWorldPositionFromCanvasPosition(canvasPosition);
         final TilePosition tilePosition = TilePosition(
             (mousePosition.x / tileSize).floor(),
             (mousePosition.y / tileSize).floor());
@@ -128,7 +127,7 @@ class InputManager {
             tilePosition.y >= 0 &&
             tilePosition.y < worldSize.y) {
           final object =
-              _world.solidObjectColumns[tilePosition.x][tilePosition.y];
+          _world.solidObjectColumns[tilePosition.x][tilePosition.y];
           if (object == null) {
             clickOnGround(tilePosition);
           } else {
@@ -148,7 +147,9 @@ class InputManager {
   }
 
   void clickOnSolidObject(SolidObject object) {
-    if (session.player.inventory.currentlyEquiped.type == SoftObjectType.hand) {
+    final SoftGameObject equippedObject = _world.softObjects[session.player
+        .inventory.currentlyEquiped];
+    if (equippedObject.type == SoftObjectType.hand) {
       if (object.type == SolidObjectType.tree ||
           object.type == SolidObjectType.woodenChest ||
           object.type == SolidObjectType.campFire) {
@@ -160,8 +161,7 @@ class InputManager {
         windowsManager.inventoryMenus.add(inventoryMenu);
       }
     } else {
-      final command = UseObjectOnSolidObjectCommand(
-          object.tilePosition, session.player.inventory.currentlyEquiped.index);
+      final command = UseObjectOnSolidObjectCommand(object.tilePosition);
       webSocketClient.webSocket.send(jsonEncode(command));
     }
   }

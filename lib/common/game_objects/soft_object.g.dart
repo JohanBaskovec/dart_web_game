@@ -13,7 +13,7 @@ SoftGameObject _$SoftGameObjectFromJson(Map json) {
           ? null
           : WorldPosition.fromJson(json['position'] as Map))
     ..id = json['id'] as int
-    ..index = json['index'] as int;
+    ..indexInInventory = json['indexInInventory'] as int;
 }
 
 Map<String, dynamic> _$SoftGameObjectToJson(SoftGameObject instance) =>
@@ -21,7 +21,7 @@ Map<String, dynamic> _$SoftGameObjectToJson(SoftGameObject instance) =>
       'id': instance.id,
       'type': _$SoftObjectTypeEnumMap[instance.type],
       'position': instance.position,
-      'index': instance.index
+      'indexInInventory': instance.indexInInventory
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {

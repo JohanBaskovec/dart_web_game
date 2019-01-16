@@ -1,22 +1,21 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'logged_in_command.dart';
+part of 'set_equipped_item_server_command.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-LoggedInCommand _$LoggedInCommandFromJson(Map json) {
-  return LoggedInCommand(json['playerId'] as int,
-      json['world'] == null ? null : World.fromJson(json['world'] as Map))
+SetEquippedItemServerCommand _$SetEquippedItemServerCommandFromJson(Map json) {
+  return SetEquippedItemServerCommand(json['itemId'] as int)
     ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type']);
 }
 
-Map<String, dynamic> _$LoggedInCommandToJson(LoggedInCommand instance) =>
+Map<String, dynamic> _$SetEquippedItemServerCommandToJson(
+        SetEquippedItemServerCommand instance) =>
     <String, dynamic>{
       'type': _$ServerCommandTypeEnumMap[instance.type],
-      'playerId': instance.playerId,
-      'world': instance.world
+      'itemId': instance.itemId
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {

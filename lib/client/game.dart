@@ -23,7 +23,7 @@ class Game {
     final CanvasElement canvas = document.getElementById('canvas');
     final windowsManager = WindowsManager();
     final session = Session(null, null);
-    final inventory = PlayerInventoryMenu(session);
+    final inventory = PlayerInventoryMenu(session, null);
     final renderer =
         Renderer(canvas, buildMenu, chat, inventory, windowsManager, session);
     final world = World();
@@ -38,6 +38,8 @@ class Game {
 
     final webSocketClient = WebSocketClient(WebSocket('ws:127.0.0.1:8083/ws'),
         world, renderer, chat, inventory, session);
+
+    inventory.webSocketClient = webSocketClient;
 
     webSocketClient.connect();
 

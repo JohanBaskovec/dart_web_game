@@ -3,6 +3,7 @@ enum ClientCommandType {
   move,
   useObjectOnSolidObject,
   buildSolidObject,
+  setEquippedItem,
   sendMessage,
   takeFromInventory,
   addToInventory,

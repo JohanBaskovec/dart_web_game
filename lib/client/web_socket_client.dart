@@ -7,6 +7,7 @@ import 'package:dart_game/client/ui/player_inventory_menu.dart';
 import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/command/server/add_message_command.dart';
 import 'package:dart_game/common/command/server/add_player_command.dart';
+import 'package:dart_game/common/command/server/add_soft_object_command.dart';
 import 'package:dart_game/common/command/server/add_solid_object_command.dart';
 import 'package:dart_game/common/command/server/add_to_inventory_command.dart';
 import 'package:dart_game/common/command/server/logged_in_command.dart';
@@ -16,6 +17,8 @@ import 'package:dart_game/common/command/server/remove_player_command.dart';
 import 'package:dart_game/common/command/server/remove_solid_object_command.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
+import 'package:dart_game/common/command/server/set_equipped_item_server_command.dart';
+import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/session.dart';
 
@@ -63,8 +66,13 @@ class WebSocketClient {
         case ServerCommandType.addMessage:
           executeAddMessageCommand(command as AddMessageCommand);
           break;
-        case ServerCommandType.unknown:
+        case ServerCommandType.setEquippedItem:
+          executeSetEquippedCommand(command as SetEquippedItemServerCommand);
+          break;
         case ServerCommandType.addSoftObject:
+          executeAddSoftObjectCommand(command as AddSoftObjectCommand);
+          break;
+        case ServerCommandType.unknown:
         case ServerCommandType.removeSoftObject:
         case ServerCommandType.addTile:
         case ServerCommandType.removeTile:
@@ -93,10 +101,14 @@ class WebSocketClient {
   }
 
   void executeLoggedInCommand(LoggedInCommand command) {
+    assert(command.playerId != null);
+    _world.softObjects = command.world.softObjects;
+    _world.solidObjects = command.world.solidObjects;
     _world.solidObjectColumns = command.world.solidObjectColumns;
     _world.players = command.world.players;
     _world.tilesColumn = command.world.tilesColumn;
     session.player = _world.players[command.playerId];
+    assert(session.player != null);
     session.id = command.playerId;
   }
 
@@ -105,7 +117,10 @@ class WebSocketClient {
   }
 
   void executeAddToInventoryCommand(AddToInventoryCommand command) {
-    session.player.inventory.addItem(_world.softObjects[command.objectId]);
+    assert(command.objectId != null);
+    final SoftGameObject item = _world.softObjects[command.objectId];
+    assert(item != null);
+    session.player.inventory.addItem(item);
     inventoryMenu.update();
   }
 
@@ -124,6 +139,21 @@ class WebSocketClient {
   }
 
   void executeAddMessageCommand(AddMessageCommand command) {
+    assert(command.message != null);
     chat.addMessage(command.message);
+  }
+
+  void executeSetEquippedCommand(SetEquippedItemServerCommand command) {
+    assert(command.itemId != null);
+    session.player.inventory.currentlyEquiped = command.itemId;
+  }
+
+  void executeAddSoftObjectCommand(AddSoftObjectCommand command) {
+    assert(command.object != null);
+    assert(command.object.id != null);
+    if (_world.softObjects.length <= command.object.id) {
+      _world.softObjects.length = command.object.id + 1;
+    }
+    _world.softObjects[command.object.id] = command.object;
   }
 }

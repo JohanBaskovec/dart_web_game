@@ -1,26 +1,21 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'build_solid_object_command.dart';
+part of 'set_equipped_item_client_command.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-BuildSolidObjectCommand _$BuildSolidObjectCommandFromJson(Map json) {
-  return BuildSolidObjectCommand(
-      _$enumDecodeNullable(_$SolidObjectTypeEnumMap, json['objectType']),
-      json['position'] == null
-          ? null
-          : TilePosition.fromJson(json['position'] as Map))
+SetEquippedItemClientCommand _$SetEquippedItemClientCommandFromJson(Map json) {
+  return SetEquippedItemClientCommand(json['inventoryIndex'] as int)
     ..type = _$enumDecodeNullable(_$ClientCommandTypeEnumMap, json['type']);
 }
 
-Map<String, dynamic> _$BuildSolidObjectCommandToJson(
-        BuildSolidObjectCommand instance) =>
+Map<String, dynamic> _$SetEquippedItemClientCommandToJson(
+        SetEquippedItemClientCommand instance) =>
     <String, dynamic>{
       'type': _$ClientCommandTypeEnumMap[instance.type],
-      'objectType': _$SolidObjectTypeEnumMap[instance.objectType],
-      'position': instance.position
+      'inventoryIndex': instance.inventoryIndex
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {
@@ -42,28 +37,6 @@ T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
   }
   return _$enumDecode<T>(enumValues, source);
 }
-
-const _$SolidObjectTypeEnumMap = <SolidObjectType, dynamic>{
-  SolidObjectType.tree: 'tree',
-  SolidObjectType.appleTree: 'appleTree',
-  SolidObjectType.coconutTree: 'coconutTree',
-  SolidObjectType.ropeTree: 'ropeTree',
-  SolidObjectType.leafTree: 'leafTree',
-  SolidObjectType.barkTree: 'barkTree',
-  SolidObjectType.player: 'player',
-  SolidObjectType.woodenWall: 'woodenWall',
-  SolidObjectType.campFire: 'campFire',
-  SolidObjectType.basicTent: 'basicTent',
-  SolidObjectType.bed: 'bed',
-  SolidObjectType.woodenDoor: 'woodenDoor',
-  SolidObjectType.woodenChest: 'woodenChest',
-  SolidObjectType.ironDeposit: 'ironDeposit',
-  SolidObjectType.ironMine: 'ironMine',
-  SolidObjectType.goldDeposit: 'goldDeposit',
-  SolidObjectType.goldMine: 'goldMine',
-  SolidObjectType.foundry: 'foundry',
-  SolidObjectType.oven: 'oven'
-};
 
 const _$ClientCommandTypeEnumMap = <ClientCommandType, dynamic>{
   ClientCommandType.login: 'login',

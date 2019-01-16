@@ -19,17 +19,23 @@ class Inventory {
   List<Stack> stacks = [];
 
   void addItem(SoftGameObject item) {
+    assert(item.id != null, 'Item must have an id before being added to inventory!');
     var i = 0;
+    Stack stack;
     for (; i < stacks.length; i++) {
       if (stacks[i].objectType == item.type) {
-        break;
+        stack = stacks[i];
+      }
+      if (stacks[i].isEmpty) {
+        stacks.removeAt(i);
       }
     }
-    if (i == stacks.length) {
-      stacks.add(Stack(item.type));
+    if (stack == null) {
+      stack = Stack(item.type);
+      stacks.add(stack);
     }
-    item.index = i;
-    stacks[i].add(item.id);
+    item.indexInInventory = i;
+    stack.add(item.id);
     print('Added $item to inventory in stack $i');
     currentlyEquiped ??= item.id;
   }
@@ -46,10 +52,6 @@ class Inventory {
       print('Attempting to remove $n items from stack $stackIndex'
           ', but stack\' length is ${stacks[stackIndex].length}!');
     }
-  }
-
-  int popFromStack(int stackIndex) {
-    return stacks[stackIndex].removeLast();
   }
 
   int get size => stacks.length;

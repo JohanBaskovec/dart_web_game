@@ -1,7 +1,7 @@
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/common/box.dart';
-import 'package:dart_game/common/command/client/take_fron_inventory_command.dart';
+import 'package:dart_game/common/command/client/take_from_inventory_command.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
 

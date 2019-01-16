@@ -45,7 +45,7 @@ class SoftGameObject {
   SoftObjectType type;
   WorldPosition position;
   /// index in inventory if it's in one
-  int index;
+  int indexInInventory;
 
   SoftGameObject([this.type, this.position]);
 
@@ -64,7 +64,7 @@ class SoftGameObject {
 
   @override
   String toString() {
-    return 'SoftGameObject{type: $type, position: $position, index: $index}';
+    return 'SoftGameObject{type: $type, position: $position, index: $indexInInventory}';
   }
 
 

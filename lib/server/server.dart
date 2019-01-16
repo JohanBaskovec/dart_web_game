@@ -9,10 +9,12 @@ import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/command/client/client_command_type.dart';
 import 'package:dart_game/common/command/client/move_command.dart';
 import 'package:dart_game/common/command/client/send_message_command.dart';
-import 'package:dart_game/common/command/client/take_fron_inventory_command.dart';
+import 'package:dart_game/common/command/client/set_equipped_item_client_command.dart';
+import 'package:dart_game/common/command/client/take_from_inventory_command.dart';
 import 'package:dart_game/common/command/client/use_object_on_solid_object_command.dart';
 import 'package:dart_game/common/command/server/add_message_command.dart';
 import 'package:dart_game/common/command/server/add_player_command.dart';
+import 'package:dart_game/common/command/server/add_soft_object_command.dart';
 import 'package:dart_game/common/command/server/add_solid_object_command.dart';
 import 'package:dart_game/common/command/server/add_to_inventory_command.dart';
 import 'package:dart_game/common/command/server/logged_in_command.dart';
@@ -21,12 +23,12 @@ import 'package:dart_game/common/command/server/remove_from_inventory_command.da
 import 'package:dart_game/common/command/server/remove_player_command.dart';
 import 'package:dart_game/common/command/server/remove_solid_object_command.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
+import 'package:dart_game/common/command/server/set_equipped_item_server_command.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/gathering.dart';
-import 'package:dart_game/common/inventory.dart';
 import 'package:dart_game/common/message.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/stack.dart';
@@ -77,7 +79,43 @@ class Server {
 
       server = await HttpServer.bind(
           InternetAddress.anyIPv6, config['backend_port'] as int);
-      world = World.fromConstants(randomGenerator);
+      world = World.fromConstants();
+
+      for (int x = 0; x < world.solidObjectColumns.length; x++) {
+        for (int y = 0; y < world.solidObjectColumns[x].length; y++) {
+          final int rand = randomGenerator.nextInt(100);
+          if (rand < 10) {
+            final tree = makeTree(x, y);
+            final int nLeaves = randomGenerator.nextInt(6) + 1;
+            for (int i = 0; i < nLeaves; i++) {
+              final leaves = SoftGameObject(SoftObjectType.leaves);
+              addSoftObject(leaves);
+              tree.inventory.addItem(leaves);
+            }
+
+            final int nSnakes = randomGenerator.nextInt(6) + 1;
+            for (int i = 0; i < nSnakes; i++) {
+              final snake = SoftGameObject(SoftObjectType.leaves);
+              addSoftObject(snake);
+              tree.inventory.addItem(snake);
+            }
+            world.solidObjectColumns[x][y] = tree;
+          } else if (rand < 20) {
+            final tree = makeAppleTree(x, y);
+            final int nLogs = randomGenerator.nextInt(6) + 1;
+            /*
+            for (int i = 0 ; i < nLogs ; i++) {
+              tree.inventory.addItem(SoftGameObject(SoftObjectType.fruitTreeLog));
+            }
+            final int nApples = randomGenerator.nextInt(6) + 1;
+            for (int i = 0 ; i < nLogs ; i++) {
+              tree.inventory.addItem(SoftGameObject(SoftObjectType.apple));
+            }
+            */
+            world.solidObjectColumns[x][y] = tree;
+          }
+        }
+      }
 
       int nPlayers = 0;
       server.listen((HttpRequest request) async {
@@ -100,8 +138,12 @@ class Server {
             }
           }
           final newPlayer = makePlayer(0, 0);
-          newPlayer.inventory.addItem(SoftGameObject(SoftObjectType.hand));
-          newPlayer.inventory.addItem(SoftGameObject(SoftObjectType.axe));
+          final hand = SoftGameObject(SoftObjectType.hand);
+          final axe = SoftGameObject(SoftObjectType.axe);
+          addSoftObject(hand);
+          addSoftObject(axe);
+          newPlayer.inventory.addItem(hand);
+          newPlayer.inventory.addItem(axe);
 
           world.players[playerId] = newPlayer;
           nPlayers++;
@@ -145,6 +187,10 @@ class Server {
                   executeTakeFromInventoryCommand(
                       newClient, command as TakeFromInventoryCommand);
                   break;
+                case ClientCommandType.setEquippedItem:
+                  executeSetEquippedItemCommand(
+                      newClient, command as SetEquippedItemClientCommand);
+                  break;
                 case ClientCommandType.login:
                 case ClientCommandType.unknown:
                 case ClientCommandType.addToInventory:
@@ -179,7 +225,7 @@ class Server {
     final SolidObject target = world
         .solidObjectColumns[command.targetPosition.x][command.targetPosition.y];
     final SoftGameObject item =
-        client.session.player.inventory.currentlyEquiped;
+        world.softObjects[client.session.player.inventory.currentlyEquiped];
     useItemOnSolidObject(client, item, target);
   }
 
@@ -196,8 +242,10 @@ class Server {
         SoftGameObject(config.gatherableItemsType);
     target.nGatherableItems--;
 
-    world.addSoftObject(gatheredItem);
+    addSoftObject(gatheredItem);
     client.session.player.inventory.addItem(gatheredItem);
+    final addObjectCommand = AddSoftObjectCommand(gatheredItem);
+    client.sendCommand(addObjectCommand);
     final addToInventoryCommand = AddToInventoryCommand(gatheredItem.id);
     client.sendCommand(addToInventoryCommand);
 
@@ -262,6 +310,31 @@ class Server {
     final SoftGameObject objectTaken = world.softObjects[stack.removeLast()];
     newClient.session.player.inventory.addItem(objectTaken);
     final serverCommand = AddToInventoryCommand(objectTaken.id);
+    newClient.sendCommand(serverCommand);
+  }
+
+  void addSoftObject(SoftGameObject object) {
+    if (world.freeSoftObjectIds.isEmpty) {
+      object.id = world.softObjects.length;
+      world.softObjects.add(object);
+    } else {
+      final int id = world.freeSoftObjectIds.removeLast();
+      object.id = id;
+      world.softObjects[id] = object;
+    }
+  }
+
+  void removeSoftObject(SoftGameObject object) {
+    world.freeSoftObjectIds.add(object.id);
+    world.softObjects.removeAt(object.id);
+  }
+
+  void executeSetEquippedItemCommand(
+      Client newClient, SetEquippedItemClientCommand command) {
+    final int itemId =
+        newClient.session.player.inventory.stacks[command.inventoryIndex][0];
+    newClient.session.player.inventory.currentlyEquiped = itemId;
+    final serverCommand = SetEquippedItemServerCommand(itemId);
     newClient.sendCommand(serverCommand);
   }
 }

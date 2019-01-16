@@ -8,9 +8,7 @@ part of 'inventory.dart';
 
 Inventory _$InventoryFromJson(Map json) {
   return Inventory()
-    ..currentlyEquiped = json['currentlyEquiped'] == null
-        ? null
-        : SoftGameObject.fromJson(json['currentlyEquiped'] as Map)
+    ..currentlyEquiped = json['currentlyEquiped'] as int
     ..stacks = (json['stacks'] as List)
         ?.map((e) => e == null ? null : Stack.fromJson(e as Map))
         ?.toList();

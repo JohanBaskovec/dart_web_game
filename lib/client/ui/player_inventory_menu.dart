@@ -1,6 +1,8 @@
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/client/ui/button.dart';
+import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/common/box.dart';
+import 'package:dart_game/common/command/client/set_equipped_item_client_command.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/stack.dart';
@@ -15,8 +17,9 @@ class PlayerInventoryMenu {
   Box box = Box(0, 0, 0, 0);
   List<InventoryButton> buttons = [];
   Session session;
+  WebSocketClient webSocketClient;
 
-  PlayerInventoryMenu(this.session);
+  PlayerInventoryMenu(this.session, this.webSocketClient);
 
   void moveAndResize(Box box) {
     this.box = box;
@@ -28,7 +31,7 @@ class PlayerInventoryMenu {
     }
     for (int i = 0; i < buttons.length; i++) {
       if (buttons[i].box.pointIsInBox(canvasPosition.x, canvasPosition.y)) {
-        session.player.inventory.currentlyEquiped = buttons[i].stack[0];
+        webSocketClient.sendCommand(SetEquippedItemClientCommand(i));
         return false;
       }
     }
