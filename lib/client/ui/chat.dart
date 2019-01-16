@@ -11,7 +11,7 @@ class Chat {
   Box box = Box(0, 0, 0, 0);
   Button sendButton = Button();
   Input input = Input();
-  List<Message> messages = [Message(1, 'lol ça marche bien non ?')];
+  List<Message> messages = [Message('wow', 'lol ça marche bien non ?')];
   WebSocketClient client;
 
   Chat();

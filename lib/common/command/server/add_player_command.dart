@@ -1,13 +1,13 @@
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
-import 'package:dart_game/common/game_objects/player.dart';
+import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'add_player_command.g.dart';
 
 @JsonSerializable(anyMap: true)
 class AddPlayerCommand extends ServerCommand {
-  Player player;
+  SolidObject player;
 
   AddPlayerCommand([this.player]): super(ServerCommandType.addPlayer);
   

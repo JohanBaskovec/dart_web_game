@@ -6,10 +6,9 @@ part 'remove_from_inventory_command.g.dart';
 
 @JsonSerializable(anyMap: true)
 class RemoveFromInventoryCommand extends ServerCommand {
-  int playerId;
   List<int> nObjectsToRemoveFromEachStack;
 
-  RemoveFromInventoryCommand(this.playerId, this.nObjectsToRemoveFromEachStack)
+  RemoveFromInventoryCommand(this.nObjectsToRemoveFromEachStack)
       : super(ServerCommandType.removeFromInventory);
 
   /// Creates a new [RemoveFromInventoryCommand] from a JSON object.

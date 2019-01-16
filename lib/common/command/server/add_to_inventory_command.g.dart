@@ -7,11 +7,9 @@ part of 'add_to_inventory_command.dart';
 // **************************************************************************
 
 AddToInventoryCommand _$AddToInventoryCommandFromJson(Map json) {
-  return AddToInventoryCommand(
-      json['playerId'] as int,
-      json['object'] == null
-          ? null
-          : SoftGameObject.fromJson(json['object'] as Map))
+  return AddToInventoryCommand(json['object'] == null
+      ? null
+      : SoftGameObject.fromJson(json['object'] as Map))
     ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type']);
 }
 
@@ -19,7 +17,6 @@ Map<String, dynamic> _$AddToInventoryCommandToJson(
         AddToInventoryCommand instance) =>
     <String, dynamic>{
       'type': _$ServerCommandTypeEnumMap[instance.type],
-      'playerId': instance.playerId,
       'object': instance.object
     };
 

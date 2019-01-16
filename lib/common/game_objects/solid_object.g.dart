@@ -12,9 +12,13 @@ SolidObject _$SolidObjectFromJson(Map json) {
       json['tilePosition'] == null
           ? null
           : TilePosition.fromJson(json['tilePosition'] as Map))
-    ..inventory = json['inventory'] == null
+    ..name = json['name'] as String
+    ..publicInventory = json['publicInventory'] == null
         ? null
-        : Inventory.fromJson(json['inventory'] as Map)
+        : Inventory.fromJson(json['publicInventory'] as Map)
+    ..privateInventory = json['privateInventory'] == null
+        ? null
+        : Inventory.fromJson(json['privateInventory'] as Map)
     ..box = json['box'] == null ? null : Box.fromJson(json['box'] as Map)
     ..alive = json['alive'] as bool;
 }
@@ -22,7 +26,9 @@ SolidObject _$SolidObjectFromJson(Map json) {
 Map<String, dynamic> _$SolidObjectToJson(SolidObject instance) =>
     <String, dynamic>{
       'type': _$SolidObjectTypeEnumMap[instance.type],
-      'inventory': instance.inventory,
+      'name': instance.name,
+      'publicInventory': instance.publicInventory,
+      'privateInventory': instance.privateInventory,
       'box': instance.box,
       'alive': instance.alive,
       'tilePosition': instance.tilePosition

@@ -3,12 +3,13 @@ import 'dart:html';
 
 import 'package:dart_game/client/input_manager.dart';
 import 'package:dart_game/client/renderer.dart';
-import 'package:dart_game/client/web_socket_client.dart';
-import 'package:dart_game/client/windows_manager.dart';
-import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/client/ui/build_menu.dart';
 import 'package:dart_game/client/ui/chat.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
+import 'package:dart_game/client/web_socket_client.dart';
+import 'package:dart_game/client/windows_manager.dart';
+import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/session.dart';
 
 class Game {
   void run() {
@@ -19,23 +20,24 @@ class Game {
 
     final buildMenu = BuildMenu();
     final chat = Chat();
-    final inventory = PlayerInventoryMenu();
     final CanvasElement canvas = document.getElementById('canvas');
     final windowsManager = WindowsManager();
-    final renderer = Renderer(canvas, buildMenu, chat, inventory, windowsManager);
+    final session = Session(null, null);
+    final inventory = PlayerInventoryMenu(session);
+    final renderer =
+        Renderer(canvas, buildMenu, chat, inventory, windowsManager, session);
     final world = World();
 
     Timer.periodic(Duration(milliseconds: (1000 / 60).floor()), (Timer timer) {
       renderer.render(world);
     });
 
-
     final inputManager = InputManager(document.body, canvas, world, renderer,
-        buildMenu, chat, inventory, windowsManager);
+        buildMenu, chat, inventory, windowsManager, session);
     inputManager.listen();
 
     final webSocketClient = WebSocketClient(WebSocket('ws:127.0.0.1:8083/ws'),
-        world, inputManager, renderer, chat, inventory);
+        world, inputManager, renderer, chat, inventory, session);
 
     webSocketClient.connect();
 

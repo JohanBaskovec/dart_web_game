@@ -19,7 +19,7 @@ World _$WorldFromJson(Map json) {
             ?.toList())
         ?.toList()
     ..players = (json['players'] as List)
-        ?.map((e) => e == null ? null : Player.fromJson(e as Map))
+        ?.map((e) => e == null ? null : SolidObject.fromJson(e as Map))
         ?.toList();
 }
 

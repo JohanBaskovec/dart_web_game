@@ -7,10 +7,9 @@ part 'add_to_inventory_command.g.dart';
 
 @JsonSerializable(anyMap: true)
 class AddToInventoryCommand extends ServerCommand {
-  int playerId;
   SoftGameObject object;
 
-  AddToInventoryCommand(this.playerId, this.object)
+  AddToInventoryCommand(this.object)
       : super(ServerCommandType.addToInventory);
 
   /// Creates a new [AddToInventoryCommand] from a JSON object.

@@ -1,6 +1,5 @@
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/constants.dart';
-import 'package:dart_game/common/game_objects/player.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/inventory.dart';
 import 'package:dart_game/common/tile_position.dart';
@@ -33,22 +32,41 @@ enum SolidObjectType {
 @JsonSerializable(anyMap: true)
 class SolidObject {
   SolidObjectType type;
+  String name;
 
   TilePosition _tilePosition;
-  Inventory inventory;
+
+  /// Inventory that can be accessed by using your hand on an object
+  /// Example: fruits from trees, items from chests
+  Inventory publicInventory;
+
+  /// Inventory that contains objects that can be gathered by using a tool
+  /// Example: iron from an iron vein, wood logs from a tree
+  Inventory privateInventory;
   Box box;
   bool alive = true;
 
   SolidObject([this.type, TilePosition tilePosition]) {
     this.tilePosition = tilePosition;
-    inventory = Inventory();
+  }
+
+  void move(int x, int y) {
+    tilePosition.x += x;
+    tilePosition.y += y;
+    box.move(x * tileSize, y * tileSize);
+  }
+
+  void moveTo(TilePosition position) {
+    tilePosition = position;
   }
 
   SoftGameObject useItem(SoftGameObject item) {
     switch (type) {
       case SolidObjectType.tree:
+      case SolidObjectType.appleTree:
         if (item.type == SoftObjectType.axe) {
-          final itemFromInventory = inventory.popFirstOfType(SoftObjectType.log);
+          final itemFromInventory =
+              privateInventory.popFirstOfType(SoftObjectType.log);
           if (itemFromInventory != null) {
             if (itemFromInventory.itemsLeft == 0) {
               alive = false;
@@ -57,37 +75,11 @@ class SolidObject {
           }
         }
         break;
-      case SolidObjectType.appleTree:
-          if (item.type == SoftObjectType.hand) {
-            final InventoryPopResult result = inventory.popFirstOfType(SoftObjectType.apple);
-            if (result != null) {
-              print('picked ${result.object}');
-              return result.object;
-            } else {
-              return null;
-            }
-          }
-        break;
       default:
         break;
     }
     return null;
   }
-
-  /// Creates a new [SolidObject] from a JSON object.
-  static SolidObject fromJson(Map<dynamic, dynamic> json) {
-    final SolidObjectType type =
-        _$enumDecode(_$SolidObjectTypeEnumMap, json['type']);
-    switch (type) {
-      case SolidObjectType.player:
-        return Player.fromJson(json);
-      default:
-        return _$SolidObjectFromJson(json);
-    }
-  }
-
-  /// Convert this object to a JSON object.
-  Map<String, dynamic> toJson() => _$SolidObjectToJson(this);
 
   TilePosition get tilePosition => _tilePosition;
 
@@ -101,4 +93,31 @@ class SolidObject {
           tileSize.toDouble());
     }
   }
+
+  /// Creates a new [SolidObject] from a JSON object.
+  static SolidObject fromJson(Map<dynamic, dynamic> json) =>
+      _$SolidObjectFromJson(json);
+
+  /// Convert this object to a JSON object.
+  Map<String, dynamic> toJson() => _$SolidObjectToJson(this);
+}
+
+SolidObject makeTree(int x, int y) {
+  final tree = SolidObject(SolidObjectType.tree, TilePosition(x, y));
+  tree.privateInventory = Inventory();
+  tree.publicInventory = Inventory();
+  return tree;
+}
+
+SolidObject makeAppleTree(int x, int y) {
+  final tree = SolidObject(SolidObjectType.appleTree, TilePosition(x, y));
+  tree.privateInventory = Inventory();
+  tree.publicInventory = Inventory();
+  return tree;
+}
+
+SolidObject makePlayer(int x, int y) {
+  final tree = SolidObject(SolidObjectType.player, TilePosition(x, y));
+  tree.privateInventory = Inventory();
+  return tree;
 }

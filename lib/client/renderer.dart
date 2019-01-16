@@ -1,19 +1,19 @@
 import 'dart:html';
 
 import 'package:dart_game/client/canvas_position.dart';
-import 'package:dart_game/client/windows_manager.dart';
-import 'package:dart_game/common/box.dart';
-import 'package:dart_game/common/constants.dart';
-import 'package:dart_game/common/game_objects/player.dart';
-import 'package:dart_game/common/game_objects/receipes.dart';
-import 'package:dart_game/common/game_objects/soft_object.dart';
-import 'package:dart_game/common/game_objects/solid_object.dart';
-import 'package:dart_game/common/game_objects/world.dart';
-import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/client/ui/build_menu.dart';
 import 'package:dart_game/client/ui/chat.dart';
 import 'package:dart_game/client/ui/inventory_menu.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
+import 'package:dart_game/client/windows_manager.dart';
+import 'package:dart_game/common/box.dart';
+import 'package:dart_game/common/constants.dart';
+import 'package:dart_game/common/game_objects/receipes.dart';
+import 'package:dart_game/common/game_objects/soft_object.dart';
+import 'package:dart_game/common/game_objects/solid_object.dart';
+import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/session.dart';
+import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/world_position.dart';
 
 class Renderer {
@@ -21,16 +21,16 @@ class Renderer {
   final CanvasRenderingContext2D _ctx;
   double scale = 1;
   CanvasPosition cameraPosition;
-  Player player;
   Map<SoftObjectType, ImageElement> softImages = {};
   Map<SolidObjectType, ImageElement> solidImages = {};
   BuildMenu buildMenu;
   Chat chat;
   PlayerInventoryMenu inventory;
   WindowsManager windowsManager;
+  final Session session;
 
   Renderer(this._canvas, this.buildMenu, this.chat, this.inventory,
-      this.windowsManager)
+      this.windowsManager, this.session)
       : _ctx = _canvas.getContext('2d') as CanvasRenderingContext2D {
     for (SoftObjectType type in SoftObjectType.values) {
       softImages[type] = ImageElement();
@@ -48,6 +48,9 @@ class Renderer {
     _canvas.width = window.innerWidth;
     _canvas.height = window.innerHeight;
 
+    if (session.player != null) {
+      moveCameraToPlayerPosition(session.player.tilePosition);
+    }
     _ctx.scale(scale, scale);
     if (cameraPosition != null) {
       _ctx.translate(cameraPosition.x, cameraPosition.y);
@@ -74,14 +77,15 @@ class Renderer {
       }
     }
     _ctx.setTransform(1, 0, 0, 1, 0, 0);
-    if (player != null) {
+    if (session.player != null) {
       _ctx.fillStyle = 'black';
       inventory.update();
       _ctx.fillRect(inventory.box.left, inventory.box.top, inventory.box.width,
           inventory.box.height);
       final double widthPerStack = inventory.box.width / 9;
-      for (var i = 0; i < player.inventory.stacks.length; i++) {
-        final List<SoftGameObject> stack = player.inventory.stacks[i];
+      for (var i = 0; i < session.player.privateInventory.stacks.length; i++) {
+        final List<SoftGameObject> stack =
+            session.player.privateInventory.stacks[i];
         final double left = i * widthPerStack + inventory.box.left;
         _ctx.drawImageScaled(softImages[stack[0].type], left, inventory.box.top,
             widthPerStack, inventory.box.height);
@@ -175,7 +179,7 @@ class Renderer {
     if (scale < 0.05) {
       scale = 0.05;
     }
-    moveCameraToPlayerPosition(player.tilePosition);
+    moveCameraToPlayerPosition(session.player.tilePosition);
   }
 
   CanvasPosition getCursorPositionInCanvas(MouseEvent event) {

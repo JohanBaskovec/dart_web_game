@@ -7,8 +7,9 @@ part of 'add_player_command.dart';
 // **************************************************************************
 
 AddPlayerCommand _$AddPlayerCommandFromJson(Map json) {
-  return AddPlayerCommand(
-      json['player'] == null ? null : Player.fromJson(json['player'] as Map))
+  return AddPlayerCommand(json['player'] == null
+      ? null
+      : SolidObject.fromJson(json['player'] as Map))
     ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type']);
 }
 

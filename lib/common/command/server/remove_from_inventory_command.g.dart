@@ -8,7 +8,6 @@ part of 'remove_from_inventory_command.dart';
 
 RemoveFromInventoryCommand _$RemoveFromInventoryCommandFromJson(Map json) {
   return RemoveFromInventoryCommand(
-      json['playerId'] as int,
       (json['nObjectsToRemoveFromEachStack'] as List)
           ?.map((e) => e as int)
           ?.toList())
@@ -19,7 +18,6 @@ Map<String, dynamic> _$RemoveFromInventoryCommandToJson(
         RemoveFromInventoryCommand instance) =>
     <String, dynamic>{
       'type': _$ServerCommandTypeEnumMap[instance.type],
-      'playerId': instance.playerId,
       'nObjectsToRemoveFromEachStack': instance.nObjectsToRemoveFromEachStack
     };
 

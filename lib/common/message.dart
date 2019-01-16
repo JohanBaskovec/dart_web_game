@@ -4,10 +4,10 @@ part 'message.g.dart';
 
 @JsonSerializable(anyMap: true)
 class Message {
-  int senderId;
+  String senderName;
   String message;
 
-  Message(this.senderId, this.message);
+  Message(this.senderName, this.message);
 
   /// Creates a new [Message] from a JSON object.
   static Message fromJson(Map<dynamic, dynamic> json) => _$MessageFromJson(json);

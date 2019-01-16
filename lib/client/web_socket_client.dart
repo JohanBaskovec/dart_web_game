@@ -3,6 +3,7 @@ import 'dart:html';
 
 import 'package:dart_game/client/input_manager.dart';
 import 'package:dart_game/client/renderer.dart';
+import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/command/server/add_message_command.dart';
 import 'package:dart_game/common/command/server/add_player_command.dart';
@@ -26,9 +27,10 @@ class WebSocketClient {
   final Renderer renderer;
   final Chat chat;
   final PlayerInventoryMenu inventoryMenu;
+  final Session session;
 
   WebSocketClient(this.webSocket, this._world, this._inputManager,
-      this.renderer, this.chat, this.inventoryMenu);
+      this.renderer, this.chat, this.inventoryMenu, this.session);
 
   void connect() {
     webSocket.onMessage.listen((MessageEvent e) {
@@ -82,13 +84,10 @@ class WebSocketClient {
 
   void executeMoveCommand(MovePlayerCommand command) {
     _world.players[command.playerId].moveTo(command.targetPosition);
-    if (command.playerId == _inputManager.player.id) {
-      renderer.moveCameraToPlayerPosition(_inputManager.player.tilePosition);
-    }
   }
 
   void executeAddPlayerCommand(AddPlayerCommand command) {
-    _world.players[command.player.id] = command.player;
+    _world.players.add(command.player);
   }
 
   void executeRemovePlayerCommand(RemovePlayerCommand command) {
@@ -99,8 +98,8 @@ class WebSocketClient {
     _world.solidObjectColumns = command.world.solidObjectColumns;
     _world.players = command.world.players;
     _world.tilesColumn = command.world.tilesColumn;
-    _inputManager.player = _world.players[command.playerId];
-    inventoryMenu.player = _inputManager.player;
+    session.player = _world.players[command.playerId];
+    session.id = command.playerId;
   }
 
   void executeRemoveSolidObjectCommand(RemoveSolidObjectCommand command) {
@@ -108,7 +107,7 @@ class WebSocketClient {
   }
 
   void executeAddToInventoryCommand(AddToInventoryCommand command) {
-    _inputManager.player.inventory.addItem(command.object);
+    session.player.privateInventory.addItem(command.object);
     inventoryMenu.update();
   }
 
@@ -120,7 +119,7 @@ class WebSocketClient {
   void executeRemoveFromInventoryCommand(RemoveFromInventoryCommand command) {
     for (int i = 0; i < command.nObjectsToRemoveFromEachStack.length; i++) {
       if (command.nObjectsToRemoveFromEachStack[i] != 0) {
-        _inputManager.player.inventory
+        session.player.privateInventory
             .removeFromStack(i, command.nObjectsToRemoveFromEachStack[i]);
       }
     }

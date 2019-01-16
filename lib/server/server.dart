@@ -20,14 +20,13 @@ import 'package:dart_game/common/command/server/remove_player_command.dart';
 import 'package:dart_game/common/command/server/remove_solid_object_command.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/constants.dart';
-import 'package:dart_game/common/game_objects/player.dart';
 import 'package:dart_game/common/game_objects/receipes.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/message.dart';
+import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/solid_object_building.dart';
-import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/server/client.dart';
 import 'package:yaml/yaml.dart';
 
@@ -46,7 +45,7 @@ class Server {
   }
 
   void executeMoveCommand(Client client, MoveCommand command) {
-    final int playerId = client.player.id;
+    final int playerId = client.session.id;
     final targetX = world.players[playerId].tilePosition.x + command.x;
     final targetY = world.players[playerId].tilePosition.y + command.y;
     if (targetX < worldSize.x &&
@@ -97,17 +96,20 @@ class Server {
               break;
             }
           }
-          final newPlayer = Player(TilePosition(0, 0), 'admin', playerId);
-          newPlayer.inventory.addItem(SoftGameObject(SoftObjectType.hand));
-          newPlayer.inventory.addItem(SoftGameObject(SoftObjectType.axe));
+          final newPlayer = makePlayer(0, 0);
+          newPlayer.privateInventory
+              .addItem(SoftGameObject(SoftObjectType.hand));
+          newPlayer.privateInventory
+              .addItem(SoftGameObject(SoftObjectType.axe));
 
           world.players[playerId] = newPlayer;
           nPlayers++;
-          final newClient = Client(newPlayer, newPlayerWebSocket);
+          final newClient =
+              Client(Session(newPlayer, playerId), newPlayerWebSocket);
           // TODO: prevent synchro modification of clients,
           // because we may send wrong id to user otherwise
           final addNewPlayer = AddPlayerCommand(newPlayer);
-          final loggedInCommand = LoggedInCommand(newPlayer.id, world);
+          final loggedInCommand = LoggedInCommand(playerId, world);
           print('Client connected!');
           for (var i = 0; i < clients.length; i++) {
             if (clients[i] != null) {
@@ -171,7 +173,7 @@ class Server {
     final SolidObject target = world
         .solidObjectColumns[command.targetPosition.x][command.targetPosition.y];
     final SoftGameObject item =
-        client.player.inventory.stacks[command.itemIndex][0];
+        client.session.player.privateInventory.stacks[command.itemIndex][0];
     useItemOnSolidObject(client, item, target);
   }
 
@@ -179,9 +181,9 @@ class Server {
       Client client, SoftGameObject item, SolidObject target) {
     final SoftGameObject itemReceivedFromAction = target.useItem(item);
     if (itemReceivedFromAction != null) {
-      client.player.inventory.addItem(itemReceivedFromAction);
+      client.session.player.privateInventory.addItem(itemReceivedFromAction);
       final addToInventoryCommand =
-          AddToInventoryCommand(client.player.id, itemReceivedFromAction);
+          AddToInventoryCommand(itemReceivedFromAction);
       client.sendCommand(addToInventoryCommand);
 
       if (!target.alive) {
@@ -202,22 +204,21 @@ class Server {
       return;
     }
 
-    final Player player = client.player;
+    final SolidObject player = client.session.player;
 
     final Map<SoftObjectType, int> receipe = solidReceipes[command.objectType];
     if (!playerCanBuild(command.objectType, player)) {
       print('Tried to build an object but couldn\'t!');
       return;
     }
-    final removeFromInventoryCommand =
-        RemoveFromInventoryCommand(player.id, []);
+    final removeFromInventoryCommand = RemoveFromInventoryCommand([]);
     for (var type in receipe.keys) {
-      for (int i = 0; i < player.inventory.stacks.length; i++) {
-        if (player.inventory.stacks[i][0].type == type) {
+      for (int i = 0; i < player.privateInventory.stacks.length; i++) {
+        if (player.privateInventory.stacks[i][0].type == type) {
           removeFromInventoryCommand.nObjectsToRemoveFromEachStack
               .add(receipe[type]);
           for (int k = 0; k < receipe[type]; k++) {
-            player.inventory.removeFromStack(i);
+            player.privateInventory.removeFromStack(i);
           }
         } else {
           removeFromInventoryCommand.nObjectsToRemoveFromEachStack.add(0);
@@ -240,7 +241,7 @@ class Server {
   }
 
   void executeSendMessageCommand(Client newClient, SendMessageCommand command) {
-    sendCommandToAllClients(
-        AddMessageCommand(Message(newClient.player.id, command.message)));
+    sendCommandToAllClients(AddMessageCommand(
+        Message(newClient.session.player.name, command.message)));
   }
 }
