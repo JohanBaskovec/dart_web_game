@@ -1,6 +1,6 @@
 class CanvasPosition {
-  int x;
-  int y;
+  double x;
+  double y;
 
   CanvasPosition(this.x, this.y);
 }

@@ -7,8 +7,7 @@ part of 'remove_entity_command.dart';
 // **************************************************************************
 
 RemoveEntityCommand _$RemoveEntityCommandFromJson(Map json) {
-  return RemoveEntityCommand(
-      json['entity'] == null ? null : Entity.fromJson(json['entity'] as Map))
+  return RemoveEntityCommand(json['entityId'] as int)
     ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type']);
 }
 
@@ -16,7 +15,7 @@ Map<String, dynamic> _$RemoveEntityCommandToJson(
         RemoveEntityCommand instance) =>
     <String, dynamic>{
       'type': _$ServerCommandTypeEnumMap[instance.type],
-      'entity': instance.entity
+      'entityId': instance.entityId
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {

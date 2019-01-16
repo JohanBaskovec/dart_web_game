@@ -5,18 +5,18 @@ part 'box.g.dart';
 
 @JsonSerializable(anyMap: true)
 class Box {
-  int left;
-  int right;
-  int top;
-  int bottom;
-  int width;
-  int height;
+  double left;
+  double right;
+  double top;
+  double bottom;
+  double width;
+  double height;
 
   Box(this.left, this.top, this.width, this.height)
       : right = left + width,
         bottom = top + height;
 
-  bool pointIsInBox(int x, int y) {
+  bool pointIsInBox(double x, double y) {
     return x > left &&
         x < right &&
         y > top &&
@@ -30,7 +30,7 @@ class Box {
     bottom = top + height;
   }
 
-  void moveTo(int x, int y) {
+  void moveTo(double x, double y) {
     left = x;
     top = y;
     right = left + width;

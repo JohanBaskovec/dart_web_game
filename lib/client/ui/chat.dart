@@ -17,13 +17,11 @@ class Chat {
   Chat();
 
   void moveAndResize(Box box) {
-    final int sendButtonWidth = (box.width / 10).floor();
+    final double sendButtonWidth = box.width / 10;
     sendButton.box =
         Box(box.right - sendButtonWidth, box.bottom - 40, sendButtonWidth, 40);
-    final int top = (box.bottom - box.height / 10).floor();
-    final int height = (box.height / 10).floor();
     input.box =
-        Box(box.left, top, box.width, height);
+        Box(box.left, box.bottom - box.height / 10, box.width, box.height / 10);
     this.box = box;
   }
 

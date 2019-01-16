@@ -8,30 +8,41 @@ part of 'world.dart';
 
 World _$WorldFromJson(Map json) {
   return World()
+    ..tilesColumn = (json['tilesColumn'] as List)
+        ?.map((e) => (e as List)
+            ?.map((e) => e == null ? null : Tile.fromJson(e as Map))
+            ?.toList())
+        ?.toList()
+    ..solidObjectColumns = (json['solidObjectColumns'] as List)
+        ?.map((e) => (e as List)?.map((e) => e as int)?.toList())
+        ?.toList()
+    ..publicInventories = (json['publicInventories'] as List)
+        ?.map((e) => e == null ? null : Inventory.fromJson(e as Map))
+        ?.toList()
+    ..privateInventories = (json['privateInventories'] as List)
+        ?.map((e) => e == null ? null : Inventory.fromJson(e as Map))
+        ?.toList()
+    ..gridPositions = (json['gridPositions'] as List)
+        ?.map((e) => e == null ? null : TilePosition.fromJson(e as Map))
+        ?.toList()
+    ..entities = (json['entities'] as List)?.map((e) => e as int)?.toList()
     ..renderingComponents = (json['renderingComponents'] as List)
         ?.map((e) => e == null ? null : RenderingComponent.fromJson(e as Map))
         ?.toList()
-    ..renderingComponentFreeIds = (json['renderingComponentFreeIds'] as List)
-        ?.map((e) => e as int)
+    ..usableComponents = (json['usableComponents'] as List)
+        ?.map((e) => e == null ? null : UsableComponent.fromJson(e as Map))
         ?.toList()
-    ..collisionComponents = (json['collisionComponents'] as List)
-        ?.map((e) => e == null ? null : CollisionComponent.fromJson(e as Map))
-        ?.toList()
-    ..collisionComponentFreeIds = (json['collisionComponentFreeIds'] as List)
-        ?.map((e) => e as int)
-        ?.toList()
-    ..entities = (json['entities'] as List)
-        ?.map((e) => e == null ? null : Entity.fromJson(e as Map))
-        ?.toList()
-    ..entitiesFreeIds =
-        (json['entitiesFreeIds'] as List)?.map((e) => e as int)?.toList();
+    ..lastAddedEntityId = json['lastAddedEntityId'] as int;
 }
 
 Map<String, dynamic> _$WorldToJson(World instance) => <String, dynamic>{
-      'renderingComponents': instance.renderingComponents,
-      'renderingComponentFreeIds': instance.renderingComponentFreeIds,
-      'collisionComponents': instance.collisionComponents,
-      'collisionComponentFreeIds': instance.collisionComponentFreeIds,
+      'tilesColumn': instance.tilesColumn,
+      'solidObjectColumns': instance.solidObjectColumns,
+      'publicInventories': instance.publicInventories,
+      'privateInventories': instance.privateInventories,
+      'gridPositions': instance.gridPositions,
       'entities': instance.entities,
-      'entitiesFreeIds': instance.entitiesFreeIds
+      'renderingComponents': instance.renderingComponents,
+      'usableComponents': instance.usableComponents,
+      'lastAddedEntityId': instance.lastAddedEntityId
     };

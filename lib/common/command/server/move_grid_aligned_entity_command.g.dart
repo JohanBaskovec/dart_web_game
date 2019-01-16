@@ -1,28 +1,25 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'move_rendering_and_collision_components_command.dart';
+part of 'move_grid_aligned_entity_command.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-MoveRenderingAndCollisionComponentsCommand
-    _$MoveRenderingAndCollisionComponentsCommandFromJson(Map json) {
-  return MoveRenderingAndCollisionComponentsCommand(
-      json['renderingComponentId'] as int,
-      json['collisionComponentId'] as int,
+MoveGridAlignedEntityCommand _$MoveGridAlignedEntityCommandFromJson(Map json) {
+  return MoveGridAlignedEntityCommand(
+      json['entityId'] as int,
       json['destination'] == null
           ? null
-          : WorldPosition.fromJson(json['destination'] as Map))
+          : TilePosition.fromJson(json['destination'] as Map))
     ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type']);
 }
 
-Map<String, dynamic> _$MoveRenderingAndCollisionComponentsCommandToJson(
-        MoveRenderingAndCollisionComponentsCommand instance) =>
+Map<String, dynamic> _$MoveGridAlignedEntityCommandToJson(
+        MoveGridAlignedEntityCommand instance) =>
     <String, dynamic>{
       'type': _$ServerCommandTypeEnumMap[instance.type],
-      'renderingComponentId': instance.renderingComponentId,
-      'collisionComponentId': instance.collisionComponentId,
+      'entityId': instance.entityId,
       'destination': instance.destination
     };
 

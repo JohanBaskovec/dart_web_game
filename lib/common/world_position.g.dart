@@ -7,7 +7,8 @@ part of 'world_position.dart';
 // **************************************************************************
 
 WorldPosition _$WorldPositionFromJson(Map json) {
-  return WorldPosition(json['x'] as int, json['y'] as int);
+  return WorldPosition(
+      (json['x'] as num)?.toDouble(), (json['y'] as num)?.toDouble());
 }
 
 Map<String, dynamic> _$WorldPositionToJson(WorldPosition instance) =>

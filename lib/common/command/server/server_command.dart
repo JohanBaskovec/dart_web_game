@@ -4,7 +4,7 @@ import 'package:dart_game/common/command/server/add_grid_aligned_entity_command.
 import 'package:dart_game/common/command/server/add_message_command.dart';
 import 'package:dart_game/common/command/server/add_to_inventory_command.dart';
 import 'package:dart_game/common/command/server/logged_in_command.dart';
-import 'package:dart_game/common/command/server/move_rendering_and_collision_components_command.dart';
+import 'package:dart_game/common/command/server/move_grid_aligned_entity_command.dart';
 import 'package:dart_game/common/command/server/remove_entity_command.dart';
 import 'package:dart_game/common/command/server/remove_from_inventory_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
@@ -40,7 +40,7 @@ class ServerCommand {
       case ServerCommandType.addEntityWithRendering:
         return AddEntityWithRenderingCommand.fromJson(json);
       case ServerCommandType.moveGridAlignedEntity:
-        return MoveRenderingAndCollisionComponentsCommand.fromJson(json);
+        return MoveGridAlignedEntityCommand.fromJson(json);
       case ServerCommandType.removeRenderingComponent:
       case ServerCommandType.addRenderingComponent:
         throw Exception('Trying to unserialize unimplemented'

@@ -10,7 +10,6 @@ import 'package:dart_game/client/ui/player_inventory_menu.dart';
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/client/windows_manager.dart';
 import 'package:dart_game/common/command/client/move_command.dart';
-import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/tile_position.dart';
 
 class InputManager {
@@ -128,7 +127,7 @@ class InputManager {
   }
 
   void move(int x, int y) {
-    final command = MoveCommand(x * tileSize, y * tileSize);
+    final command = MoveCommand(x, y);
     webSocketClient.webSocket.send(jsonEncode(command));
   }
 

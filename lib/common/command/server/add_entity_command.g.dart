@@ -7,15 +7,15 @@ part of 'add_entity_command.dart';
 // **************************************************************************
 
 AddEntityCommand _$AddEntityCommandFromJson(Map json) {
-  return AddEntityCommand(
-      json['entity'] == null ? null : Entity.fromJson(json['entity'] as Map))
-    ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type']);
+  return AddEntityCommand()
+    ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type'])
+    ..entityId = json['entityId'] as int;
 }
 
 Map<String, dynamic> _$AddEntityCommandToJson(AddEntityCommand instance) =>
     <String, dynamic>{
       'type': _$ServerCommandTypeEnumMap[instance.type],
-      'entity': instance.entity
+      'entityId': instance.entityId
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {

@@ -1,8 +1,6 @@
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
-import 'package:dart_game/common/component/collision_component.dart';
-import 'package:dart_game/common/component/rendering_component.dart';
-import 'package:dart_game/common/entity.dart';
+import 'package:dart_game/common/game_objects/world.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'logged_in_command.g.dart';
@@ -10,11 +8,9 @@ part 'logged_in_command.g.dart';
 @JsonSerializable(anyMap: true)
 class LoggedInCommand extends ServerCommand {
   int playerId;
-  List<RenderingComponent> renderingComponents;
-  List<CollisionComponent> collisionComponents;
-  List<Entity> entities;
+  World world;
 
-  LoggedInCommand([this.playerId, this.renderingComponents, this.collisionComponents, this.entities])
+  LoggedInCommand([this.playerId, this.world])
       : super(ServerCommandType.loggedIn);
 
   /// Creates a new [LoggedInCommand] from a JSON object.

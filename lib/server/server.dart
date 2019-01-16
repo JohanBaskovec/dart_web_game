@@ -11,18 +11,15 @@ import 'package:dart_game/common/command/client/send_message_command.dart';
 import 'package:dart_game/common/command/client/use_object_on_solid_object_command.dart';
 import 'package:dart_game/common/command/server/add_message_command.dart';
 import 'package:dart_game/common/command/server/logged_in_command.dart';
-import 'package:dart_game/common/command/server/move_rendering_and_collision_components_command.dart';
+import 'package:dart_game/common/command/server/move_grid_aligned_entity_command.dart';
 import 'package:dart_game/common/command/server/remove_entity_command.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
-import 'package:dart_game/common/component/collision_component.dart';
-import 'package:dart_game/common/component/inventory_component.dart';
 import 'package:dart_game/common/constants.dart';
-import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/game_objects/entity_type.dart';
 import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/inventory.dart';
 import 'package:dart_game/common/message.dart';
 import 'package:dart_game/common/tile_position.dart';
-import 'package:dart_game/common/world_position.dart';
 import 'package:dart_game/server/client.dart';
 import 'package:yaml/yaml.dart';
 
@@ -41,28 +38,20 @@ class Server {
   }
 
   void executeMoveCommand(Client client, MoveCommand command) {
-    final Entity player = client.player;
-    final collisionComponent =
-        world.collisionComponents[player.collisionComponentId];
-    final target = WorldPosition(collisionComponent.box.left + command.x,
-        collisionComponent.box.top + command.y);
-    // TODO: improve performances
-    for (int i = 0; i < world.collisionComponents.length; i++) {
-      final CollisionComponent collisionComponent =
-          world.collisionComponents[i];
-      if (collisionComponent != null &&
-          collisionComponent.box.top == target.y &&
-          collisionComponent.box.left == target.x) {
-        return;
-      }
-    }
-    if (target.x < worldSizePx.x &&
+    final int playerId = client.playerId;
+    final origin = world.gridPositions[playerId];
+    final target = TilePosition(origin.x + command.x, origin.y + command.y);
+    if (target.x < worldSize.x &&
         target.x >= 0 &&
-        target.y < worldSizePx.y &&
-        target.y >= 0) {
-      final serverCommand = MoveRenderingAndCollisionComponentsCommand(
-          player.renderingComponentId, player.collisionComponentId, target);
-      world.executeMoveGridAlignedEntity(serverCommand);
+        target.y < worldSize.y &&
+        target.y >= 0 &&
+        world.solidObjectColumns[target.x][target.y] == null) {
+      world.solidObjectColumns[origin.x][origin.y] = null;
+      world.gridPositions[playerId] = target;
+      world.renderingComponents[playerId].box
+          .move(command.x * tileSize, command.y * tileSize);
+      world.solidObjectColumns[target.x][target.y] = playerId;
+      final serverCommand = MoveGridAlignedEntityCommand(playerId, target);
       sendCommandToAllClients(serverCommand);
     }
   }
@@ -103,23 +92,19 @@ class Server {
               break;
             }
           }
-          final Entity newPlayer =
+          final int newPlayerId =
               world.addGridAlignedEntity(EntityType.player, TilePosition(0, 0));
-          final playerInventory = InventoryComponent();
-          playerInventory.addItem(world.createAndAddEntity(EntityType.hand));
-          playerInventory.addItem(world.createAndAddEntity(EntityType.axe));
+          final playerInventory = Inventory();
+          playerInventory.addItem(world.addEntity(EntityType.hand));
+          playerInventory.addItem(world.addEntity(EntityType.axe));
 
           nPlayers++;
-          final newClient = Client(newPlayer, newPlayerWebSocket);
+          final newClient = Client(newPlayerId, newPlayerWebSocket);
           // TODO: prevent synchro modification of clients,
           // because we may send wrong id to user otherwise
           // TODO: should be add entity
           //final addNewPlayer = AddPlayerCommand(newPlayer);
-          final loggedInCommand = LoggedInCommand(
-              newPlayer.id,
-              world.renderingComponents,
-              world.collisionComponents,
-              world.entities);
+          final loggedInCommand = LoggedInCommand(newPlayerId, world);
           print('Client connected!');
           for (var i = 0; i < clients.length; i++) {
             if (clients[i] != null) {
@@ -161,11 +146,12 @@ class Server {
             }
           }, onDone: () {
             print('Client disconnected.');
-            final removeCommand = RemoveEntityCommand(newPlayer);
+            final removeCommand = RemoveEntityCommand(playerId);
             sendCommandToAllClients(removeCommand);
             newPlayerWebSocket.close();
             clients[playerId] = null;
-            world.removeEntity(newPlayer);
+            world.entities[playerId] = null;
+            world.renderingComponents[playerId] = null;
           });
         } catch (e, s) {
           print(e);
@@ -257,6 +243,6 @@ class Server {
 
   void executeSendMessageCommand(Client newClient, SendMessageCommand command) {
     sendCommandToAllClients(
-        AddMessageCommand(Message(newClient.player.id, command.message)));
+        AddMessageCommand(Message(newClient.playerId, command.message)));
   }
 }
