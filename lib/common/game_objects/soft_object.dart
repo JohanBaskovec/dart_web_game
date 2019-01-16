@@ -41,6 +41,7 @@ enum SoftObjectType {
 /// Objects that can be traversed
 @JsonSerializable(anyMap: true)
 class SoftGameObject {
+  int id;
   SoftObjectType type;
   WorldPosition position;
   /// index in inventory if it's in one

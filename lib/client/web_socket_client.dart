@@ -105,7 +105,7 @@ class WebSocketClient {
   }
 
   void executeAddToInventoryCommand(AddToInventoryCommand command) {
-    session.player.inventory.addItem(command.object);
+    session.player.inventory.addItem(_world.softObjects[command.objectId]);
     inventoryMenu.update();
   }
 

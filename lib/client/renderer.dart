@@ -12,7 +12,9 @@ import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/inventory.dart';
 import 'package:dart_game/common/session.dart';
+import 'package:dart_game/common/stack.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/world_position.dart';
 
@@ -85,10 +87,9 @@ class Renderer {
           inventory.box.height);
       final double widthPerStack = inventory.box.width / 9;
       for (var i = 0; i < session.player.inventory.stacks.length; i++) {
-        final List<SoftGameObject> stack =
-            session.player.inventory.stacks[i];
+        final Stack stack = session.player.inventory.stacks[i];
         final double left = i * widthPerStack + inventory.box.left;
-        _ctx.drawImageScaled(softImages[stack[0].type], left, inventory.box.top,
+        _ctx.drawImageScaled(softImages[stack.objectType], left, inventory.box.top,
             widthPerStack, inventory.box.height);
         _ctx.fillStyle = 'white';
         _ctx.fillText(stack.length.toString(), left, inventory.box.bottom);

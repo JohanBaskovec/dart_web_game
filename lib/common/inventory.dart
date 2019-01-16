@@ -1,4 +1,5 @@
 import 'package:dart_game/common/game_objects/soft_object.dart';
+import 'package:dart_game/common/stack.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'inventory.g.dart';
@@ -10,25 +11,27 @@ class InventoryPopResult {
   InventoryPopResult(this.itemsLeft, this.object);
 }
 
+
+
 @JsonSerializable(anyMap: true)
 class Inventory {
-  SoftGameObject currentlyEquiped;
-  List<List<SoftGameObject>> stacks = [];
+  int currentlyEquiped;
+  List<Stack> stacks = [];
 
   void addItem(SoftGameObject item) {
     var i = 0;
     for (; i < stacks.length; i++) {
-      if (stacks[i][0].type == item.type) {
+      if (stacks[i].objectType == item.type) {
         break;
       }
     }
     if (i == stacks.length) {
-      stacks.add([]);
+      stacks.add(Stack(item.type));
     }
     item.index = i;
-    stacks[i].add(item);
+    stacks[i].add(item.id);
     print('Added $item to inventory in stack $i');
-    currentlyEquiped ??= item;
+    currentlyEquiped ??= item.id;
   }
 
   void removeFromStack(int stackIndex, [int n = 1]) {
@@ -45,7 +48,7 @@ class Inventory {
     }
   }
 
-  SoftGameObject popFromStack(int stackIndex) {
+  int popFromStack(int stackIndex) {
     return stacks[stackIndex].removeLast();
   }
 

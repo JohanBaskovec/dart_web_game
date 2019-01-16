@@ -15,8 +15,27 @@ class World {
   List<List<Tile>> tilesColumn = [];
   List<List<SolidObject>> solidObjectColumns = [];
   List<SolidObject> players = [];
+  List<SolidObject> solidObjects = List(worldSize.x * worldSize.y);
+  List<SoftGameObject> softObjects = [];
+  List<int> freeSoftObjectIds = [];
 
   World();
+
+  void addSoftObject(SoftGameObject object) {
+    if (freeSoftObjectIds.isEmpty) {
+      object.id = softObjects.length;
+      softObjects.add(object);
+    } else {
+      final int id = freeSoftObjectIds.removeLast();
+      object.id = id;
+      softObjects[id] = object;
+    }
+  }
+
+  void removeSoftObject(SoftGameObject object) {
+    freeSoftObjectIds.add(object.id);
+    softObjects.removeAt(object.id);
+  }
 
   World.fromConstants(Random randomGenerator)
       : _dimension = worldSize,
@@ -40,17 +59,19 @@ class World {
         final int rand = randomGenerator.nextInt(100);
         if (rand < 10) {
           final tree = makeTree(x, y);
-          final int nLogs = randomGenerator.nextInt(6) + 1;
-          for (int i = 0 ; i < nLogs ; i++) {
-            tree.inventory.addItem(SoftGameObject(SoftObjectType.log));
-          }
+          solidObjects.add(tree);
           final int nLeaves = randomGenerator.nextInt(6) + 1;
           for (int i = 0 ; i < nLeaves ; i++) {
-            tree.inventory.addItem(SoftGameObject(SoftObjectType.leaves));
+            final leaves = SoftGameObject(SoftObjectType.leaves);
+            addSoftObject(leaves);
+            tree.inventory.addItem(leaves);
           }
+
           final int nSnakes = randomGenerator.nextInt(6) + 1;
           for (int i = 0 ; i < nSnakes ; i++) {
-            tree.inventory.addItem(SoftGameObject(SoftObjectType.snake));
+            final snake = SoftGameObject(SoftObjectType.leaves);
+            addSoftObject(snake);
+            tree.inventory.addItem(snake);
           }
           solidObjectColumns[x][y] = tree;
         } else if (rand < 20) {

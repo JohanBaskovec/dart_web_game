@@ -20,7 +20,7 @@ bool playerCanBuild(SolidObjectType type, SolidObject player) {
 
   for (var type in recipe.keys) {
     for (int i = 0; i < player.inventory.stacks.length; i++) {
-      if (player.inventory.stacks[i][0].type == type) {
+      if (player.inventory.stacks[i].objectType == type) {
         required[type] -= player.inventory.stacks[i].length;
       }
     }

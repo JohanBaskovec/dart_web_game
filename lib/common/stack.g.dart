@@ -1,27 +1,20 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'soft_object.dart';
+part of 'stack.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-SoftGameObject _$SoftGameObjectFromJson(Map json) {
-  return SoftGameObject(
-      _$enumDecodeNullable(_$SoftObjectTypeEnumMap, json['type']),
-      json['position'] == null
-          ? null
-          : WorldPosition.fromJson(json['position'] as Map))
-    ..id = json['id'] as int
-    ..index = json['index'] as int;
+Stack _$StackFromJson(Map json) {
+  return Stack(
+      _$enumDecodeNullable(_$SoftObjectTypeEnumMap, json['objectType']))
+    ..objectsIds = (json['objectsIds'] as List)?.map((e) => e as int)?.toList();
 }
 
-Map<String, dynamic> _$SoftGameObjectToJson(SoftGameObject instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'type': _$SoftObjectTypeEnumMap[instance.type],
-      'position': instance.position,
-      'index': instance.index
+Map<String, dynamic> _$StackToJson(Stack instance) => <String, dynamic>{
+      'objectType': _$SoftObjectTypeEnumMap[instance.objectType],
+      'objectsIds': instance.objectsIds
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {

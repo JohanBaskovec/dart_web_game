@@ -25,6 +25,8 @@ class ClientCommand {
         return UseObjectOnSolidObjectCommand.fromJson(json);
       case ClientCommandType.sendMessage:
         return SendMessageCommand.fromJson(json);
+      case ClientCommandType.addToInventory:
+      case ClientCommandType.takeFromInventory:
       case ClientCommandType.login:
       case ClientCommandType.unknown:
         break;

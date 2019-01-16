@@ -26,8 +26,10 @@ import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/gathering.dart';
+import 'package:dart_game/common/inventory.dart';
 import 'package:dart_game/common/message.dart';
 import 'package:dart_game/common/session.dart';
+import 'package:dart_game/common/stack.dart';
 import 'package:dart_game/server/client.dart';
 import 'package:yaml/yaml.dart';
 
@@ -145,6 +147,7 @@ class Server {
                   break;
                 case ClientCommandType.login:
                 case ClientCommandType.unknown:
+                case ClientCommandType.addToInventory:
                   // unimplemented, should never happen
                   break;
               }
@@ -176,7 +179,7 @@ class Server {
     final SolidObject target = world
         .solidObjectColumns[command.targetPosition.x][command.targetPosition.y];
     final SoftGameObject item =
-        client.session.player.inventory.stacks[command.itemIndex][0];
+        client.session.player.inventory.currentlyEquiped;
     useItemOnSolidObject(client, item, target);
   }
 
@@ -193,8 +196,9 @@ class Server {
         SoftGameObject(config.gatherableItemsType);
     target.nGatherableItems--;
 
+    world.addSoftObject(gatheredItem);
     client.session.player.inventory.addItem(gatheredItem);
-    final addToInventoryCommand = AddToInventoryCommand(gatheredItem);
+    final addToInventoryCommand = AddToInventoryCommand(gatheredItem.id);
     client.sendCommand(addToInventoryCommand);
 
     if (target.nGatherableItems == 0) {
@@ -224,7 +228,7 @@ class Server {
     final removeFromInventoryCommand = RemoveFromInventoryCommand([]);
     for (var type in recipe.keys) {
       for (int i = 0; i < player.inventory.stacks.length; i++) {
-        if (player.inventory.stacks[i][0].type == type) {
+        if (player.inventory.stacks[i].objectType == type) {
           removeFromInventoryCommand.nObjectsToRemoveFromEachStack
               .add(recipe[type]);
           for (int k = 0; k < recipe[type]; k++) {
@@ -250,12 +254,14 @@ class Server {
       Client newClient, TakeFromInventoryCommand command) {
     final SolidObject target = world.solidObjectColumns[command.tilePosition.x]
         [command.tilePosition.y];
-    final List<SoftGameObject> stack = target.inventory.stacks[command.index];
+    final Stack stack = target.inventory.stacks[command.index];
     if (stack.isEmpty) {
       // concurrent access?
       return;
     }
-    final SoftGameObject objectTaken = stack.removeLast();
+    final SoftGameObject objectTaken = world.softObjects[stack.removeLast()];
     newClient.session.player.inventory.addItem(objectTaken);
+    final serverCommand = AddToInventoryCommand(objectTaken.id);
+    newClient.sendCommand(serverCommand);
   }
 }

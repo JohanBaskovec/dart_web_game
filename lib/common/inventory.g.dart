@@ -12,9 +12,7 @@ Inventory _$InventoryFromJson(Map json) {
         ? null
         : SoftGameObject.fromJson(json['currentlyEquiped'] as Map)
     ..stacks = (json['stacks'] as List)
-        ?.map((e) => (e as List)
-            ?.map((e) => e == null ? null : SoftGameObject.fromJson(e as Map))
-            ?.toList())
+        ?.map((e) => e == null ? null : Stack.fromJson(e as Map))
         ?.toList();
 }
 
