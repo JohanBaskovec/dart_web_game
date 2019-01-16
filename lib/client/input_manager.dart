@@ -148,7 +148,7 @@ class InputManager {
   }
 
   void clickOnSolidObject(SolidObject object) {
-    if (session.player.privateInventory.currentlyEquiped.type ==
+    if (session.player.inventory.currentlyEquiped.type ==
         SoftObjectType.hand) {
       if (object.type == SolidObjectType.tree ||
           object.type == SolidObjectType.woodenChest ||
@@ -161,7 +161,7 @@ class InputManager {
       }
     } else {
       final command = UseObjectOnSolidObjectCommand(object.tilePosition,
-          session.player.privateInventory.currentlyEquiped.index);
+          session.player.inventory.currentlyEquiped.index);
       webSocketClient.webSocket.send(jsonEncode(command));
     }
   }

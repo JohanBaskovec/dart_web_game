@@ -38,11 +38,11 @@ class SolidObject {
 
   /// Inventory that can be accessed by using your hand on an object
   /// Example: fruits from trees, items from chests
-  Inventory publicInventory;
+  Inventory inventory;
 
   /// Inventory that contains objects that can be gathered by using a tool
   /// Example: iron from an iron vein, wood logs from a tree
-  Inventory privateInventory;
+  int nGatherableItems;
   Box box;
   bool alive = true;
 
@@ -58,27 +58,6 @@ class SolidObject {
 
   void moveTo(TilePosition position) {
     tilePosition = position;
-  }
-
-  SoftGameObject useItem(SoftGameObject item) {
-    switch (type) {
-      case SolidObjectType.tree:
-      case SolidObjectType.appleTree:
-        if (item.type == SoftObjectType.axe) {
-          final itemFromInventory =
-              privateInventory.popFirstOfType(SoftObjectType.log);
-          if (itemFromInventory != null) {
-            if (itemFromInventory.itemsLeft == 0) {
-              alive = false;
-            }
-            return itemFromInventory.object;
-          }
-        }
-        break;
-      default:
-        break;
-    }
-    return null;
   }
 
   TilePosition get tilePosition => _tilePosition;
@@ -104,20 +83,20 @@ class SolidObject {
 
 SolidObject makeTree(int x, int y) {
   final tree = SolidObject(SolidObjectType.tree, TilePosition(x, y));
-  tree.privateInventory = Inventory();
-  tree.publicInventory = Inventory();
+  tree.inventory = Inventory();
+  tree.nGatherableItems = 1;
   return tree;
 }
 
 SolidObject makeAppleTree(int x, int y) {
   final tree = SolidObject(SolidObjectType.appleTree, TilePosition(x, y));
-  tree.privateInventory = Inventory();
-  tree.publicInventory = Inventory();
+  tree.inventory = Inventory();
+  tree.nGatherableItems = 1;
   return tree;
 }
 
 SolidObject makePlayer(int x, int y) {
   final tree = SolidObject(SolidObjectType.player, TilePosition(x, y));
-  tree.privateInventory = Inventory();
+  tree.inventory = Inventory();
   return tree;
 }

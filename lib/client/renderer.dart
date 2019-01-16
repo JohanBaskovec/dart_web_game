@@ -83,9 +83,9 @@ class Renderer {
       _ctx.fillRect(inventory.box.left, inventory.box.top, inventory.box.width,
           inventory.box.height);
       final double widthPerStack = inventory.box.width / 9;
-      for (var i = 0; i < session.player.privateInventory.stacks.length; i++) {
+      for (var i = 0; i < session.player.inventory.stacks.length; i++) {
         final List<SoftGameObject> stack =
-            session.player.privateInventory.stacks[i];
+            session.player.inventory.stacks[i];
         final double left = i * widthPerStack + inventory.box.left;
         _ctx.drawImageScaled(softImages[stack[0].type], left, inventory.box.top,
             widthPerStack, inventory.box.height);

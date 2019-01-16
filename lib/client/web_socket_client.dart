@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:html';
 
-import 'package:dart_game/client/input_manager.dart';
 import 'package:dart_game/client/renderer.dart';
-import 'package:dart_game/common/session.dart';
+import 'package:dart_game/client/ui/chat.dart';
+import 'package:dart_game/client/ui/player_inventory_menu.dart';
 import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/command/server/add_message_command.dart';
 import 'package:dart_game/common/command/server/add_player_command.dart';
@@ -17,20 +17,18 @@ import 'package:dart_game/common/command/server/remove_solid_object_command.dart
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
 import 'package:dart_game/common/game_objects/world.dart';
-import 'package:dart_game/client/ui/chat.dart';
-import 'package:dart_game/client/ui/player_inventory_menu.dart';
+import 'package:dart_game/common/session.dart';
 
 class WebSocketClient {
   final WebSocket webSocket;
   final World _world;
-  final InputManager _inputManager;
   final Renderer renderer;
   final Chat chat;
   final PlayerInventoryMenu inventoryMenu;
   final Session session;
 
-  WebSocketClient(this.webSocket, this._world, this._inputManager,
-      this.renderer, this.chat, this.inventoryMenu, this.session);
+  WebSocketClient(this.webSocket, this._world, this.renderer, this.chat,
+      this.inventoryMenu, this.session);
 
   void connect() {
     webSocket.onMessage.listen((MessageEvent e) {
@@ -107,7 +105,7 @@ class WebSocketClient {
   }
 
   void executeAddToInventoryCommand(AddToInventoryCommand command) {
-    session.player.privateInventory.addItem(command.object);
+    session.player.inventory.addItem(command.object);
     inventoryMenu.update();
   }
 
@@ -119,7 +117,7 @@ class WebSocketClient {
   void executeRemoveFromInventoryCommand(RemoveFromInventoryCommand command) {
     for (int i = 0; i < command.nObjectsToRemoveFromEachStack.length; i++) {
       if (command.nObjectsToRemoveFromEachStack[i] != 0) {
-        session.player.privateInventory
+        session.player.inventory
             .removeFromStack(i, command.nObjectsToRemoveFromEachStack[i]);
       }
     }

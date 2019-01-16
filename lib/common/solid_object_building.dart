@@ -7,9 +7,9 @@ bool playerCanBuild(SolidObjectType type, SolidObject player) {
   final Map<SoftObjectType, int> required = Map.from(receipe);
 
   for (var type in receipe.keys) {
-    for (int i = 0; i < player.privateInventory.stacks.length; i++) {
-      if (player.privateInventory.stacks[i][0].type == type) {
-        required[type] -= player.privateInventory.stacks[i].length;
+    for (int i = 0; i < player.inventory.stacks.length; i++) {
+      if (player.inventory.stacks[i][0].type == type) {
+        required[type] -= player.inventory.stacks[i].length;
       }
     }
   }

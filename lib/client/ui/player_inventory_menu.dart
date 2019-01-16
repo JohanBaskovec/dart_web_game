@@ -27,7 +27,7 @@ class PlayerInventoryMenu {
     }
     for (int i = 0; i < buttons.length; i++) {
       if (buttons[i].box.pointIsInBox(canvasPosition.x, canvasPosition.y)) {
-        session.player.privateInventory.currentlyEquiped = buttons[i].stack[0];
+        session.player.inventory.currentlyEquiped = buttons[i].stack[0];
         return false;
       }
     }
@@ -40,10 +40,10 @@ class PlayerInventoryMenu {
     }
     final double widthPerStack = box.width / 9;
     buttons = [];
-    for (var i = 0; i < session.player.privateInventory.stacks.length; i++) {
+    for (var i = 0; i < session.player.inventory.stacks.length; i++) {
       final double left = i * widthPerStack + box.left;
       final newButton =
-          InventoryButton(session.player.privateInventory.stacks[i]);
+          InventoryButton(session.player.inventory.stacks[i]);
       newButton.box = Box(left, box.top, widthPerStack, box.height);
       buttons.add(newButton);
     }

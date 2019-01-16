@@ -24,6 +24,7 @@ import 'package:dart_game/common/game_objects/receipes.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/gathering.dart';
 import 'package:dart_game/common/message.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/solid_object_building.dart';
@@ -97,10 +98,8 @@ class Server {
             }
           }
           final newPlayer = makePlayer(0, 0);
-          newPlayer.privateInventory
-              .addItem(SoftGameObject(SoftObjectType.hand));
-          newPlayer.privateInventory
-              .addItem(SoftGameObject(SoftObjectType.axe));
+          newPlayer.inventory.addItem(SoftGameObject(SoftObjectType.hand));
+          newPlayer.inventory.addItem(SoftGameObject(SoftObjectType.axe));
 
           world.players[playerId] = newPlayer;
           nPlayers++;
@@ -173,25 +172,32 @@ class Server {
     final SolidObject target = world
         .solidObjectColumns[command.targetPosition.x][command.targetPosition.y];
     final SoftGameObject item =
-        client.session.player.privateInventory.stacks[command.itemIndex][0];
+        client.session.player.inventory.stacks[command.itemIndex][0];
     useItemOnSolidObject(client, item, target);
   }
 
   void useItemOnSolidObject(
-      Client client, SoftGameObject item, SolidObject target) {
-    final SoftGameObject itemReceivedFromAction = target.useItem(item);
-    if (itemReceivedFromAction != null) {
-      client.session.player.privateInventory.addItem(itemReceivedFromAction);
-      final addToInventoryCommand =
-          AddToInventoryCommand(itemReceivedFromAction);
-      client.sendCommand(addToInventoryCommand);
+      Client client, SoftGameObject usedItem, SolidObject target) {
+    final GatheringConfig config = gatheringConfigs[target.type];
+    if (config == null ||
+        usedItem.type != config.tool ||
+        target.nGatherableItems == 0) {
+      return;
+    }
 
-      if (!target.alive) {
-        world.solidObjectColumns[target.tilePosition.x][target.tilePosition.y] =
-            null;
-        final removeCommand = RemoveSolidObjectCommand(target.tilePosition);
-        sendCommandToAllClients(removeCommand);
-      }
+    final SoftGameObject gatheredItem =
+        SoftGameObject(config.gatherableItemsType);
+    target.nGatherableItems--;
+
+    client.session.player.inventory.addItem(gatheredItem);
+    final addToInventoryCommand = AddToInventoryCommand(gatheredItem);
+    client.sendCommand(addToInventoryCommand);
+
+    if (target.nGatherableItems == 0) {
+      world.solidObjectColumns[target.tilePosition.x][target.tilePosition.y] =
+          null;
+      final removeCommand = RemoveSolidObjectCommand(target.tilePosition);
+      sendCommandToAllClients(removeCommand);
     }
   }
 
@@ -213,12 +219,12 @@ class Server {
     }
     final removeFromInventoryCommand = RemoveFromInventoryCommand([]);
     for (var type in receipe.keys) {
-      for (int i = 0; i < player.privateInventory.stacks.length; i++) {
-        if (player.privateInventory.stacks[i][0].type == type) {
+      for (int i = 0; i < player.inventory.stacks.length; i++) {
+        if (player.inventory.stacks[i][0].type == type) {
           removeFromInventoryCommand.nObjectsToRemoveFromEachStack
               .add(receipe[type]);
           for (int k = 0; k < receipe[type]; k++) {
-            player.privateInventory.removeFromStack(i);
+            player.inventory.removeFromStack(i);
           }
         } else {
           removeFromInventoryCommand.nObjectsToRemoveFromEachStack.add(0);

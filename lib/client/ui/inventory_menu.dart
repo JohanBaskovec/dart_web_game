@@ -16,9 +16,9 @@ class InventoryMenu {
     this.box = box;
     final double widthPerStack = box.width / 9;
     buttons = [];
-    for (var i = 0; i < owner.publicInventory.stacks.length; i++) {
+    for (var i = 0; i < owner.inventory.stacks.length; i++) {
       final double left = box.left + i * widthPerStack + box.left;
-      final newButton = InventoryButton(owner.publicInventory.stacks[i]);
+      final newButton = InventoryButton(owner.inventory.stacks[i]);
       newButton.box = Box(left, box.top, widthPerStack, box.height);
       buttons.add(newButton);
     }
@@ -27,7 +27,7 @@ class InventoryMenu {
   bool clickAt(CanvasPosition canvasPosition) {
     for (int i = 0 ; i < buttons.length ; i++) {
       if (buttons[i].box.pointIsInBox(canvasPosition.x, canvasPosition.y)) {
-        player.privateInventory.addItem(buttons[i].stack.removeLast());
+        player.inventory.addItem(buttons[i].stack.removeLast());
         if (buttons[i].stack.isEmpty) {
           buttons.removeAt(i);
         }

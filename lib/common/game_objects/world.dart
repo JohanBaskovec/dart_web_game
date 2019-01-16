@@ -42,26 +42,26 @@ class World {
           final tree = makeTree(x, y);
           final int nLogs = randomGenerator.nextInt(6) + 1;
           for (int i = 0 ; i < nLogs ; i++) {
-            tree.privateInventory.addItem(SoftGameObject(SoftObjectType.log));
+            tree.inventory.addItem(SoftGameObject(SoftObjectType.log));
           }
           final int nLeaves = randomGenerator.nextInt(6) + 1;
           for (int i = 0 ; i < nLeaves ; i++) {
-            tree.publicInventory.addItem(SoftGameObject(SoftObjectType.leaves));
+            tree.inventory.addItem(SoftGameObject(SoftObjectType.leaves));
           }
           final int nSnakes = randomGenerator.nextInt(6) + 1;
           for (int i = 0 ; i < nSnakes ; i++) {
-            tree.publicInventory.addItem(SoftGameObject(SoftObjectType.snake));
+            tree.inventory.addItem(SoftGameObject(SoftObjectType.snake));
           }
           solidObjectColumns[x][y] = tree;
         } else if (rand < 20) {
           final tree = makeAppleTree(x, y);
           final int nLogs = randomGenerator.nextInt(6) + 1;
           for (int i = 0 ; i < nLogs ; i++) {
-            tree.publicInventory.addItem(SoftGameObject(SoftObjectType.fruitTreeLog));
+            tree.inventory.addItem(SoftGameObject(SoftObjectType.fruitTreeLog));
           }
           final int nApples = randomGenerator.nextInt(6) + 1;
           for (int i = 0 ; i < nLogs ; i++) {
-            tree.publicInventory.addItem(SoftGameObject(SoftObjectType.apple));
+            tree.inventory.addItem(SoftGameObject(SoftObjectType.apple));
           }
           solidObjectColumns[x][y] = tree;
         }
