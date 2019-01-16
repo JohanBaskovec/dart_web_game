@@ -7,7 +7,7 @@ part 'add_soft_object_command.g.dart';
 
 @JsonSerializable(anyMap: true)
 class AddSoftObjectCommand extends ServerCommand {
-  SoftGameObject object;
+  SoftObject object;
 
   AddSoftObjectCommand(this.object)
       : assert(object.id != null),

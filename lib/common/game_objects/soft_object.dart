@@ -40,31 +40,31 @@ enum SoftObjectType {
 
 /// Objects that can be traversed
 @JsonSerializable(anyMap: true)
-class SoftGameObject {
+class SoftObject {
   int id;
   SoftObjectType type;
   WorldPosition position;
   /// index in inventory if it's in one
   int indexInInventory;
 
-  SoftGameObject([this.type, this.position]);
+  SoftObject([this.type, this.position]);
 
-  /// Creates a new [SoftGameObject] from a JSON object.
-  static SoftGameObject fromJson(Map<dynamic, dynamic> json) {
+  /// Creates a new [SoftObject] from a JSON object.
+  static SoftObject fromJson(Map<dynamic, dynamic> json) {
     final type = _$enumDecode(_$SoftObjectTypeEnumMap, json['type']);
     switch (type) {
       default:
-        return _$SoftGameObjectFromJson(json);
+        return _$SoftObjectFromJson(json);
         break;
     }
   }
 
   /// Convert this object to a JSON object.
-  Map<String, dynamic> toJson() => _$SoftGameObjectToJson(this);
+  Map<String, dynamic> toJson() => _$SoftObjectToJson(this);
 
   @override
   String toString() {
-    return 'SoftGameObject{type: $type, position: $position, index: $indexInInventory}';
+    return 'SoftObject{type: $type, position: $position, index: $indexInInventory}';
   }
 
 

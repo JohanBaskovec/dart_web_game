@@ -147,7 +147,7 @@ class InputManager {
   }
 
   void clickOnSolidObject(SolidObject object) {
-    final SoftGameObject equippedObject = _world.softObjects[session.player
+    final SoftObject equippedObject = _world.softObjects[session.player
         .inventory.currentlyEquiped];
     if (equippedObject.type == SoftObjectType.hand) {
       if (object.type == SolidObjectType.tree ||

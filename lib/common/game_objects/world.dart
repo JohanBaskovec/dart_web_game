@@ -16,7 +16,7 @@ class World {
   List<List<SolidObject>> solidObjectColumns = [];
   List<SolidObject> players = [];
   List<SolidObject> solidObjects = List(worldSize.x * worldSize.y);
-  List<SoftGameObject> softObjects = [];
+  List<SoftObject> softObjects = [];
   List<int> freeSoftObjectIds = [];
 
   World();

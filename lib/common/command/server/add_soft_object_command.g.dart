@@ -9,7 +9,7 @@ part of 'add_soft_object_command.dart';
 AddSoftObjectCommand _$AddSoftObjectCommandFromJson(Map json) {
   return AddSoftObjectCommand(json['object'] == null
       ? null
-      : SoftGameObject.fromJson(json['object'] as Map))
+      : SoftObject.fromJson(json['object'] as Map))
     ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type']);
 }
 

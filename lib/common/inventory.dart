@@ -6,7 +6,7 @@ part 'inventory.g.dart';
 
 class InventoryPopResult {
   int itemsLeft;
-  SoftGameObject object;
+  SoftObject object;
 
   InventoryPopResult(this.itemsLeft, this.object);
 }
@@ -18,7 +18,7 @@ class Inventory {
   int currentlyEquiped;
   List<Stack> stacks = [];
 
-  void addItem(SoftGameObject item) {
+  void addItem(SoftObject item) {
     assert(item.id != null, 'Item must have an id before being added to inventory!');
     var i = 0;
     Stack stack;

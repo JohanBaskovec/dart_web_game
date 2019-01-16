@@ -25,7 +25,7 @@ World _$WorldFromJson(Map json) {
         ?.map((e) => e == null ? null : SolidObject.fromJson(e as Map))
         ?.toList()
     ..softObjects = (json['softObjects'] as List)
-        ?.map((e) => e == null ? null : SoftGameObject.fromJson(e as Map))
+        ?.map((e) => e == null ? null : SoftObject.fromJson(e as Map))
         ?.toList()
     ..freeSoftObjectIds =
         (json['freeSoftObjectIds'] as List)?.map((e) => e as int)?.toList();

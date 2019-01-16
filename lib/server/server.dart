@@ -88,14 +88,14 @@ class Server {
             final tree = makeTree(x, y);
             final int nLeaves = randomGenerator.nextInt(6) + 1;
             for (int i = 0; i < nLeaves; i++) {
-              final leaves = SoftGameObject(SoftObjectType.leaves);
+              final leaves = SoftObject(SoftObjectType.leaves);
               addSoftObject(leaves);
               tree.inventory.addItem(leaves);
             }
 
             final int nSnakes = randomGenerator.nextInt(6) + 1;
             for (int i = 0; i < nSnakes; i++) {
-              final snake = SoftGameObject(SoftObjectType.leaves);
+              final snake = SoftObject(SoftObjectType.leaves);
               addSoftObject(snake);
               tree.inventory.addItem(snake);
             }
@@ -138,8 +138,8 @@ class Server {
             }
           }
           final newPlayer = makePlayer(0, 0);
-          final hand = SoftGameObject(SoftObjectType.hand);
-          final axe = SoftGameObject(SoftObjectType.axe);
+          final hand = SoftObject(SoftObjectType.hand);
+          final axe = SoftObject(SoftObjectType.axe);
           addSoftObject(hand);
           addSoftObject(axe);
           newPlayer.inventory.addItem(hand);
@@ -224,13 +224,13 @@ class Server {
       Client client, UseObjectOnSolidObjectCommand command) {
     final SolidObject target = world
         .solidObjectColumns[command.targetPosition.x][command.targetPosition.y];
-    final SoftGameObject item =
+    final SoftObject item =
         world.softObjects[client.session.player.inventory.currentlyEquiped];
     useItemOnSolidObject(client, item, target);
   }
 
   void useItemOnSolidObject(
-      Client client, SoftGameObject usedItem, SolidObject target) {
+      Client client, SoftObject usedItem, SolidObject target) {
     final GatheringConfig config = gatheringConfigs[target.type];
     if (config == null ||
         usedItem.type != config.tool ||
@@ -238,8 +238,8 @@ class Server {
       return;
     }
 
-    final SoftGameObject gatheredItem =
-        SoftGameObject(config.gatherableItemsType);
+    final SoftObject gatheredItem =
+        SoftObject(config.gatherableItemsType);
     target.nGatherableItems--;
 
     addSoftObject(gatheredItem);
@@ -307,13 +307,13 @@ class Server {
       // concurrent access?
       return;
     }
-    final SoftGameObject objectTaken = world.softObjects[stack.removeLast()];
+    final SoftObject objectTaken = world.softObjects[stack.removeLast()];
     newClient.session.player.inventory.addItem(objectTaken);
     final serverCommand = AddToInventoryCommand(objectTaken.id);
     newClient.sendCommand(serverCommand);
   }
 
-  void addSoftObject(SoftGameObject object) {
+  void addSoftObject(SoftObject object) {
     if (world.freeSoftObjectIds.isEmpty) {
       object.id = world.softObjects.length;
       world.softObjects.add(object);
@@ -324,7 +324,7 @@ class Server {
     }
   }
 
-  void removeSoftObject(SoftGameObject object) {
+  void removeSoftObject(SoftObject object) {
     world.freeSoftObjectIds.add(object.id);
     world.softObjects.removeAt(object.id);
   }

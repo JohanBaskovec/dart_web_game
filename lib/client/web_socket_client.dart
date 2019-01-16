@@ -118,7 +118,7 @@ class WebSocketClient {
 
   void executeAddToInventoryCommand(AddToInventoryCommand command) {
     assert(command.objectId != null);
-    final SoftGameObject item = _world.softObjects[command.objectId];
+    final SoftObject item = _world.softObjects[command.objectId];
     assert(item != null);
     session.player.inventory.addItem(item);
     inventoryMenu.update();

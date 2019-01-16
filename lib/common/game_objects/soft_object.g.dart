@@ -6,8 +6,8 @@ part of 'soft_object.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-SoftGameObject _$SoftGameObjectFromJson(Map json) {
-  return SoftGameObject(
+SoftObject _$SoftObjectFromJson(Map json) {
+  return SoftObject(
       _$enumDecodeNullable(_$SoftObjectTypeEnumMap, json['type']),
       json['position'] == null
           ? null
@@ -16,7 +16,7 @@ SoftGameObject _$SoftGameObjectFromJson(Map json) {
     ..indexInInventory = json['indexInInventory'] as int;
 }
 
-Map<String, dynamic> _$SoftGameObjectToJson(SoftGameObject instance) =>
+Map<String, dynamic> _$SoftObjectToJson(SoftObject instance) =>
     <String, dynamic>{
       'id': instance.id,
       'type': _$SoftObjectTypeEnumMap[instance.type],
