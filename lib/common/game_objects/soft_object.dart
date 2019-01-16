@@ -1,4 +1,3 @@
-import 'package:dart_game/common/game_objects/axe.dart';
 import 'package:dart_game/common/world_position.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -53,8 +52,6 @@ class SoftGameObject {
   static SoftGameObject fromJson(Map<dynamic, dynamic> json) {
     final type = _$enumDecode(_$SoftObjectTypeEnumMap, json['type']);
     switch (type) {
-      case SoftObjectType.axe:
-        return Axe.fromJson(json);
       default:
         return _$SoftGameObjectFromJson(json);
         break;

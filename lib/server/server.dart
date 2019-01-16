@@ -20,7 +20,6 @@ import 'package:dart_game/common/command/server/remove_player_command.dart';
 import 'package:dart_game/common/command/server/remove_solid_object_command.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/constants.dart';
-import 'package:dart_game/common/game_objects/axe.dart';
 import 'package:dart_game/common/game_objects/player.dart';
 import 'package:dart_game/common/game_objects/receipes.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
@@ -100,7 +99,7 @@ class Server {
           }
           final newPlayer = Player(TilePosition(0, 0), 'admin', playerId);
           newPlayer.inventory.addItem(SoftGameObject(SoftObjectType.hand));
-          newPlayer.inventory.addItem(Axe());
+          newPlayer.inventory.addItem(SoftGameObject(SoftObjectType.axe));
 
           world.players[playerId] = newPlayer;
           nPlayers++;
