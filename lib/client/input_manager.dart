@@ -150,9 +150,7 @@ class InputManager {
     final SoftObject equippedObject = _world.softObjects[session.player
         .inventory.currentlyEquiped];
     if (equippedObject.type == SoftObjectType.hand) {
-      if (object.type == SolidObjectType.tree ||
-          object.type == SolidObjectType.woodenChest ||
-          object.type == SolidObjectType.campFire) {
+      if (object.inventory.stacks.isNotEmpty) {
         final inventoryMenu = InventoryMenu(
             Box(object.box.left, object.box.top, 600, 100),
             object,

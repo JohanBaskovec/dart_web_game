@@ -122,16 +122,10 @@ class Server {
           } else if (rand < 80) {
             final tree = makeAppleTree(x, y);
             addSolidObject(tree);
-            final int nLogs = randomGenerator.nextInt(6) + 1;
-            /*
-            for (int i = 0 ; i < nLogs ; i++) {
-              tree.inventory.addItem(SoftGameObject(SoftObjectType.fruitTreeLog));
-            }
             final int nApples = randomGenerator.nextInt(6) + 1;
-            for (int i = 0 ; i < nLogs ; i++) {
-              tree.inventory.addItem(SoftGameObject(SoftObjectType.apple));
+            for (int i = 0 ; i < nApples ; i++) {
+              tree.inventory.addItem(addSoftObject(SoftObjectType.apple));
             }
-            */
           }
         }
       }
