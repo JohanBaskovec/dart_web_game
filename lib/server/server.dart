@@ -67,18 +67,35 @@ class Server {
 
       Timer.periodic(Duration(seconds: 5), (Timer timer) {
         final start = DateTime.now();
-        for (int i = 0 ; i < world.solidObjects.length ; i++) {
+        for (int i = 0; i < world.solidObjects.length; i++) {
           final SolidObject object = world.solidObjects[i];
 
           if (object != null) {
             if (object.hungerComponent != null) {
               object.hungerComponent.update(world);
             }
+            if (object.ageComponent != null) {
+              object.ageComponent.update(world);
+            }
 
             if (!object.alive) {
               removeSolidObject(object);
             }
           }
+        }
+        for (int i = 0; i < world.softObjects.length; i++) {
+          final SoftObject object = world.softObjects[i];
+
+          if (object != null) {
+            if (object.ageComponent != null) {
+              object.ageComponent.update(world);
+            }
+
+            if (!object.alive) {
+              removeSoftObject(object);
+            }
+          }
+
         }
         final end = DateTime.now();
         final diff = end.difference(start);
@@ -237,7 +254,7 @@ class Server {
         world.solidObjectColumns[target.x][target.y] == null) {
       moveSolidObject(player, target);
       final serverCommand =
-      MoveSolidObjectCommand(player.id, player.tilePosition);
+          MoveSolidObjectCommand(player.id, player.tilePosition);
       sendCommandToAllClients(serverCommand);
     }
   }
