@@ -27,6 +27,7 @@ import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/gathering.dart';
+import 'package:dart_game/common/hunger_component.dart';
 import 'package:dart_game/common/message.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/stack.dart';
@@ -48,22 +49,6 @@ class Server {
     }
   }
 
-  void executeMoveCommand(Client client, MoveCommand command) {
-    final SolidObject player = client.session.player;
-    final target = TilePosition(
-        player.tilePosition.x + command.x, player.tilePosition.y + command.y);
-    if (target.x < worldSize.x &&
-        target.x >= 0 &&
-        target.y < worldSize.y &&
-        target.y >= 0 &&
-        world.solidObjectColumns[target.x][target.y] == null) {
-      moveSolidObject(player, target);
-      final serverCommand =
-          MoveSolidObjectCommand(player.id, player.tilePosition);
-      sendCommandToAllClients(serverCommand);
-    }
-  }
-
   /// Run the application.
   Future<void> run() async {
     try {
@@ -80,10 +65,30 @@ class Server {
           InternetAddress.anyIPv6, config['backend_port'] as int);
       world = World.fromConstants();
 
+      Timer.periodic(Duration(seconds: 5), (Timer timer) {
+        final start = DateTime.now();
+        for (int i = 0 ; i < world.solidObjects.length ; i++) {
+          final SolidObject object = world.solidObjects[i];
+
+          if (object != null) {
+            if (object.hungerComponent != null) {
+              object.hungerComponent.update(world);
+            }
+
+            if (!object.alive) {
+              removeSolidObject(object);
+            }
+          }
+        }
+        final end = DateTime.now();
+        final diff = end.difference(start);
+        print('Updated all solid objects in $diff');
+      });
+
       for (int x = 0; x < world.solidObjectColumns.length; x++) {
         for (int y = 0; y < world.solidObjectColumns[x].length; y++) {
           final int rand = randomGenerator.nextInt(100);
-          if (rand < 10) {
+          if (rand < 40) {
             final tree = makeTree(x, y);
             addSolidObject(tree);
             final int nLeaves = randomGenerator.nextInt(6) + 1;
@@ -97,7 +102,7 @@ class Server {
               final snake = addSoftObject(SoftObjectType.snake);
               tree.inventory.addItem(snake);
             }
-          } else if (rand < 20) {
+          } else if (rand < 70) {
             final tree = makeAppleTree(x, y);
             addSolidObject(tree);
             final int nLogs = randomGenerator.nextInt(6) + 1;
@@ -143,6 +148,7 @@ class Server {
             return;
           }
           addSolidObject(newPlayer);
+          newPlayer.hungerComponent = HungerComponent(0, 1);
           newPlayer.inventory.addItem(addSoftObject(SoftObjectType.hand));
           newPlayer.inventory.addItem(addSoftObject(SoftObjectType.axe));
           newPlayer.inventory.addItem(addSoftObject(SoftObjectType.log));
@@ -163,6 +169,7 @@ class Server {
 
           newPlayerWebSocket.listen((dynamic data) {
             try {
+              final start = DateTime.now();
               final ClientCommand command =
                   ClientCommand.fromJson(jsonDecode(data as String) as Map);
               switch (command.type) {
@@ -195,6 +202,9 @@ class Server {
                   // unimplemented, should never happen
                   break;
               }
+              final end = DateTime.now();
+              final timeForRequest = end.difference(start);
+              print('Time for request: $timeForRequest');
             } catch (e, s) {
               print(e);
               print(s);
@@ -202,8 +212,6 @@ class Server {
           }, onDone: () {
             removeSolidObject(newPlayer);
             print('Client disconnected.');
-            final removeCommand = RemoveSolidObjectCommand(newPlayer.id);
-            sendCommandToAllClients(removeCommand);
             newPlayerWebSocket.close();
             clients.remove(newClient);
           });
@@ -215,6 +223,22 @@ class Server {
     } catch (e, s) {
       print(e);
       print(s);
+    }
+  }
+
+  void executeMoveCommand(Client client, MoveCommand command) {
+    final SolidObject player = client.session.player;
+    final target = TilePosition(
+        player.tilePosition.x + command.x, player.tilePosition.y + command.y);
+    if (target.x < worldSize.x &&
+        target.x >= 0 &&
+        target.y < worldSize.y &&
+        target.y >= 0 &&
+        world.solidObjectColumns[target.x][target.y] == null) {
+      moveSolidObject(player, target);
+      final serverCommand =
+      MoveSolidObjectCommand(player.id, player.tilePosition);
+      sendCommandToAllClients(serverCommand);
     }
   }
 
@@ -246,8 +270,6 @@ class Server {
 
     if (target.nGatherableItems == 0) {
       removeSolidObject(target);
-      final removeCommand = RemoveSolidObjectCommand(target.id);
-      sendCommandToAllClients(removeCommand);
     }
   }
 
@@ -361,6 +383,9 @@ class Server {
         null;
     world.freeSolidObjectIds.add(object.id);
     world.solidObjects[object.id] = null;
+
+    final removeCommand = RemoveSolidObjectCommand(object.id);
+    sendCommandToAllClients(removeCommand);
   }
 
   void moveSolidObject(SolidObject object, TilePosition position) {

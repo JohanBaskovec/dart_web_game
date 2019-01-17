@@ -1,6 +1,7 @@
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
+import 'package:dart_game/common/hunger_component.dart';
 import 'package:dart_game/common/inventory.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -46,6 +47,7 @@ class SolidObject {
   int nGatherableItems;
   Box box;
   bool alive = true;
+  HungerComponent _hungerComponent;
 
   SolidObject([this.type, TilePosition tilePosition]) {
     this.tilePosition = tilePosition;
@@ -73,6 +75,16 @@ class SolidObject {
           tileSize,
           tileSize);
     }
+  }
+
+  HungerComponent get hungerComponent => _hungerComponent;
+
+  set hungerComponent(HungerComponent value) {
+    if (value == null) {
+      return;
+    }
+    _hungerComponent = value;
+    value.ownerId = id;
   }
 
   /// Creates a new [SolidObject] from a JSON object.

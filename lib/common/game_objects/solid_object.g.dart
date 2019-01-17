@@ -19,7 +19,10 @@ SolidObject _$SolidObjectFromJson(Map json) {
         : Inventory.fromJson(json['inventory'] as Map)
     ..nGatherableItems = json['nGatherableItems'] as int
     ..box = json['box'] == null ? null : Box.fromJson(json['box'] as Map)
-    ..alive = json['alive'] as bool;
+    ..alive = json['alive'] as bool
+    ..hungerComponent = json['hungerComponent'] == null
+        ? null
+        : HungerComponent.fromJson(json['hungerComponent'] as Map);
 }
 
 Map<String, dynamic> _$SolidObjectToJson(SolidObject instance) =>
@@ -31,7 +34,8 @@ Map<String, dynamic> _$SolidObjectToJson(SolidObject instance) =>
       'nGatherableItems': instance.nGatherableItems,
       'box': instance.box,
       'alive': instance.alive,
-      'tilePosition': instance.tilePosition
+      'tilePosition': instance.tilePosition,
+      'hungerComponent': instance.hungerComponent
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {
