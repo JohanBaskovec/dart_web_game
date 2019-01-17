@@ -58,8 +58,18 @@ class Renderer {
     }
     _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
 
+    final Box renderingBox = Box(
+      session.player.box.left - ((_canvas.width / 2) * (1 / scale)).toInt(),
+      session.player.box.top - ((_canvas.height / 2) * (1 / scale)).toInt(),
+      ((_canvas.width) * (1 / scale)).toInt(),
+      ((_canvas.height) * (1 / scale)).toInt(),
+    );
     for (SolidObject object in world.solidObjects) {
-      if (object != null) {
+      if (object != null &&
+          object.box.left < renderingBox.right &&
+          object.box.right > renderingBox.left &&
+          object.box.bottom > renderingBox.top &&
+          object.box.top < renderingBox.bottom) {
         _ctx.drawImageScaled(solidImages[object.type], object.box.left,
             object.box.top, object.box.width, object.box.height);
       }
@@ -202,10 +212,13 @@ class Renderer {
   void resizeWindows() {
     _canvas.width = window.innerWidth;
     _canvas.height = window.innerHeight;
-    buildMenu.moveAndResize(Box(_canvas.width ~/ 10, 100,
-        _canvas.width ~/ 2, _canvas.height ~/ 2));
-    inventory.moveAndResize(Box(20, (_canvas.height - _canvas.height / 10).toInt(),
-        (_canvas.width - 20 - _canvas.width / 3).toInt(), _canvas.height ~/ 11));
+    buildMenu.moveAndResize(
+        Box(_canvas.width ~/ 10, 100, _canvas.width ~/ 2, _canvas.height ~/ 2));
+    inventory.moveAndResize(Box(
+        20,
+        (_canvas.height - _canvas.height / 10).toInt(),
+        (_canvas.width - 20 - _canvas.width / 3).toInt(),
+        _canvas.height ~/ 11));
     chat.moveAndResize(Box(inventory.box.right + 20, inventory.box.top - 100,
         (_canvas.width / 3 - 40).toInt(), 100 + inventory.box.height));
   }

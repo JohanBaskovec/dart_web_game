@@ -36,7 +36,13 @@ class Box {
     right = x + width;
     bottom = y + height;
   }
-  
+
+
+  @override
+  String toString() {
+    return 'Box{left: $left, right: $right, top: $top, bottom: $bottom, width: $width, height: $height}';
+  }
+
   /// Creates a new [Box] from a JSON object.
   static Box fromJson(Map<dynamic, dynamic> json) => _$BoxFromJson(json);
 

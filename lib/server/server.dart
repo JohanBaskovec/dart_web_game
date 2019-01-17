@@ -102,7 +102,7 @@ class Server {
               final snake = addSoftObject(SoftObjectType.snake);
               tree.inventory.addItem(snake);
             }
-          } else if (rand < 70) {
+          } else if (rand < 80) {
             final tree = makeAppleTree(x, y);
             addSolidObject(tree);
             final int nLogs = randomGenerator.nextInt(6) + 1;
