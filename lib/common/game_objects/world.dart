@@ -5,6 +5,7 @@ import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/size.dart';
 import 'package:dart_game/common/tile.dart';
+import 'package:dart_game/common/tile_position.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'world.g.dart';
@@ -44,6 +45,13 @@ class World {
   }
 
   Size get dimension => _dimension;
+
+  SolidObject getObjectAt(TilePosition position) {
+    if (solidObjectColumns[position.x][position.y] == null) {
+      return null;
+    }
+    return solidObjects[solidObjectColumns[position.x][position.y]];
+  }
 
   /// Creates a new [World] from a JSON object.
   static World fromJson(Map<dynamic, dynamic> json) => _$WorldFromJson(json);

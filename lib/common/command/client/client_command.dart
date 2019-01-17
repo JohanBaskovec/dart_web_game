@@ -6,6 +6,8 @@ import 'package:dart_game/common/command/client/set_equipped_item_client_command
 import 'package:dart_game/common/command/client/take_from_inventory_command.dart';
 import 'package:dart_game/common/command/client/use_object_on_solid_object_command.dart';
 import 'package:dart_game/common/command/server/add_to_inventory_command.dart';
+import 'package:dart_game/server/client.dart';
+import 'package:dart_game/server/game_server.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'client_command.g.dart';
@@ -15,6 +17,10 @@ class ClientCommand {
   ClientCommandType type;
 
   ClientCommand(this.type);
+
+  void execute(GameClient client, GameServer gameServer) {
+
+  }
 
   /// Creates a new [ClientCommand] from a JSON object.
   static ClientCommand fromJson(Map<dynamic, dynamic> json) {
