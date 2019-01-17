@@ -1,3 +1,4 @@
+import 'package:dart_game/common/age_component.dart';
 import 'package:dart_game/common/world_position.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -46,6 +47,9 @@ class SoftObject {
   WorldPosition position;
   /// index in inventory if it's in one
   int indexInInventory;
+  bool alive = true;
+
+  AgeComponent _ageComponent;
 
   SoftObject([this.type, this.position]);
 
@@ -57,6 +61,16 @@ class SoftObject {
         return _$SoftObjectFromJson(json);
         break;
     }
+  }
+
+  AgeComponent get ageComponent => _ageComponent;
+
+  set ageComponent(AgeComponent value) {
+    if (value == null) {
+      return;
+    }
+    _ageComponent = value;
+    _ageComponent.ownerId = id;
   }
 
   /// Convert this object to a JSON object.

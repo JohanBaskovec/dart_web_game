@@ -1,3 +1,4 @@
+import 'package:dart_game/common/age_component.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
@@ -48,6 +49,7 @@ class SolidObject {
   Box box;
   bool alive = true;
   HungerComponent _hungerComponent;
+  AgeComponent _ageComponent;
 
   SolidObject([this.type, TilePosition tilePosition]) {
     this.tilePosition = tilePosition;
@@ -87,6 +89,16 @@ class SolidObject {
     value.ownerId = id;
   }
 
+  AgeComponent get ageComponent => _ageComponent;
+
+  set ageComponent(AgeComponent value) {
+    if (value == null) {
+      return;
+    }
+    _ageComponent = value;
+    _ageComponent.ownerId = id;
+  }
+
   /// Creates a new [SolidObject] from a JSON object.
   static SolidObject fromJson(Map<dynamic, dynamic> json) =>
       _$SolidObjectFromJson(json);
@@ -95,8 +107,10 @@ class SolidObject {
   Map<String, dynamic> toJson() => _$SolidObjectToJson(this);
 }
 
+const int minutesPerYear = 525600;
 SolidObject makeTree(int x, int y) {
   final tree = SolidObject(SolidObjectType.tree, TilePosition(x, y));
+  tree.ageComponent = AgeComponent(1000 * minutesPerYear);
   tree.inventory = Inventory();
   tree.nGatherableItems = 1;
   return tree;
@@ -104,6 +118,7 @@ SolidObject makeTree(int x, int y) {
 
 SolidObject makeAppleTree(int x, int y) {
   final tree = SolidObject(SolidObjectType.appleTree, TilePosition(x, y));
+  tree.ageComponent = AgeComponent(1000 * minutesPerYear);
   tree.inventory = Inventory();
   tree.nGatherableItems = 1;
   return tree;
@@ -111,6 +126,7 @@ SolidObject makeAppleTree(int x, int y) {
 
 SolidObject makePlayer(int x, int y) {
   final tree = SolidObject(SolidObjectType.player, TilePosition(x, y));
+  tree.ageComponent = AgeComponent(100 * minutesPerYear);
   tree.inventory = Inventory();
   return tree;
 }
