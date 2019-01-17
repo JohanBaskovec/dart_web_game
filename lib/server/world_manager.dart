@@ -21,10 +21,6 @@ class WorldManager {
 
   WorldManager();
 
-  SolidObject getObjectAt(TilePosition position) {
-    return world.getObjectAt(position);
-  }
-
   void startObjectsUpdate() {
     Timer.periodic(Duration(seconds: 5), (Timer timer) {
       final start = DateTime.now();
@@ -188,5 +184,17 @@ class WorldManager {
 
   void sendCommandToAllClients(ServerCommand command) {
     gameServer.sendCommandToAllClients(command);
+  }
+
+  SolidObject getObjectAt(TilePosition position) {
+    return world.getObjectAt(position);
+  }
+
+  SolidObject getSolidObject(int id) {
+    return world.solidObjects[id];
+  }
+
+  SoftObject getSoftObject(int id) {
+    return world.softObjects[id];
   }
 }

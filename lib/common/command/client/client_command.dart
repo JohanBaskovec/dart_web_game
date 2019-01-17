@@ -8,6 +8,7 @@ import 'package:dart_game/common/command/client/use_object_on_solid_object_comma
 import 'package:dart_game/common/command/server/add_to_inventory_command.dart';
 import 'package:dart_game/server/client.dart';
 import 'package:dart_game/server/game_server.dart';
+import 'package:dart_game/server/world_manager.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'client_command.g.dart';
@@ -18,7 +19,7 @@ class ClientCommand {
 
   ClientCommand(this.type);
 
-  void execute(GameClient client, GameServer gameServer) {
+  void execute(GameClient client, WorldManager worldManager) {
 
   }
 

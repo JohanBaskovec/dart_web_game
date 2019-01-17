@@ -6,7 +6,7 @@ import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/stack.dart';
 import 'package:dart_game/server/client.dart';
-import 'package:dart_game/server/game_server.dart';
+import 'package:dart_game/server/world_manager.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'take_from_inventory_command.g.dart';
@@ -20,16 +20,15 @@ class TakeFromInventoryCommand extends ClientCommand {
       : super(ClientCommandType.takeFromInventory);
 
   @override
-  Future execute(GameClient client, GameServer gameServer) async {
-    final SolidObject target =
-        gameServer.worldManager.world.solidObjects[ownerId];
+  Future execute(GameClient client, WorldManager worldManager) async {
+    final SolidObject target = worldManager.getSolidObject(ownerId);
     final Stack stack = target.inventory.stacks[inventoryIndex];
     if (stack.isEmpty) {
       // concurrent access?
       return;
     }
-    final SoftObject objectTaken =
-        gameServer.worldManager.world.softObjects[stack.removeLast()];
+    final int itemId = stack.removeLast();
+    final SoftObject objectTaken = worldManager.getSoftObject(itemId);
     final List<int> nItemsToRemove =
         List.filled(target.inventory.stacks.length, 0);
     nItemsToRemove[inventoryIndex] = 1;

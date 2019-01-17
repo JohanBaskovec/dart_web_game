@@ -27,7 +27,7 @@ class GameClient {
         final start = DateTime.now();
         final ClientCommand command =
             ClientCommand.fromJson(jsonDecode(data as String) as Map);
-        command.execute(this, gameServer);
+        command.execute(this, gameServer.worldManager);
         final end = DateTime.now();
         final timeForRequest = end.difference(start);
         print('Time for request: $timeForRequest');

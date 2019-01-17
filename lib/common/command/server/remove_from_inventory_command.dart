@@ -16,7 +16,10 @@ class RemoveFromInventoryCommand extends ServerCommand {
         super(ServerCommandType.removeFromInventory);
 
   void execute(World world) {
-      world.solidObjects[ownerId].inventory.removeFromStacks(nObjectsToRemoveFromEachStack);
+    world
+        .solidObjects[ownerId]
+        .inventory
+        .removeFromStacks(nObjectsToRemoveFromEachStack);
   }
 
   /// Creates a new [RemoveFromInventoryCommand] from a JSON object.

@@ -8,6 +8,7 @@ import 'package:dart_game/common/gathering.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/server/client.dart';
 import 'package:dart_game/server/game_server.dart';
+import 'package:dart_game/server/world_manager.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'use_object_on_solid_object_command.g.dart';
@@ -22,10 +23,10 @@ class UseObjectOnSolidObjectCommand extends ClientCommand {
 
 
   @override
-  void execute(GameClient client, GameServer gameServer) {
-    final SolidObject target = gameServer.worldManager.world.solidObjects[targetId];
+  void execute(GameClient client, WorldManager worldManager) {
+    final SolidObject target = worldManager.world.solidObjects[targetId];
     final SoftObject item =
-    gameServer.worldManager.world.softObjects[client.session.player.inventory.currentlyEquiped];
+    worldManager.getSoftObject(client.session.player.inventory.currentlyEquiped);
 
     final GatheringConfig config = gatheringConfigs[target.type];
     if (config == null ||
@@ -36,7 +37,7 @@ class UseObjectOnSolidObjectCommand extends ClientCommand {
 
     target.nGatherableItems--;
 
-    final gatheredItem = gameServer.worldManager.addSoftObject(config.gatherableItemsType);
+    final gatheredItem = worldManager.addSoftObject(config.gatherableItemsType);
     client.session.player.inventory.addItem(gatheredItem);
     final addObjectCommand = AddSoftObjectCommand(gatheredItem);
     client.sendCommand(addObjectCommand);
@@ -44,7 +45,7 @@ class UseObjectOnSolidObjectCommand extends ClientCommand {
     client.sendCommand(addToInventoryCommand);
 
     if (target.nGatherableItems == 0) {
-      gameServer.worldManager.removeSolidObject(target);
+      worldManager.removeSolidObject(target);
     }
   }
 

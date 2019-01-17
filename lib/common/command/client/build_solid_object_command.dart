@@ -7,6 +7,7 @@ import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/server/client.dart';
 import 'package:dart_game/server/game_server.dart';
+import 'package:dart_game/server/world_manager.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'build_solid_object_command.g.dart';
@@ -20,9 +21,8 @@ class BuildSolidObjectCommand extends ClientCommand {
       : super(ClientCommandType.buildSolidObject);
 
   @override
-  void execute(GameClient client, GameServer gameServer) {
-    if (gameServer.worldManager.world.solidObjectColumns[position.x][position.y] !=
-        null) {
+  void execute(GameClient client, WorldManager worldManager) {
+    if (worldManager.getObjectAt(position) != null) {
       print(
           'Tried to build an object but one already exists at that position!');
       return;
@@ -49,9 +49,9 @@ class BuildSolidObjectCommand extends ClientCommand {
         }
       }
     }
-    removeFromInventoryCommand.execute(gameServer.worldManager.world);
+    removeFromInventoryCommand.execute(worldManager.world);
     final object = SolidObject(objectType, position);
-    gameServer.worldManager.addSolidObject(object);
+    worldManager.addSolidObject(object);
     client.sendCommand(removeFromInventoryCommand);
   }
 
