@@ -58,12 +58,6 @@ class Inventory {
 
   void removeFromStacks(List<int> nObjectsToRemoveFromEachStack) {
     int k = 0;
-    // 1 1 1 2
-    // 0 0 1 2
-
-    // 1 1 1 2
-    // 0 0 2
-
     for (int i = 0; i < nObjectsToRemoveFromEachStack.length; i++) {
       if (nObjectsToRemoveFromEachStack[i] != 0) {
         if (!removeFromStack(k, nObjectsToRemoveFromEachStack[i])) {

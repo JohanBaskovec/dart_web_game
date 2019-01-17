@@ -271,7 +271,8 @@ class Server {
       for (int i = 0; i < playerInventoryLength; i++) {
         if (player.inventory.stacks[i].objectType == type) {
           if (player.inventory.stacks[i].length >= quantity) {
-            removeFromInventoryCommand.nObjectsToRemoveFromEachStack[i] = quantity;
+            removeFromInventoryCommand.nObjectsToRemoveFromEachStack[i] =
+                quantity;
           } else {
             print('can\'t build object, not enough resources!');
             return;
@@ -301,12 +302,18 @@ class Server {
       return;
     }
     final SoftObject objectTaken = world.softObjects[stack.removeLast()];
-    newClient.session.player.inventory.addItem(objectTaken);
-    final List<int> nItemsToRemove = List(target.inventory.stacks.length);
+    final List<int> nItemsToRemove =
+        List.filled(target.inventory.stacks.length, 0);
     nItemsToRemove[command.inventoryIndex] = 1;
+    if (stack.isEmpty) {
+      target.inventory.stacks.removeAt(command.inventoryIndex);
+    }
+    newClient.session.player.inventory.addItem(objectTaken);
+
     final removeFromInventoryCommand =
         RemoveFromInventoryCommand(target.id, nItemsToRemove);
     newClient.sendCommand(removeFromInventoryCommand);
+
     final serverCommand = AddToInventoryCommand(objectTaken.id);
     newClient.sendCommand(serverCommand);
   }

@@ -17,6 +17,9 @@ class InventoryMenu {
   }
   void moveAndResize(Box box) {
     this.box = box;
+  }
+
+  void update() {
     final int widthPerStack = box.width ~/ 9;
     buttons = [];
     for (var i = 0; i < owner.inventory.stacks.length; i++) {
@@ -24,14 +27,6 @@ class InventoryMenu {
       final newButton = InventoryButton(owner.inventory.stacks[i]);
       newButton.box = Box(left, box.top, widthPerStack, box.height);
       buttons.add(newButton);
-    }
-  }
-
-  void update() {
-    for (var i = 0; i < owner.inventory.stacks.length; i++) {
-      if (owner.inventory.stacks[i].isEmpty) {
-        buttons.removeAt(i);
-      }
     }
   }
 
