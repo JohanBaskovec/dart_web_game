@@ -88,15 +88,13 @@ class Server {
             addSolidObject(tree);
             final int nLeaves = randomGenerator.nextInt(6) + 1;
             for (int i = 0; i < nLeaves; i++) {
-              final leaves = SoftObject(SoftObjectType.leaves);
-              addSoftObject(leaves);
+              final leaves = addSoftObject(SoftObjectType.leaves);
               tree.inventory.addItem(leaves);
             }
 
             final int nSnakes = randomGenerator.nextInt(6) + 1;
             for (int i = 0; i < nSnakes; i++) {
-              final snake = SoftObject(SoftObjectType.leaves);
-              addSoftObject(snake);
+              final snake = addSoftObject(SoftObjectType.snake);
               tree.inventory.addItem(snake);
             }
           } else if (rand < 20) {
@@ -145,12 +143,11 @@ class Server {
             return;
           }
           addSolidObject(newPlayer);
-          final hand = SoftObject(SoftObjectType.hand);
-          final axe = SoftObject(SoftObjectType.axe);
-          addSoftObject(hand);
-          addSoftObject(axe);
-          newPlayer.inventory.addItem(hand);
-          newPlayer.inventory.addItem(axe);
+          newPlayer.inventory.addItem(addSoftObject(SoftObjectType.hand));
+          newPlayer.inventory.addItem(addSoftObject(SoftObjectType.axe));
+          newPlayer.inventory.addItem(addSoftObject(SoftObjectType.log));
+          newPlayer.inventory.addItem(addSoftObject(SoftObjectType.leaves));
+          newPlayer.inventory.addItem(addSoftObject(SoftObjectType.leaves));
 
           // TODO: prevent synchro modification of clients,
           // because we may send wrong id to user otherwise
@@ -238,10 +235,9 @@ class Server {
       return;
     }
 
-    final SoftObject gatheredItem = SoftObject(config.gatherableItemsType);
     target.nGatherableItems--;
 
-    addSoftObject(gatheredItem);
+    final gatheredItem = addSoftObject(config.gatherableItemsType);
     client.session.player.inventory.addItem(gatheredItem);
     final addObjectCommand = AddSoftObjectCommand(gatheredItem);
     client.sendCommand(addObjectCommand);
@@ -267,24 +263,24 @@ class Server {
     final SolidObject player = client.session.player;
 
     final Map<SoftObjectType, int> recipe = buildingRecipes[command.objectType];
-    if (!playerCanBuild(command.objectType, player)) {
-      print('Tried to build an object but couldn\'t!');
-      return;
-    }
-    final removeFromInventoryCommand = RemoveFromInventoryCommand([]);
+    final int playerInventoryLength = player.inventory.stacks.length;
+    final removeFromInventoryCommand = RemoveFromInventoryCommand(
+        player.id, List.filled(playerInventoryLength, 0));
     for (var type in recipe.keys) {
-      for (int i = 0; i < player.inventory.stacks.length; i++) {
+      final int quantity = recipe[type];
+      for (int i = 0; i < playerInventoryLength; i++) {
         if (player.inventory.stacks[i].objectType == type) {
-          removeFromInventoryCommand.nObjectsToRemoveFromEachStack
-              .add(recipe[type]);
-          for (int k = 0; k < recipe[type]; k++) {
-            player.inventory.removeFromStack(i);
+          if (player.inventory.stacks[i].length >= quantity) {
+            removeFromInventoryCommand.nObjectsToRemoveFromEachStack[i] = quantity;
+          } else {
+            print('can\'t build object, not enough resources!');
+            return;
           }
-        } else {
-          removeFromInventoryCommand.nObjectsToRemoveFromEachStack.add(0);
+          break;
         }
       }
     }
+    removeFromInventoryCommand.execute(world);
     final object = SolidObject(command.objectType, command.position);
     addSolidObject(object);
     sendCommandToAllClients(AddSolidObjectCommand(object));
@@ -309,13 +305,14 @@ class Server {
     final List<int> nItemsToRemove = List(target.inventory.stacks.length);
     nItemsToRemove[command.inventoryIndex] = 1;
     final removeFromInventoryCommand =
-        RemoveFromInventoryCommand(nItemsToRemove);
+        RemoveFromInventoryCommand(target.id, nItemsToRemove);
     newClient.sendCommand(removeFromInventoryCommand);
     final serverCommand = AddToInventoryCommand(objectTaken.id);
     newClient.sendCommand(serverCommand);
   }
 
-  void addSoftObject(SoftObject object) {
+  SoftObject addSoftObject(SoftObjectType type) {
+    final object = SoftObject(type);
     if (world.freeSoftObjectIds.isEmpty) {
       object.id = world.softObjects.length;
       world.softObjects.add(object);
@@ -324,6 +321,7 @@ class Server {
       object.id = id;
       world.softObjects[id] = object;
     }
+    return object;
   }
 
   void removeSoftObject(SoftObject object) {

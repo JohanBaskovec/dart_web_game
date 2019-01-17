@@ -11,15 +11,14 @@ class InventoryPopResult {
   InventoryPopResult(this.itemsLeft, this.object);
 }
 
-
-
 @JsonSerializable(anyMap: true)
 class Inventory {
   int currentlyEquiped;
   List<Stack> stacks = [];
 
   void addItem(SoftObject item) {
-    assert(item.id != null, 'Item must have an id before being added to inventory!');
+    assert(item.id != null,
+        'Item must have an id before being added to inventory!');
     var i = 0;
     Stack stack;
     for (; i < stacks.length; i++) {
@@ -40,10 +39,12 @@ class Inventory {
     currentlyEquiped ??= item.id;
   }
 
-  void removeFromStack(int stackIndex, [int n = 1]) {
+  /// Returns true when the stack at index stackIndex was removed.
+  bool removeFromStack(int stackIndex, [int n = 1]) {
     if (stacks[stackIndex].length >= n) {
       if (stacks[stackIndex].length == n) {
         stacks.removeAt(stackIndex);
+        return true;
       } else {
         stacks[stackIndex].removeRange(
             stacks[stackIndex].length - n, stacks[stackIndex].length);
@@ -51,6 +52,26 @@ class Inventory {
     } else {
       print('Attempting to remove $n items from stack $stackIndex'
           ', but stack\' length is ${stacks[stackIndex].length}!');
+    }
+    return false;
+  }
+
+  void removeFromStacks(List<int> nObjectsToRemoveFromEachStack) {
+    int k = 0;
+    // 1 1 1 2
+    // 0 0 1 2
+
+    // 1 1 1 2
+    // 0 0 2
+
+    for (int i = 0; i < nObjectsToRemoveFromEachStack.length; i++) {
+      if (nObjectsToRemoveFromEachStack[i] != 0) {
+        if (!removeFromStack(k, nObjectsToRemoveFromEachStack[i])) {
+          k++;
+        }
+      } else {
+        k++;
+      }
     }
   }
 

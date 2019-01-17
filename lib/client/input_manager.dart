@@ -128,11 +128,10 @@ class InputManager {
             tilePosition.y < worldSize.y) {
           final objectId =
           _world.solidObjectColumns[tilePosition.x][tilePosition.y];
-          final object = _world.solidObjects[objectId];
-          if (object == null) {
+          if (objectId == null) {
             clickOnGround(tilePosition);
           } else {
-            clickOnSolidObject(object);
+            clickOnSolidObject(_world.solidObjects[objectId]);
           }
         }
       }

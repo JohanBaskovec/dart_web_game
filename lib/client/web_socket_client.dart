@@ -114,12 +114,7 @@ class WebSocketClient {
   }
 
   void executeRemoveFromInventoryCommand(RemoveFromInventoryCommand command) {
-    for (int i = 0; i < command.nObjectsToRemoveFromEachStack.length; i++) {
-      if (command.nObjectsToRemoveFromEachStack[i] != 0) {
-        session.player.inventory
-            .removeFromStack(i, command.nObjectsToRemoveFromEachStack[i]);
-      }
-    }
+    command.execute(_world);
   }
 
   void executeAddMessageCommand(AddMessageCommand command) {

@@ -8,11 +8,11 @@ part of 'remove_from_inventory_command.dart';
 
 RemoveFromInventoryCommand _$RemoveFromInventoryCommandFromJson(Map json) {
   return RemoveFromInventoryCommand(
+      json['ownerId'] as int,
       (json['nObjectsToRemoveFromEachStack'] as List)
           ?.map((e) => e as int)
           ?.toList())
-    ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type'])
-    ..ownerId = json['ownerId'] as int;
+    ..type = _$enumDecodeNullable(_$ServerCommandTypeEnumMap, json['type']);
 }
 
 Map<String, dynamic> _$RemoveFromInventoryCommandToJson(
