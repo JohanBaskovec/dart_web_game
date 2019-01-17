@@ -95,7 +95,6 @@ class Server {
               removeSoftObject(object);
             }
           }
-
         }
         final end = DateTime.now();
         final diff = end.difference(start);
@@ -123,7 +122,7 @@ class Server {
             final tree = makeAppleTree(x, y);
             addSolidObject(tree);
             final int nApples = randomGenerator.nextInt(6) + 1;
-            for (int i = 0 ; i < nApples ; i++) {
+            for (int i = 0; i < nApples; i++) {
               tree.inventory.addItem(addSoftObject(SoftObjectType.apple));
             }
           }
@@ -168,11 +167,9 @@ class Server {
 
           // TODO: prevent synchro modification of clients,
           // because we may send wrong id to user otherwise
-          final addNewPlayer = AddSolidObjectCommand(newPlayer);
           final loggedInCommand = LoggedInCommand(newPlayer.id, world);
           print('Client connected!');
 
-          sendCommandToAllClients(addNewPlayer);
           final newClient = Client(Session(newPlayer), newPlayerWebSocket);
           clients.add(newClient);
           final jsonCommand = jsonEncode(loggedInCommand.toJson());
@@ -247,9 +244,6 @@ class Server {
         target.y >= 0 &&
         world.solidObjectColumns[target.x][target.y] == null) {
       moveSolidObject(player, target);
-      final serverCommand =
-          MoveSolidObjectCommand(player.id, player.tilePosition);
-      sendCommandToAllClients(serverCommand);
     }
   }
 
@@ -317,7 +311,6 @@ class Server {
     removeFromInventoryCommand.execute(world);
     final object = SolidObject(command.objectType, command.position);
     addSolidObject(object);
-    sendCommandToAllClients(AddSolidObjectCommand(object));
     client.sendCommand(removeFromInventoryCommand);
   }
 
@@ -369,6 +362,7 @@ class Server {
     world.softObjects.removeAt(object.id);
   }
 
+  /// Add solid object and send the command to all clients
   void addSolidObject(SolidObject object) {
     assert(
         world.freeSolidObjectIds.isNotEmpty,
@@ -383,8 +377,10 @@ class Server {
         object.id;
     assert(world.solidObjects[id] == null);
     world.solidObjects[id] = object;
+    sendCommandToAllClients(AddSolidObjectCommand(object));
   }
 
+  /// Remove solid object and send the command to all clients
   void removeSolidObject(SolidObject object) {
     assert(world.solidObjectColumns[object.tilePosition.x]
             [object.tilePosition.y] !=
@@ -399,11 +395,15 @@ class Server {
     sendCommandToAllClients(removeCommand);
   }
 
+  /// Move solid object and send move command to all clients
   void moveSolidObject(SolidObject object, TilePosition position) {
     world.solidObjectColumns[object.tilePosition.x][object.tilePosition.y] =
         null;
     object.moveTo(position);
     world.solidObjectColumns[position.x][position.y] = object.id;
+    final serverCommand =
+        MoveSolidObjectCommand(object.id, object.tilePosition);
+    sendCommandToAllClients(serverCommand);
   }
 
   void executeSetEquippedItemCommand(
