@@ -1,5 +1,6 @@
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
+import 'package:dart_game/common/game_objects/world.dart';
 
 final Map<SolidObjectType, Map<SoftObjectType, int>> buildingRecipes = {
   SolidObjectType.woodenWall: {
@@ -11,7 +12,7 @@ final Map<SolidObjectType, Map<SoftObjectType, int>> buildingRecipes = {
   }
 };
 
-bool playerCanBuild(SolidObjectType type, SolidObject player) {
+bool playerCanBuild(World world, SolidObjectType type, SolidObject player) {
   final Map<SoftObjectType, int> recipe = buildingRecipes[type];
   if (recipe == null) {
     return false;
@@ -19,9 +20,11 @@ bool playerCanBuild(SolidObjectType type, SolidObject player) {
   final Map<SoftObjectType, int> required = Map.from(recipe);
 
   for (var type in recipe.keys) {
-    for (int i = 0; i < player.inventory.stacks.length; i++) {
-      if (player.inventory.stacks[i].objectType == type) {
-        required[type] -= player.inventory.stacks[i].length;
+    for (int i = 0; i < player.inventory.items.length; i++) {
+      final int itemId = player.inventory.items[i];
+      final SoftObject item = world.getSoftObject(itemId);
+      if (item.type == type) {
+        required[type] -= 1;
       }
     }
   }

@@ -53,6 +53,14 @@ class World {
     return solidObjects[solidObjectColumns[position.x][position.y]];
   }
 
+  SolidObject getSolidObject(int id) {
+    return solidObjects[id];
+  }
+
+  SoftObject getSoftObject(int id) {
+    return softObjects[id];
+  }
+
   /// Creates a new [World] from a JSON object.
   static World fromJson(Map<dynamic, dynamic> json) => _$WorldFromJson(json);
 

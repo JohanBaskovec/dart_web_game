@@ -78,7 +78,7 @@ class SoftObject {
 
   @override
   String toString() {
-    return 'SoftObject{type: $type, position: $position, index: $indexInInventory}';
+    return 'SoftObject{id: $id, type: $type, position: $position, indexInInventory: $indexInInventory, alive: $alive, _ageComponent: $_ageComponent}';
   }
 
 

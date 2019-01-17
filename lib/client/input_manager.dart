@@ -150,7 +150,7 @@ class InputManager {
     final SoftObject equippedObject = _world.softObjects[session.player
         .inventory.currentlyEquiped];
     if (equippedObject.type == SoftObjectType.hand) {
-      if (object.inventory.stacks.isNotEmpty) {
+      if (object.inventory.items.isNotEmpty) {
         final inventoryMenu = InventoryMenu(
             Box(object.box.left, object.box.top, 600, 100),
             object,
@@ -172,7 +172,7 @@ class InputManager {
 
   void clickOnGround(TilePosition tilePosition) {
     if (buildMenu.enabled && buildMenu.selectedType != null) {
-      if (playerCanBuild(buildMenu.selectedType, session.player)) {
+      if (playerCanBuild(_world, buildMenu.selectedType, session.player)) {
         webSocketClient.webSocket.send(jsonEncode(
             BuildSolidObjectCommand(buildMenu.selectedType, tilePosition)));
       }

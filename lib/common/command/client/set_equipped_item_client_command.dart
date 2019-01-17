@@ -2,7 +2,6 @@ import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/command/client/client_command_type.dart';
 import 'package:dart_game/common/command/server/set_equipped_item_server_command.dart';
 import 'package:dart_game/server/client.dart';
-import 'package:dart_game/server/game_server.dart';
 import 'package:dart_game/server/world_manager.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -17,8 +16,7 @@ class SetEquippedItemClientCommand extends ClientCommand {
 
   @override
   void execute(GameClient client, WorldManager worldManager) {
-    final int itemId =
-        client.session.player.inventory.stacks[inventoryIndex][0];
+    final int itemId = client.session.player.inventory.items[inventoryIndex];
     client.session.player.inventory.currentlyEquiped = itemId;
     final serverCommand = SetEquippedItemServerCommand(itemId);
     client.sendCommand(serverCommand);

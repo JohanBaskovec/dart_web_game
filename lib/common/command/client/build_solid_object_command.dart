@@ -31,22 +31,26 @@ class BuildSolidObjectCommand extends ClientCommand {
     final SolidObject player = client.session.player;
 
     final Map<SoftObjectType, int> recipe = buildingRecipes[objectType];
-    final int playerInventoryLength = player.inventory.stacks.length;
+    final int playerInventoryLength = player.inventory.items.length;
     final removeFromInventoryCommand = RemoveFromInventoryCommand(
         player.id, List.filled(playerInventoryLength, 0));
     for (var type in recipe.keys) {
-      final int quantity = recipe[type];
+      final int quantityNeeded = recipe[type];
+      int quantityOwned = 0;
       for (int i = 0; i < playerInventoryLength; i++) {
-        if (player.inventory.stacks[i].objectType == type) {
-          if (player.inventory.stacks[i].length >= quantity) {
-            removeFromInventoryCommand.nObjectsToRemoveFromEachStack[i] =
-                quantity;
-          } else {
-            print('can\'t build object, not enough resources!');
-            return;
+        final int itemId = player.inventory.items[i];
+        final SoftObject item = worldManager.getSoftObject(itemId);
+        if (item.type == type) {
+          quantityOwned++;
+          removeFromInventoryCommand.indexOfObjectsToRemove.add(i);
+          if (quantityOwned == quantityNeeded) {
+            break;
           }
-          break;
         }
+      }
+      if (quantityOwned < quantityNeeded) {
+        print('can\'t build object, not enough resources!');
+        return;
       }
     }
     removeFromInventoryCommand.execute(worldManager.world);

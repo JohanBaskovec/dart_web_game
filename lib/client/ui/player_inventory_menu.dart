@@ -3,14 +3,12 @@ import 'package:dart_game/client/ui/button.dart';
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/command/client/set_equipped_item_client_command.dart';
-import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/session.dart';
-import 'package:dart_game/common/stack.dart';
 
 class InventoryButton extends Button {
-  Stack stack;
+  int itemId;
 
-  InventoryButton(this.stack);
+  InventoryButton(this.itemId);
 }
 
 class PlayerInventoryMenu {
@@ -44,10 +42,10 @@ class PlayerInventoryMenu {
     }
     final int widthPerStack = box.width ~/ 9;
     buttons = [];
-    for (var i = 0; i < session.player.inventory.stacks.length; i++) {
+    for (var i = 0; i < session.player.inventory.items.length; i++) {
       final int left = i * widthPerStack + box.left;
       final newButton =
-          InventoryButton(session.player.inventory.stacks[i]);
+          InventoryButton(session.player.inventory.items[i]);
       newButton.box = Box(left, box.top, widthPerStack, box.height);
       buttons.add(newButton);
     }

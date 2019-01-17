@@ -1,75 +1,31 @@
 import 'package:dart_game/common/game_objects/soft_object.dart';
-import 'package:dart_game/common/stack.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'inventory.g.dart';
 
-class InventoryPopResult {
-  int itemsLeft;
-  SoftObject object;
-
-  InventoryPopResult(this.itemsLeft, this.object);
-}
-
 @JsonSerializable(anyMap: true)
 class Inventory {
   int currentlyEquiped;
-  List<Stack> stacks = [];
+  List<int> items = [];
 
   void addItem(SoftObject item) {
     assert(item.id != null,
         'Item must have an id before being added to inventory!');
-    var i = 0;
-    Stack stack;
-    for (; i < stacks.length; i++) {
-      if (stacks[i].objectType == item.type) {
-        stack = stacks[i];
-      }
-      if (stacks[i].isEmpty) {
-        stacks.removeAt(i);
-      }
+    if (items.length == 9) {
+      return;
     }
-    if (stack == null) {
-      stack = Stack(item.type);
-      stacks.add(stack);
-    }
-    item.indexInInventory = i;
-    stack.add(item.id);
-    print('Added $item to inventory in stack $i');
+    item.indexInInventory = items.length;
+    items.add(item.id);
+    print('Added $item to inventory at position ${item.id}');
     currentlyEquiped ??= item.id;
   }
 
   /// Returns true when the stack at index stackIndex was removed.
-  bool removeFromStack(int stackIndex, [int n = 1]) {
-    if (stacks[stackIndex].length >= n) {
-      if (stacks[stackIndex].length == n) {
-        stacks.removeAt(stackIndex);
-        return true;
-      } else {
-        stacks[stackIndex].removeRange(
-            stacks[stackIndex].length - n, stacks[stackIndex].length);
-      }
-    } else {
-      print('Attempting to remove $n items from stack $stackIndex'
-          ', but stack\' length is ${stacks[stackIndex].length}!');
-    }
-    return false;
+  void removeItem(int stackIndex) {
+    items.removeAt(stackIndex);
   }
 
-  void removeFromStacks(List<int> nObjectsToRemoveFromEachStack) {
-    int k = 0;
-    for (int i = 0; i < nObjectsToRemoveFromEachStack.length; i++) {
-      if (nObjectsToRemoveFromEachStack[i] != 0) {
-        if (!removeFromStack(k, nObjectsToRemoveFromEachStack[i])) {
-          k++;
-        }
-      } else {
-        k++;
-      }
-    }
-  }
-
-  int get size => stacks.length;
+  int get size => items.length;
 
   /// Creates a new [Inventory] from a JSON object.
   static Inventory fromJson(Map<dynamic, dynamic> json) =>

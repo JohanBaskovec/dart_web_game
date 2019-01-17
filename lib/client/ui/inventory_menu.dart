@@ -22,9 +22,9 @@ class InventoryMenu {
   void update() {
     final int widthPerStack = box.width ~/ 9;
     buttons = [];
-    for (var i = 0; i < owner.inventory.stacks.length; i++) {
+    for (var i = 0; i < owner.inventory.items.length; i++) {
       final int left = box.left + i * widthPerStack + box.left;
-      final newButton = InventoryButton(owner.inventory.stacks[i]);
+      final newButton = InventoryButton(owner.inventory.items[i]);
       newButton.box = Box(left, box.top, widthPerStack, box.height);
       buttons.add(newButton);
     }

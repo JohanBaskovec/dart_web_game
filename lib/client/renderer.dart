@@ -13,7 +13,6 @@ import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/session.dart';
-import 'package:dart_game/common/stack.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/world_position.dart';
 
@@ -82,14 +81,12 @@ class Renderer {
       _ctx.fillRect(inventory.box.left, inventory.box.top, inventory.box.width,
           inventory.box.height);
       final double widthPerStack = inventory.box.width / 9;
-      for (var i = 0; i < session.player.inventory.stacks.length; i++) {
-        final Stack stack = session.player.inventory.stacks[i];
+      for (var i = 0; i < session.player.inventory.items.length; i++) {
+        final int itemId = session.player.inventory.items[i];
+        final SoftObject item = world.getSoftObject(itemId);
         final double left = i * widthPerStack + inventory.box.left;
-        _ctx.drawImageScaled(softImages[stack.objectType], left,
+        _ctx.drawImageScaled(softImages[item.type], left,
             inventory.box.top, widthPerStack, inventory.box.height);
-        _ctx.fillStyle = 'white';
-        _ctx.fillText(stack.length.toString(), left, inventory.box.bottom);
-        _ctx.fillStyle = 'black';
       }
     }
     if (buildMenu.enabled) {
@@ -119,17 +116,13 @@ class Renderer {
       _ctx.fillStyle = 'black';
       _ctx.fillRect(inventory.box.left, inventory.box.top, inventory.box.width,
           inventory.box.height);
-      final double widthPerStack = inventory.box.width / 9;
       for (var i = 0; i < inventory.buttons.length; i++) {
-        final Stack stack = inventory.buttons[i].stack;
+        final int itemId = session.player.inventory.items[i];
+        final SoftObject item = world.getSoftObject(itemId);
         final InventoryButton button = inventory.buttons[i];
-        final type = stack.objectType;
+        final type = item.type;
         _ctx.drawImageScaled(softImages[type], button.box.left, button.box.top,
             button.box.width, button.box.height);
-        _ctx.fillStyle = 'white';
-        _ctx.fillText(
-            stack.length.toString(), button.box.left, inventory.box.bottom);
-        _ctx.fillStyle = 'black';
       }
     }
     if (chat.enabled) {
