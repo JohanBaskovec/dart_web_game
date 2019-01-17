@@ -46,12 +46,13 @@ class Renderer {
   }
 
   void render(World world) {
+    if (session.player == null) {
+      return;
+    }
     _canvas.width = window.innerWidth;
     _canvas.height = window.innerHeight;
 
-    if (session.player != null) {
-      moveCameraToPlayerPosition(session.player.tilePosition);
-    }
+    moveCameraToPlayerPosition(session.player.tilePosition);
     _ctx.scale(scale, scale);
     if (cameraPosition != null) {
       _ctx.translate(cameraPosition.x, cameraPosition.y);
