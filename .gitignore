@@ -10,6 +10,9 @@ build/
 # Directory created by dartdoc
 doc/api/
 
+# generated dart code
+lib/**/*.g.dart
+
 .idea/
 web/main.dart.js
 web/main.dart.js.deps
