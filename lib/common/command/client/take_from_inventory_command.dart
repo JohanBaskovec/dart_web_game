@@ -4,8 +4,9 @@ import 'package:dart_game/common/command/server/add_to_inventory_command.dart';
 import 'package:dart_game/common/command/server/remove_from_inventory_command.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
+import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/inventory.dart';
 import 'package:dart_game/server/client.dart';
-import 'package:dart_game/server/world_manager.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'take_from_inventory_command.g.dart';
@@ -19,18 +20,26 @@ class TakeFromInventoryCommand extends ClientCommand {
       : super(ClientCommandType.takeFromInventory);
 
   @override
-  Future execute(GameClient client, WorldManager worldManager) async {
-    final SolidObject target = worldManager.getSolidObject(ownerId);
+  Future execute(GameClient client, World world) async {
+    final Inventory userInventory = client.session.player.inventory;
+    if (userInventory.full) {
+      return;
+    }
+    final SolidObject target = world.getSolidObject(ownerId);
+    if (inventoryIndex > target.inventory.size - 1) {
+      print("Tried to take an item that doesn't exist from inventory! $this");
+    }
     final int itemId = target.inventory.items[inventoryIndex];
-    final SoftObject objectTaken = worldManager.getSoftObject(itemId);
-    client.session.player.inventory.addItem(objectTaken);
+    final removeFromInventoryCommand = RemoveFromInventoryCommand(target.id, [itemId]);
+    removeFromInventoryCommand.execute(client.session, world);
 
-    final removeFromInventoryCommand =
-        RemoveFromInventoryCommand(target.id, [itemId]);
+    final addToInventoryCommand = AddToInventoryCommand(itemId);
+    addToInventoryCommand.execute(client.session, world);
+
     client.sendCommand(removeFromInventoryCommand);
+    client.sendCommand(addToInventoryCommand);
 
-    final serverCommand = AddToInventoryCommand(itemId);
-    client.sendCommand(serverCommand);
+    print('Executed $this');
   }
 
   /// Creates a new [TakeFromInventoryCommand] from a JSON object.
@@ -40,4 +49,9 @@ class TakeFromInventoryCommand extends ClientCommand {
   /// Convert this object to a JSON object.
   @override
   Map<String, dynamic> toJson() => _$TakeFromInventoryCommandToJson(this);
+
+  @override
+  String toString() {
+    return 'TakeFromInventoryCommand{ownerId: $ownerId, inventoryIndex: $inventoryIndex}';
+  }
 }

@@ -16,4 +16,11 @@ class TilePosition {
 
   /// Convert this object to a JSON object.
   Map<String, dynamic> toJson() => _$TilePositionToJson(this);
+
+  @override
+  String toString() {
+    return 'TilePosition{x: $x, y: $y}';
+  }
+
+
 }

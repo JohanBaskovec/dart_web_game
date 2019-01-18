@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:html';
 
+import 'package:dart_game/client/client_world.dart';
 import 'package:dart_game/client/input_manager.dart';
 import 'package:dart_game/client/renderer.dart';
 import 'package:dart_game/client/ui/build_menu.dart';
@@ -8,7 +9,7 @@ import 'package:dart_game/client/ui/chat.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/client/windows_manager.dart';
-import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/server/server_world.dart';
 import 'package:dart_game/common/session.dart';
 
 class Game {
@@ -26,7 +27,7 @@ class Game {
     final inventory = PlayerInventoryMenu(session, null);
     final renderer =
         Renderer(canvas, buildMenu, chat, inventory, windowsManager, session);
-    final world = World();
+    final world = ClientWorld();
 
     Timer.periodic(Duration(milliseconds: (1000 / 60).floor()), (Timer timer) {
       renderer.render(world);

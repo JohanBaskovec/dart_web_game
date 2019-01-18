@@ -1,3 +1,4 @@
+import 'package:dart_game/server/server_world.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -24,4 +25,11 @@ class HungerComponent {
       world.solidObjects[ownerId].alive = false;
     }
   }
+
+  @override
+  String toString() {
+    return 'HungerComponent{hunger: $hunger, increasePerSecond: $increasePerSecond, ownerId: $ownerId}';
+  }
+
+
 }

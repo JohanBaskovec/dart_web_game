@@ -1,31 +1,40 @@
+import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:dart_game/common/command/server/logged_in_command.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
+import 'package:dart_game/common/constants.dart';
+import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
+import 'package:dart_game/server/server_world.dart';
+import 'package:dart_game/common/hunger_component.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/server/client.dart';
-import 'package:dart_game/server/world_manager.dart';
 
 class GameServer {
+  Random randomGenerator = Random.secure();
   HttpServer httpServer;
   int port;
   String frontendHost;
   int frontendPort;
-  WorldManager worldManager;
+  ServerWorld world;
   final List<GameClient> clients = [];
 
   GameServer.bind(
-      this.port, this.frontendHost, this.frontendPort, this.worldManager) {
-    worldManager.gameServer = this;
-  }
+      this.port, this.frontendHost, this.frontendPort);
 
   Future<void> listen() async {
+    world = ServerWorld.fromConstants();
+    world.gameServer = this;
+    fillWorldWithStuff();
+    startObjectsUpdate();
+
     httpServer = await HttpServer.bind(InternetAddress.anyIPv6, port);
 
     httpServer.listen((HttpRequest request) async {
       try {
-        if (worldManager.world.freeSolidObjectIds.isEmpty) {
+        if (world.freeSolidObjectIds.isEmpty) {
           // TODO: ErrorCommand
           return;
         }
@@ -52,18 +61,18 @@ class GameServer {
   }
 
   void addNewPlayer(WebSocket webSocket) {
-    final SolidObject newPlayer = worldManager.addNewPlayerAtRandomPosition();
+    final SolidObject newPlayer = addNewPlayerAtRandomPosition();
     if (newPlayer == null) {
       return;
     }
 
     final LoggedInCommand loggedInCommand =
-        LoggedInCommand(newPlayer.id, worldManager.world);
+        LoggedInCommand(newPlayer.id, world);
     print('Client connected!');
 
     final newClient = GameClient(Session(newPlayer), webSocket, this);
     newClient.onLeave = () {
-      worldManager.removeSolidObject(newPlayer);
+      world.removeSolidObject(newPlayer);
       print('Client disconnected.');
       newClient.webSocket.close();
       clients.remove(newClient);
@@ -71,5 +80,101 @@ class GameServer {
     newClient.listen();
     clients.add(newClient);
     newClient.sendCommand(loggedInCommand);
+  }
+
+  void startObjectsUpdate() {
+    Timer.periodic(Duration(seconds: 5), (Timer timer) {
+      final start = DateTime.now();
+      for (int i = 0; i < world.solidObjects.length; i++) {
+        final SolidObject object = world.solidObjects[i];
+
+        if (object != null) {
+          if (object.hungerComponent != null) {
+            object.hungerComponent.update(world);
+          }
+          if (object.ageComponent != null) {
+            object.ageComponent.update(world);
+          }
+
+          if (!object.alive) {
+            world.removeSolidObject(object);
+          }
+        }
+      }
+      for (int i = 0; i < world.softObjects.length; i++) {
+        final SoftObject object = world.softObjects[i];
+
+        if (object != null) {
+          if (object.ageComponent != null) {
+            object.ageComponent.update(world);
+          }
+
+          if (!object.alive) {
+            world.removeSoftObject(object);
+          }
+        }
+      }
+      final end = DateTime.now();
+      final diff = end.difference(start);
+      print('Updated all solid objects in $diff');
+    });
+  }
+
+  SolidObject addNewPlayerAtRandomPosition() {
+    SolidObject newPlayer;
+    for (int x = 0; x < worldSize.x; x++) {
+      for (int y = 0; y < worldSize.y; y++) {
+        if (world.solidObjectColumns[x][y] == null) {
+          newPlayer = makePlayer(x, y);
+          break;
+        }
+      }
+      if (newPlayer != null) {
+        break;
+      }
+    }
+    if (newPlayer != null) {
+      newPlayer.hungerComponent = HungerComponent(0, 1) as HungerComponent;
+      newPlayer.inventory.addItem(world.addSoftObjectOfType(SoftObjectType.hand));
+      newPlayer.inventory.addItem(world.addSoftObjectOfType(SoftObjectType.axe));
+      newPlayer.inventory.addItem(world.addSoftObjectOfType(SoftObjectType.log));
+      newPlayer.inventory.addItem(world.addSoftObjectOfType(SoftObjectType.log));
+      newPlayer.inventory.addItem(world.addSoftObjectOfType(SoftObjectType.log));
+      newPlayer.inventory.addItem(world.addSoftObjectOfType(SoftObjectType.log));
+      newPlayer.inventory.addItem(world.addSoftObjectOfType(SoftObjectType.log));
+      newPlayer.inventory.addItem(world.addSoftObjectOfType(SoftObjectType.leaves));
+      world.addSolidObject(newPlayer);
+    }
+    return newPlayer;
+  }
+
+  void fillWorldWithStuff() {
+    for (int x = 0; x < world.solidObjectColumns.length; x++) {
+      for (int y = 0; y < world.solidObjectColumns[x].length; y++) {
+        final int rand = randomGenerator.nextInt(100);
+        if (rand < 40) {
+          final tree = makeTree(x, y);
+          world.addSolidObject(tree);
+          final int nLeaves = randomGenerator.nextInt(6) + 1;
+          for (int i = 0; i < nLeaves; i++) {
+            final leaves = world.addSoftObjectOfType(SoftObjectType.leaves);
+            tree.inventory.addItem(leaves);
+          }
+
+          final int nSnakes = randomGenerator.nextInt(6) + 1;
+          for (int i = 0; i < nSnakes; i++) {
+            final snake = world.addSoftObjectOfType(SoftObjectType.snake);
+            tree.inventory.addItem(snake);
+          }
+        } else if (rand < 80) {
+          final tree = makeAppleTree(x, y);
+          world.addSolidObject(tree);
+          final int nApples = randomGenerator.nextInt(6) + 1;
+          for (int i = 0; i < nApples; i++) {
+            tree.inventory.addItem(world.addSoftObjectOfType(SoftObjectType.apple));
+          }
+        }
+      }
+    }
   }
 }

@@ -1,13 +1,13 @@
 import 'package:dart_game/common/building.dart';
 import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/command/client/client_command_type.dart';
+import 'package:dart_game/common/command/server/add_solid_object_command.dart';
 import 'package:dart_game/common/command/server/remove_from_inventory_command.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
+import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/server/client.dart';
-import 'package:dart_game/server/game_server.dart';
-import 'package:dart_game/server/world_manager.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'build_solid_object_command.g.dart';
@@ -21,8 +21,8 @@ class BuildSolidObjectCommand extends ClientCommand {
       : super(ClientCommandType.buildSolidObject);
 
   @override
-  void execute(GameClient client, WorldManager worldManager) {
-    if (worldManager.getObjectAt(position) != null) {
+  void execute(GameClient client, World world) {
+    if (world.getObjectAt(position) != null) {
       print(
           'Tried to build an object but one already exists at that position!');
       return;
@@ -32,17 +32,17 @@ class BuildSolidObjectCommand extends ClientCommand {
 
     final Map<SoftObjectType, int> recipe = buildingRecipes[objectType];
     final int playerInventoryLength = player.inventory.items.length;
-    final removeFromInventoryCommand = RemoveFromInventoryCommand(
-        player.id, List.filled(playerInventoryLength, 0));
+    final removeFromInventoryCommand =
+        RemoveFromInventoryCommand(player.id, []);
     for (var type in recipe.keys) {
       final int quantityNeeded = recipe[type];
       int quantityOwned = 0;
       for (int i = 0; i < playerInventoryLength; i++) {
         final int itemId = player.inventory.items[i];
-        final SoftObject item = worldManager.getSoftObject(itemId);
+        final SoftObject item = world.getSoftObject(itemId);
         if (item.type == type) {
           quantityOwned++;
-          removeFromInventoryCommand.indexOfObjectsToRemove.add(i);
+          removeFromInventoryCommand.idsToRemove.add(itemId);
           if (quantityOwned == quantityNeeded) {
             break;
           }
@@ -53,9 +53,9 @@ class BuildSolidObjectCommand extends ClientCommand {
         return;
       }
     }
-    removeFromInventoryCommand.execute(worldManager.world);
+    removeFromInventoryCommand.execute(client.session, world);
     final object = SolidObject(objectType, position);
-    worldManager.addSolidObject(object);
+    world.addSolidObject(object);
     client.sendCommand(removeFromInventoryCommand);
   }
 

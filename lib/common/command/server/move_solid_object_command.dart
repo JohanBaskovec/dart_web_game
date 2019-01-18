@@ -1,5 +1,8 @@
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
+import 'package:dart_game/common/game_objects/solid_object.dart';
+import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -12,6 +15,15 @@ class MoveSolidObjectCommand extends ServerCommand {
 
   MoveSolidObjectCommand(this.objectId, this.position)
       : super(ServerCommandType.moveSolidObject);
+
+  @override
+  void execute(Session session, World world) {
+    final SolidObject object = world.solidObjects[objectId];
+    world.solidObjectColumns[object.tilePosition.x][object.tilePosition.y] =
+        null;
+    world.solidObjects[objectId].moveTo(position);
+    world.solidObjectColumns[position.x][position.y] = objectId;
+  }
 
   /// Creates a new [MoveSolidObjectCommand] from a JSON object.
   static MoveSolidObjectCommand fromJson(Map<dynamic, dynamic> json) =>

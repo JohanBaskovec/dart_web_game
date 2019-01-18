@@ -8,6 +8,8 @@ class Inventory {
   int currentlyEquiped;
   List<int> items = [];
 
+  bool get full => items.length == 9;
+
   void addItem(SoftObject item) {
     assert(item.id != null,
         'Item must have an id before being added to inventory!');
@@ -16,7 +18,7 @@ class Inventory {
     }
     item.indexInInventory = items.length;
     items.add(item.id);
-    print('Added $item to inventory at position ${item.id}');
+    print('Added $item to inventory at position ${item.indexInInventory}');
     currentlyEquiped ??= item.id;
   }
 
@@ -34,4 +36,11 @@ class Inventory {
   /// Convert this object to a JSON object.
   @override
   Map<String, dynamic> toJson() => _$InventoryToJson(this);
+
+  @override
+  String toString() {
+    return 'Inventory{currentlyEquiped: $currentlyEquiped, items: $items}';
+  }
+
+
 }

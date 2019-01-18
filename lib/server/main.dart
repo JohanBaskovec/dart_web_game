@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dart_game/server/game_server.dart';
-import 'package:dart_game/server/world_manager.dart';
 import 'package:yaml/yaml.dart';
 
 class Server {
@@ -18,16 +17,11 @@ class Server {
           configurationFile.readAsStringSync();
       final YamlMap config = loadYaml(configurationFileContent) as YamlMap;
 
-      final worldManager = WorldManager();
-
       final gameServer = GameServer.bind(
           config['backend_port'] as int,
           config['frontend_host'] as String,
-          config['frontend_port'] as int,
-          worldManager);
+          config['frontend_port'] as int);
 
-      worldManager.fillWorldWithStuff();
-      worldManager.startObjectsUpdate();
       gameServer.listen();
     } catch (e, s) {
       print(e);

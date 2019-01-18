@@ -11,7 +11,6 @@ class Chat {
   Box box = Box(0, 0, 0, 0);
   Button sendButton = Button();
   Input input = Input();
-  List<Message> messages = [Message('wow', 'lol ça marche bien non ?')];
   WebSocketClient client;
 
   Chat();
@@ -44,9 +43,5 @@ class Chat {
     } else {
       input.type(key);
     }
-  }
-
-  void addMessage(Message message) {
-    messages.add(message);
   }
 }

@@ -8,6 +8,8 @@ import 'package:dart_game/common/command/server/remove_from_inventory_command.da
 import 'package:dart_game/common/command/server/remove_solid_object_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
 import 'package:dart_game/common/command/server/set_equipped_item_server_command.dart';
+import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/session.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'server_command.g.dart';
@@ -17,6 +19,11 @@ class ServerCommand {
   ServerCommandType type;
 
   ServerCommand(this.type);
+
+  void execute(Session session, World world) {
+    // must have an implementation because abstract class can't be serialized
+    throw Exception('Implement me!');
+  }
 
   /// Creates a new [ServerCommand] from a JSON object.
   static ServerCommand fromJson(Map<dynamic, dynamic> json) {

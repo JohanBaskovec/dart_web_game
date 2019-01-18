@@ -37,7 +37,8 @@ class InputManager {
   WindowsManager windowsManager;
   final Session session;
 
-  InputManager(this._body,
+  InputManager(
+      this._body,
       this._canvas,
       this._world,
       this.renderer,
@@ -92,7 +93,7 @@ class InputManager {
         e.preventDefault();
       }
       final CanvasPosition canvasPosition =
-      renderer.getCursorPositionInCanvas(e);
+          renderer.getCursorPositionInCanvas(e);
       if (canClick) {
         if (buildMenu.enabled) {
           if (!buildMenu.clickAt(canvasPosition)) {
@@ -118,7 +119,7 @@ class InputManager {
         }
         chat.input.active = false;
         final WorldPosition mousePosition =
-        renderer.getWorldPositionFromCanvasPosition(canvasPosition);
+            renderer.getWorldPositionFromCanvasPosition(canvasPosition);
         final TilePosition tilePosition = TilePosition(
             (mousePosition.x / tileSize).floor(),
             (mousePosition.y / tileSize).floor());
@@ -127,7 +128,7 @@ class InputManager {
             tilePosition.y >= 0 &&
             tilePosition.y < worldSize.y) {
           final objectId =
-          _world.solidObjectColumns[tilePosition.x][tilePosition.y];
+              _world.solidObjectColumns[tilePosition.x][tilePosition.y];
           if (objectId == null) {
             clickOnGround(tilePosition);
           } else {
@@ -147,8 +148,8 @@ class InputManager {
   }
 
   void clickOnSolidObject(SolidObject object) {
-    final SoftObject equippedObject = _world.softObjects[session.player
-        .inventory.currentlyEquiped];
+    final SoftObject equippedObject =
+        _world.softObjects[session.player.inventory.currentlyEquiped];
     if (equippedObject.type == SoftObjectType.hand) {
       if (object.inventory.items.isNotEmpty) {
         final inventoryMenu = InventoryMenu(
@@ -159,6 +160,9 @@ class InputManager {
         windowsManager.inventoryMenus.add(inventoryMenu);
       }
     } else {
+      if (!playerCanGather(session.player, _world, object.id)) {
+        return;
+      }
       final command = UseObjectOnSolidObjectCommand(object.id);
       webSocketClient.webSocket.send(jsonEncode(command));
     }

@@ -105,6 +105,13 @@ class SolidObject {
 
   /// Convert this object to a JSON object.
   Map<String, dynamic> toJson() => _$SolidObjectToJson(this);
+
+  @override
+  String toString() {
+    return 'SolidObject{type: $type, id: $id, name: $name, _tilePosition: $_tilePosition, inventory: $inventory, nGatherableItems: $nGatherableItems, box: $box, alive: $alive, _hungerComponent: $_hungerComponent, _ageComponent: $_ageComponent}';
+  }
+
+
 }
 
 const int minutesPerYear = 525600;

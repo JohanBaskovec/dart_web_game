@@ -1,10 +1,9 @@
 import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/command/client/client_command_type.dart';
 import 'package:dart_game/common/command/server/add_message_command.dart';
+import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/message.dart';
 import 'package:dart_game/server/client.dart';
-import 'package:dart_game/server/game_server.dart';
-import 'package:dart_game/server/world_manager.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'send_message_command.g.dart';
@@ -16,8 +15,8 @@ class SendMessageCommand extends ClientCommand {
   SendMessageCommand(this.message) : super(ClientCommandType.sendMessage);
 
   @override
-  void execute(GameClient client, WorldManager worldManager) {
-    worldManager.sendCommandToAllClients(
+  void execute(GameClient client, World world) {
+    world.sendCommandToAllClients(
         AddMessageCommand(Message(client.session.player.name, message)));
   }
 

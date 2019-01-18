@@ -1,6 +1,7 @@
 import 'dart:html';
 
 import 'package:dart_game/client/canvas_position.dart';
+import 'package:dart_game/client/client_world.dart';
 import 'package:dart_game/client/ui/build_menu.dart';
 import 'package:dart_game/client/ui/chat.dart';
 import 'package:dart_game/client/ui/inventory_menu.dart';
@@ -11,7 +12,6 @@ import 'package:dart_game/common/building.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
-import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/world_position.dart';
@@ -44,7 +44,7 @@ class Renderer {
     resizeWindows();
   }
 
-  void render(World world) {
+  void render(ClientWorld world) {
     if (session.player == null) {
       return;
     }
@@ -117,7 +117,7 @@ class Renderer {
       _ctx.fillRect(inventory.box.left, inventory.box.top, inventory.box.width,
           inventory.box.height);
       for (var i = 0; i < inventory.buttons.length; i++) {
-        final int itemId = session.player.inventory.items[i];
+        final int itemId = inventory.buttons[i].itemId;
         final SoftObject item = world.getSoftObject(itemId);
         final InventoryButton button = inventory.buttons[i];
         final type = item.type;
@@ -138,9 +138,9 @@ class Renderer {
       _ctx.fillStyle = 'white';
       num height = 0;
       final List<String> lines = [];
-      for (int i = chat.messages.length - 1; i > -1; i--) {
+      for (int i = world.messages.length - 1; i > -1; i--) {
         final List<String> messageSplitBySpace =
-            chat.messages[i].message.split(' ');
+            world.messages[i].message.split(' ');
         num width = 0;
         int j = 0;
         while (j < messageSplitBySpace.length) {
