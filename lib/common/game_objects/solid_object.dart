@@ -34,7 +34,17 @@ enum SolidObjectType {
 @JsonSerializable(anyMap: true)
 class SolidObject {
   SolidObjectType type;
-  int id;
+  int _id;
+  int get id => _id;
+  void set id(int value) {
+    _id = value;
+    if (_ageComponent != null) {
+      _ageComponent.ownerId = _id;
+    }
+    if (_hungerComponent != null) {
+      _hungerComponent.ownerId = _id;
+    }
+  }
   String name;
 
   TilePosition _tilePosition;
@@ -110,8 +120,6 @@ class SolidObject {
   String toString() {
     return 'SolidObject{type: $type, id: $id, name: $name, _tilePosition: $_tilePosition, inventory: $inventory, nGatherableItems: $nGatherableItems, box: $box, alive: $alive, _hungerComponent: $_hungerComponent, _ageComponent: $_ageComponent}';
   }
-
-
 }
 
 const int minutesPerYear = 525600;

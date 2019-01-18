@@ -20,6 +20,8 @@ class HungerComponent {
   Map<String, dynamic> toJson() => _$HungerComponentToJson(this);
 
   void update(World world) {
+    assert(ownerId != null);
+    assert(world.solidObjects[ownerId] != null);
     hunger += increasePerSecond;
     if (hunger >= 100) {
       world.solidObjects[ownerId].alive = false;

@@ -13,6 +13,7 @@ class AgeComponent {
   AgeComponent(this.maxAge);
 
   void update(World world) {
+    assert(ownerId != null);
     if (ageMinutes >= maxAge) {
       world.solidObjects[ownerId].alive = false;
     }
