@@ -148,10 +148,11 @@ class InputManager {
   }
 
   void clickOnSolidObject(SolidObject object) {
+    print('Clicking on object: $object');
     final SoftObject equippedObject =
         _world.softObjects[session.player.inventory.currentlyEquiped];
     if (equippedObject.type == SoftObjectType.hand) {
-      if (object.inventory.items.isNotEmpty) {
+      if (object.inventory.items.isNotEmpty && !object.inventoryIsPrivate) {
         final inventoryMenu = InventoryMenu(
             Box(object.box.left, object.box.top, 600, 100),
             object,

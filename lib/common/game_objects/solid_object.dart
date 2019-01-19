@@ -1,7 +1,6 @@
 import 'package:dart_game/common/age_component.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/constants.dart';
-import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/hunger_component.dart';
 import 'package:dart_game/common/inventory.dart';
 import 'package:dart_game/common/tile_position.dart';
@@ -35,7 +34,9 @@ enum SolidObjectType {
 class SolidObject {
   SolidObjectType type;
   int _id;
+
   int get id => _id;
+
   void set id(int value) {
     _id = value;
     if (_ageComponent != null) {
@@ -45,6 +46,7 @@ class SolidObject {
       _hungerComponent.ownerId = _id;
     }
   }
+
   String name;
 
   TilePosition _tilePosition;
@@ -52,6 +54,7 @@ class SolidObject {
   /// Inventory that can be accessed by using your hand on an object
   /// Example: fruits from trees, items from chests
   Inventory inventory;
+  bool inventoryIsPrivate;
 
   /// Inventory that contains objects that can be gathered by using a tool
   /// Example: iron from an iron vein, wood logs from a tree
@@ -61,9 +64,8 @@ class SolidObject {
   HungerComponent _hungerComponent;
   AgeComponent _ageComponent;
 
-  SolidObject([this.type, TilePosition tilePosition]) {
-    this.tilePosition = tilePosition;
-  }
+  SolidObject([this.type, this._tilePosition])
+      : inventoryIsPrivate = false;
 
   void move(int x, int y) {
     tilePosition.x += x;
@@ -81,10 +83,7 @@ class SolidObject {
   set tilePosition(TilePosition value) {
     _tilePosition = value;
     if (value != null) {
-      box = Box(
-          tilePosition.x * tileSize,
-          tilePosition.y * tileSize,
-          tileSize,
+      box = Box(tilePosition.x * tileSize, tilePosition.y * tileSize, tileSize,
           tileSize);
     }
   }
@@ -123,6 +122,7 @@ class SolidObject {
 }
 
 const int minutesPerYear = 525600;
+
 SolidObject makeTree(int x, int y) {
   final tree = SolidObject(SolidObjectType.tree, TilePosition(x, y));
   tree.ageComponent = AgeComponent(1000 * minutesPerYear);
@@ -140,8 +140,9 @@ SolidObject makeAppleTree(int x, int y) {
 }
 
 SolidObject makePlayer(int x, int y) {
-  final tree = SolidObject(SolidObjectType.player, TilePosition(x, y));
-  tree.ageComponent = AgeComponent(100 * minutesPerYear);
-  tree.inventory = Inventory();
-  return tree;
+  final player = SolidObject(SolidObjectType.player, TilePosition(x, y));
+  player.ageComponent = AgeComponent(100 * minutesPerYear);
+  player.inventory = Inventory();
+  player.inventoryIsPrivate = true;
+  return player;
 }

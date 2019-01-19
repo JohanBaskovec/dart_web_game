@@ -2,7 +2,6 @@ import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/command/client/client_command_type.dart';
 import 'package:dart_game/common/command/server/add_to_inventory_command.dart';
 import 'package:dart_game/common/command/server/remove_from_inventory_command.dart';
-import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/inventory.dart';
@@ -14,9 +13,9 @@ part 'take_from_inventory_command.g.dart';
 @JsonSerializable(anyMap: true)
 class TakeFromInventoryCommand extends ClientCommand {
   int ownerId;
-  int inventoryIndex;
+  int itemId;
 
-  TakeFromInventoryCommand(this.ownerId, this.inventoryIndex)
+  TakeFromInventoryCommand(this.ownerId, this.itemId)
       : super(ClientCommandType.takeFromInventory);
 
   @override
@@ -26,11 +25,17 @@ class TakeFromInventoryCommand extends ClientCommand {
       return;
     }
     final SolidObject target = world.getSolidObject(ownerId);
-    if (inventoryIndex > target.inventory.size - 1) {
-      print("Tried to take an item that doesn't exist from inventory! $this");
+    if (target.inventoryIsPrivate) {
+      print('Tried to take from a private inventory,'
+          'this shouldn\'t be possible, cheater?');
+      return;
     }
-    final int itemId = target.inventory.items[inventoryIndex];
-    final removeFromInventoryCommand = RemoveFromInventoryCommand(target.id, [itemId]);
+    if (!target.inventory.items.contains(itemId)) {
+      print("Tried to take an item that isn't in inventory! $this");
+      return;
+    }
+    final removeFromInventoryCommand =
+        RemoveFromInventoryCommand(target.id, [itemId]);
     removeFromInventoryCommand.execute(client.session, world);
 
     final addToInventoryCommand = AddToInventoryCommand(itemId);
@@ -52,6 +57,6 @@ class TakeFromInventoryCommand extends ClientCommand {
 
   @override
   String toString() {
-    return 'TakeFromInventoryCommand{ownerId: $ownerId, inventoryIndex: $inventoryIndex}';
+    return 'TakeFromInventoryCommand{ownerId: $ownerId, inventoryIndex: $itemId}';
   }
 }
