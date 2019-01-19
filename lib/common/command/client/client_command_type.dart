@@ -7,6 +7,6 @@ enum ClientCommandType {
   sendMessage,
   takeFromInventory,
   addToInventory,
+  openInventory,
   unknown
 }
-

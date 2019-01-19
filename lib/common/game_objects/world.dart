@@ -48,6 +48,7 @@ class World {
     return softObjects[id];
   }
 
+
   void sendCommandToAllClients(ServerCommand command) {}
 
   /// Creates a new [World] from a JSON object.
@@ -56,4 +57,5 @@ class World {
   /// Convert this object to a JSON object.
   @override
   Map<String, dynamic> toJson() => _$WorldToJson(this);
+
 }

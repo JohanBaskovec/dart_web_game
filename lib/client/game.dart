@@ -4,12 +4,8 @@ import 'dart:html';
 import 'package:dart_game/client/client_world.dart';
 import 'package:dart_game/client/input_manager.dart';
 import 'package:dart_game/client/renderer.dart';
-import 'package:dart_game/client/ui/build_menu.dart';
-import 'package:dart_game/client/ui/chat.dart';
-import 'package:dart_game/client/ui/player_inventory_menu.dart';
+import 'package:dart_game/client/ui/client_ui_controller.dart';
 import 'package:dart_game/client/web_socket_client.dart';
-import 'package:dart_game/client/windows_manager.dart';
-import 'package:dart_game/server/server_world.dart';
 import 'package:dart_game/common/session.dart';
 
 class Game {
@@ -19,32 +15,29 @@ class Game {
   <canvas id="canvas"></canvas>
   </div>''';
 
-    final buildMenu = BuildMenu();
-    final chat = Chat();
+    final world = ClientWorld.fromConstants();
     final CanvasElement canvas = document.getElementById('canvas');
-    final windowsManager = WindowsManager();
     final session = Session(null);
-    final inventory = PlayerInventoryMenu(session, null);
-    final renderer =
-        Renderer(canvas, buildMenu, chat, inventory, windowsManager, session);
-    final world = ClientWorld();
+    final uiController = ClientUiController(session, world);
+    final renderer = Renderer(canvas, uiController, session);
 
     Timer.periodic(Duration(milliseconds: (1000 / 60).floor()), (Timer timer) {
       renderer.render(world);
     });
 
-    final inputManager = InputManager(document.body, canvas, world, renderer,
-        buildMenu, chat, inventory, windowsManager, session);
+    final inputManager = InputManager(
+        document.body, canvas, world, renderer, session, uiController);
     inputManager.listen();
 
     final webSocketClient = WebSocketClient(WebSocket('ws:127.0.0.1:8083/ws'),
-        world, renderer, chat, inventory, session);
+        world, renderer, session, uiController);
+    uiController.webSocketClient = webSocketClient;
 
-    inventory.webSocketClient = webSocketClient;
+    uiController.inventory.webSocketClient = webSocketClient;
 
     webSocketClient.connect();
 
-    chat.client = webSocketClient;
+    uiController.chat.client = webSocketClient;
 
     inputManager.webSocketClient = webSocketClient;
   }

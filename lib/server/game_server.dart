@@ -4,13 +4,15 @@ import 'dart:math';
 
 import 'package:dart_game/common/command/server/logged_in_command.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
+import 'package:dart_game/common/command/server/solid_object_summary.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
-import 'package:dart_game/server/server_world.dart';
 import 'package:dart_game/common/hunger_component.dart';
 import 'package:dart_game/common/session.dart';
+import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/server/client.dart';
+import 'package:dart_game/server/server_world.dart';
 
 class GameServer {
   Random randomGenerator = Random.secure();
@@ -21,8 +23,7 @@ class GameServer {
   ServerWorld world;
   final List<GameClient> clients = [];
 
-  GameServer.bind(
-      this.port, this.frontendHost, this.frontendPort);
+  GameServer.bind(this.port, this.frontendHost, this.frontendPort);
 
   Future<void> listen() async {
     world = ServerWorld.fromConstants();
@@ -66,10 +67,6 @@ class GameServer {
       return;
     }
 
-    final LoggedInCommand loggedInCommand =
-        LoggedInCommand(newPlayer.id, world);
-    print('Client connected!');
-
     final newClient = GameClient(Session(newPlayer), webSocket, this);
     newClient.onLeave = () {
       world.removeSolidObject(newPlayer);
@@ -79,6 +76,28 @@ class GameServer {
     };
     newClient.listen();
     clients.add(newClient);
+
+    final List<SoftObject> softObjects = List(newPlayer.inventory.items.length);
+    for (int i = 0; i < newPlayer.inventory.size; i++) {
+      softObjects[i] = world.getSoftObject(newPlayer.inventory[i]);
+    }
+    final List<List<SolidObjectSummary>> solidObjectSummariesColumns =
+        List(worldSize.x);
+    for (int x = 0; x < worldSize.x; x++) {
+      solidObjectSummariesColumns[x] = List(worldSize.y);
+    }
+    for (var x = 0; x < solidObjectSummariesColumns.length; x++) {
+      final List<SolidObjectSummary> rows = solidObjectSummariesColumns[x];
+      for (var y = 0; y < rows.length; y++) {
+        final SolidObject solidObject = world.getObjectAt(TilePosition(x, y));
+        if (solidObject != null) {
+          rows[y] = SolidObjectSummary(solidObject.id, solidObject.type);
+        }
+      }
+    }
+    final LoggedInCommand loggedInCommand = LoggedInCommand(newPlayer.id,
+        newPlayer.inventory, softObjects, solidObjectSummariesColumns);
+    print('Client connected!');
     newClient.sendCommand(loggedInCommand);
   }
 
@@ -135,14 +154,22 @@ class GameServer {
     }
     if (newPlayer != null) {
       newPlayer.hungerComponent = HungerComponent(0, 1) as HungerComponent;
-      newPlayer.inventory.addItem(world.addSoftObjectOfType(SoftObjectType.hand));
-      newPlayer.inventory.addItem(world.addSoftObjectOfType(SoftObjectType.axe));
-      newPlayer.inventory.addItem(world.addSoftObjectOfType(SoftObjectType.log));
-      newPlayer.inventory.addItem(world.addSoftObjectOfType(SoftObjectType.log));
-      newPlayer.inventory.addItem(world.addSoftObjectOfType(SoftObjectType.log));
-      newPlayer.inventory.addItem(world.addSoftObjectOfType(SoftObjectType.log));
-      newPlayer.inventory.addItem(world.addSoftObjectOfType(SoftObjectType.log));
-      newPlayer.inventory.addItem(world.addSoftObjectOfType(SoftObjectType.leaves));
+      newPlayer.inventory
+          .addItem(world.addSoftObjectOfType(SoftObjectType.hand));
+      newPlayer.inventory
+          .addItem(world.addSoftObjectOfType(SoftObjectType.axe));
+      newPlayer.inventory
+          .addItem(world.addSoftObjectOfType(SoftObjectType.log));
+      newPlayer.inventory
+          .addItem(world.addSoftObjectOfType(SoftObjectType.log));
+      newPlayer.inventory
+          .addItem(world.addSoftObjectOfType(SoftObjectType.log));
+      newPlayer.inventory
+          .addItem(world.addSoftObjectOfType(SoftObjectType.log));
+      newPlayer.inventory
+          .addItem(world.addSoftObjectOfType(SoftObjectType.log));
+      newPlayer.inventory
+          .addItem(world.addSoftObjectOfType(SoftObjectType.leaves));
       world.addSolidObject(newPlayer);
     }
     return newPlayer;
@@ -171,7 +198,8 @@ class GameServer {
           world.addSolidObject(tree);
           final int nApples = randomGenerator.nextInt(6) + 1;
           for (int i = 0; i < nApples; i++) {
-            tree.inventory.addItem(world.addSoftObjectOfType(SoftObjectType.apple));
+            tree.inventory
+                .addItem(world.addSoftObjectOfType(SoftObjectType.apple));
           }
         }
       }

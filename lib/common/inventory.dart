@@ -5,8 +5,10 @@ part 'inventory.g.dart';
 
 @JsonSerializable(anyMap: true)
 class Inventory {
+  bool private = false;
   int currentlyEquiped;
   List<int> items = [];
+  int ownerId;
 
   bool get full => items.length == 9;
 
@@ -26,6 +28,8 @@ class Inventory {
   void removeItem(int stackIndex) {
     items.removeAt(stackIndex);
   }
+
+  int operator[](int i) => items[i];
 
   int get size => items.length;
 

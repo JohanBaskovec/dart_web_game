@@ -4,6 +4,7 @@ import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/tile_position.dart';
+import 'package:dart_game/common/ui_controller.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'move_solid_object_command.g.dart';
@@ -17,7 +18,7 @@ class MoveSolidObjectCommand extends ServerCommand {
       : super(ServerCommandType.moveSolidObject);
 
   @override
-  void execute(Session session, World world) {
+  void execute(Session session, World world, [UiController uiController]) {
     final SolidObject object = world.solidObjects[objectId];
     world.solidObjectColumns[object.tilePosition.x][object.tilePosition.y] =
         null;

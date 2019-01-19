@@ -2,11 +2,9 @@ import 'dart:html';
 
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/client/client_world.dart';
-import 'package:dart_game/client/ui/build_menu.dart';
-import 'package:dart_game/client/ui/chat.dart';
+import 'package:dart_game/client/ui/client_ui_controller.dart';
 import 'package:dart_game/client/ui/inventory_menu.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
-import 'package:dart_game/client/windows_manager.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/building.dart';
 import 'package:dart_game/common/constants.dart';
@@ -23,14 +21,10 @@ class Renderer {
   CanvasPosition cameraPosition;
   Map<SoftObjectType, ImageElement> softImages = {};
   Map<SolidObjectType, ImageElement> solidImages = {};
-  BuildMenu buildMenu;
-  Chat chat;
-  PlayerInventoryMenu inventory;
-  WindowsManager windowsManager;
   final Session session;
+  final ClientUiController uiController;
 
-  Renderer(this._canvas, this.buildMenu, this.chat, this.inventory,
-      this.windowsManager, this.session)
+  Renderer(this._canvas, this.uiController, this.session)
       : _ctx = _canvas.getContext('2d') as CanvasRenderingContext2D {
     for (SoftObjectType type in SoftObjectType.values) {
       softImages[type] = ImageElement();
@@ -77,25 +71,35 @@ class Renderer {
     _ctx.setTransform(1, 0, 0, 1, 0, 0);
     if (session.player != null) {
       _ctx.fillStyle = 'black';
-      inventory.update();
-      _ctx.fillRect(inventory.box.left, inventory.box.top, inventory.box.width,
-          inventory.box.height);
-      final double widthPerStack = inventory.box.width / 9;
+      uiController.inventory.update();
+      _ctx.fillRect(
+          uiController.inventory.box.left,
+          uiController.inventory.box.top,
+          uiController.inventory.box.width,
+          uiController.inventory.box.height);
+      final double widthPerStack = uiController.inventory.box.width / 9;
       for (var i = 0; i < session.player.inventory.items.length; i++) {
         final int itemId = session.player.inventory.items[i];
         final SoftObject item = world.getSoftObject(itemId);
-        final double left = i * widthPerStack + inventory.box.left;
-        _ctx.drawImageScaled(softImages[item.type], left,
-            inventory.box.top, widthPerStack, inventory.box.height);
+        final double left = i * widthPerStack + uiController.inventory.box.left;
+        _ctx.drawImageScaled(
+            softImages[item.type],
+            left,
+            uiController.inventory.box.top,
+            widthPerStack,
+            uiController.inventory.box.height);
       }
     }
-    if (buildMenu.enabled) {
+    if (uiController.buildMenu.enabled) {
       _ctx.fillStyle = 'black';
-      _ctx.fillRect(buildMenu.box.left, buildMenu.box.top, buildMenu.box.width,
-          buildMenu.box.height);
+      _ctx.fillRect(
+          uiController.buildMenu.box.left,
+          uiController.buildMenu.box.top,
+          uiController.buildMenu.box.width,
+          uiController.buildMenu.box.height);
 
-      for (int i = 0; i < buildMenu.buttons.length; i++) {
-        final button = buildMenu.buttons[i];
+      for (int i = 0; i < uiController.buildMenu.buttons.length; i++) {
+        final button = uiController.buildMenu.buttons[i];
         _ctx.drawImageScaled(solidImages[button.type], button.box.left,
             button.box.top, button.box.width, button.box.height);
         _ctx.fillStyle = 'white';
@@ -104,14 +108,17 @@ class Renderer {
             in buildingRecipes[button.type].entries) {
           _ctx.fillText(
               '${ingredientList.key}: ${ingredientList.value}',
-              buildMenu.box.left + 40,
-              buildMenu.box.top + button.box.height * i + 15 + k * 10);
+              uiController.buildMenu.box.left + 40,
+              uiController.buildMenu.box.top +
+                  button.box.height * i +
+                  15 +
+                  k * 10);
           k++;
         }
         _ctx.fillStyle = 'black';
       }
     }
-    for (InventoryMenu inventory in windowsManager.inventoryMenus) {
+    for (InventoryMenu inventory in uiController.inventoryMenus) {
       inventory.update();
       _ctx.fillStyle = 'black';
       _ctx.fillRect(inventory.box.left, inventory.box.top, inventory.box.width,
@@ -125,16 +132,21 @@ class Renderer {
             button.box.width, button.box.height);
       }
     }
-    if (chat.enabled) {
+    if (uiController.chat.enabled) {
       _ctx.fillStyle = 'black';
-      _ctx.fillRect(
-          chat.box.left, chat.box.top, chat.box.width, chat.box.height);
+      _ctx.fillRect(uiController.chat.box.left, uiController.chat.box.top,
+          uiController.chat.box.width, uiController.chat.box.height);
       _ctx.fillStyle = 'white';
-      _ctx.fillRect(chat.input.box.left, chat.input.box.top,
-          chat.input.box.width, chat.input.box.height);
+      _ctx.fillRect(
+          uiController.chat.input.box.left,
+          uiController.chat.input.box.top,
+          uiController.chat.input.box.width,
+          uiController.chat.input.box.height);
       _ctx.fillStyle = 'black';
       _ctx.fillText(
-          chat.input.content, chat.input.box.left, chat.input.box.top + 8);
+          uiController.chat.input.content,
+          uiController.chat.input.box.left,
+          uiController.chat.input.box.top + 8);
       _ctx.fillStyle = 'white';
       num height = 0;
       final List<String> lines = [];
@@ -145,7 +157,7 @@ class Renderer {
         int j = 0;
         while (j < messageSplitBySpace.length) {
           final StringBuffer line = StringBuffer();
-          while (width < chat.box.width) {
+          while (width < uiController.chat.box.width) {
             line.write('${messageSplitBySpace[j]} ');
             width += _ctx.measureText(messageSplitBySpace[j]).width;
             j++;
@@ -156,12 +168,13 @@ class Renderer {
           lines.add(line.toString());
         }
         height += 8;
-        if (height > chat.box.height) {
+        if (height > uiController.chat.box.height) {
           break;
         }
       }
       for (int i = lines.length - 1; i > -1; i--) {
-        _ctx.fillText(lines[i], chat.box.left, chat.input.box.top - 9 * i);
+        _ctx.fillText(lines[i], uiController.chat.box.left,
+            uiController.chat.input.box.top - 9 * i);
       }
     }
   }
@@ -206,14 +219,17 @@ class Renderer {
   void resizeWindows() {
     _canvas.width = window.innerWidth;
     _canvas.height = window.innerHeight;
-    buildMenu.moveAndResize(
+    uiController.buildMenu.moveAndResize(
         Box(_canvas.width ~/ 10, 100, _canvas.width ~/ 2, _canvas.height ~/ 2));
-    inventory.moveAndResize(Box(
+    uiController.inventory.moveAndResize(Box(
         20,
         (_canvas.height - _canvas.height / 10).toInt(),
         (_canvas.width - 20 - _canvas.width / 3).toInt(),
         _canvas.height ~/ 11));
-    chat.moveAndResize(Box(inventory.box.right + 20, inventory.box.top - 100,
-        (_canvas.width / 3 - 40).toInt(), 100 + inventory.box.height));
+    uiController.chat.moveAndResize(Box(
+        uiController.inventory.box.right + 20,
+        uiController.inventory.box.top - 100,
+        (_canvas.width / 3 - 40).toInt(),
+        100 + uiController.inventory.box.height));
   }
 }

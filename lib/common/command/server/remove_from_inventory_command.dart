@@ -3,6 +3,7 @@ import 'package:dart_game/common/command/server/server_command_type.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/inventory.dart';
 import 'package:dart_game/common/session.dart';
+import 'package:dart_game/common/ui_controller.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'remove_from_inventory_command.g.dart';
@@ -18,7 +19,7 @@ class RemoveFromInventoryCommand extends ServerCommand {
         super(ServerCommandType.removeFromInventory);
 
   @override
-  void execute(Session session, World world) {
+  void execute(Session session, World world, [UiController uiController]) {
     final Inventory inventory = world.solidObjects[ownerId].inventory;
     idsToRemove.forEach(inventory.items.remove);
     print('Executed $this');

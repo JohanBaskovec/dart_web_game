@@ -11,6 +11,6 @@ enum ServerCommandType {
   removeTile,
   setEquippedItem,
   addMessage,
+  sendInventory,
   unknown
 }
-

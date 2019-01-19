@@ -1,10 +1,28 @@
 import 'package:dart_game/common/command/server/server_command.dart';
+import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/common/tile_position.dart';
 
 class ClientWorld extends World {
+  ClientWorld.fromConstants() {
+    tilesColumn = List(worldSize.x);
+    solidObjectColumns = List(worldSize.x);
+    for (int x = 0; x < worldSize.x; x++) {
+      tilesColumn[x] = List(worldSize.y);
+    }
+    for (List<Tile> column in tilesColumn) {
+      for (int i = 0; i < column.length; i++) {
+        column[i] = Tile();
+      }
+    }
+
+    for (int x = 0; x < worldSize.x; x++) {
+      solidObjectColumns[x] = List(worldSize.y);
+    }
+  }
   @override
   void addSolidObject(SolidObject object) {
     assert(object != null);
@@ -46,7 +64,7 @@ class ClientWorld extends World {
   @override
   void addSoftObject(SoftObject object) {
     if (softObjects.length < object.id) {
-      softObjects.length *= 2;
+      softObjects.length = (object.id + 1) * 2;
     }
     softObjects[object.id] = object;
   }

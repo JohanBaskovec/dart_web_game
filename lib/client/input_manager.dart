@@ -3,16 +3,14 @@ import 'dart:html';
 
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/client/renderer.dart';
-import 'package:dart_game/client/ui/build_menu.dart';
-import 'package:dart_game/client/ui/chat.dart';
+import 'package:dart_game/client/ui/client_ui_controller.dart';
 import 'package:dart_game/client/ui/inventory_menu.dart';
-import 'package:dart_game/client/ui/player_inventory_menu.dart';
 import 'package:dart_game/client/web_socket_client.dart';
-import 'package:dart_game/client/windows_manager.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/building.dart';
 import 'package:dart_game/common/command/client/build_solid_object_command.dart';
 import 'package:dart_game/common/command/client/move_command.dart';
+import 'package:dart_game/common/command/client/open_inventory_command.dart';
 import 'package:dart_game/common/command/client/use_object_on_solid_object_command.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
@@ -31,22 +29,11 @@ class InputManager {
   DateTime lastClickTime = DateTime.now();
   Duration minDurationBetweenAction = Duration(milliseconds: 70);
   Renderer renderer;
-  BuildMenu buildMenu;
-  Chat chat;
-  PlayerInventoryMenu inventory;
-  WindowsManager windowsManager;
   final Session session;
+  final ClientUiController uiController;
 
-  InputManager(
-      this._body,
-      this._canvas,
-      this._world,
-      this.renderer,
-      this.buildMenu,
-      this.chat,
-      this.inventory,
-      this.windowsManager,
-      this.session);
+  InputManager(this._body, this._canvas, this._world, this.renderer,
+      this.session, this.uiController);
 
   void listen() {
     _body.onClick.listen((MouseEvent e) {
@@ -56,8 +43,8 @@ class InputManager {
     });
     _body.onKeyDown.listen((KeyboardEvent e) {
       if (canvasActive && session.player != null) {
-        if (chat.enabled && chat.input.active) {
-          chat.type(e.key);
+        if (uiController.chat.enabled && uiController.chat.input.active) {
+          uiController.chat.type(e.key);
         } else {
           switch (e.key) {
             case 'd':
@@ -73,7 +60,7 @@ class InputManager {
               move(0, -1);
               break;
             case 'b':
-              buildMenu.enabled = !buildMenu.enabled;
+              uiController.buildMenu.enabled = !uiController.buildMenu.enabled;
               break;
           }
         }
@@ -95,29 +82,32 @@ class InputManager {
       final CanvasPosition canvasPosition =
           renderer.getCursorPositionInCanvas(e);
       if (canClick) {
-        if (buildMenu.enabled) {
-          if (!buildMenu.clickAt(canvasPosition)) {
-            return;
-          }
-        }
-        if (chat.enabled) {
-          if (!chat.clickAt(canvasPosition)) {
-            return;
-          }
-        }
-        if (!inventory.clickAt(canvasPosition)) {
+        if (renderer.cameraPosition == null) {
           return;
         }
-        for (InventoryMenu inventory in windowsManager.inventoryMenus) {
+        if (uiController.buildMenu.enabled) {
+          if (!uiController.buildMenu.clickAt(canvasPosition)) {
+            return;
+          }
+        }
+        if (uiController.chat.enabled) {
+          if (!uiController.chat.clickAt(canvasPosition)) {
+            return;
+          }
+        }
+        if (!uiController.inventory.clickAt(canvasPosition)) {
+          return;
+        }
+        for (InventoryMenu inventory in uiController.inventoryMenus) {
           if (e.button == 2) {
-            windowsManager.inventoryMenus.remove(inventory);
+            uiController.inventoryMenus.remove(inventory);
           } else {
             if (!inventory.clickAt(canvasPosition)) {
               return;
             }
           }
         }
-        chat.input.active = false;
+        uiController.chat.input.active = false;
         final WorldPosition mousePosition =
             renderer.getWorldPositionFromCanvasPosition(canvasPosition);
         final TilePosition tilePosition = TilePosition(
@@ -152,14 +142,7 @@ class InputManager {
     final SoftObject equippedObject =
         _world.softObjects[session.player.inventory.currentlyEquiped];
     if (equippedObject.type == SoftObjectType.hand) {
-      if (object.inventory.items.isNotEmpty && !object.inventoryIsPrivate) {
-        final inventoryMenu = InventoryMenu(
-            Box(object.box.left, object.box.top, 600, 100),
-            object,
-            session.player,
-            webSocketClient);
-        windowsManager.inventoryMenus.add(inventoryMenu);
-      }
+      webSocketClient.sendCommand(OpenInventoryCommand(object.id));
     } else {
       if (!playerCanGather(session.player, _world, object.id)) {
         return;
@@ -176,10 +159,12 @@ class InputManager {
   }
 
   void clickOnGround(TilePosition tilePosition) {
-    if (buildMenu.enabled && buildMenu.selectedType != null) {
-      if (playerCanBuild(_world, buildMenu.selectedType, session.player)) {
-        webSocketClient.webSocket.send(jsonEncode(
-            BuildSolidObjectCommand(buildMenu.selectedType, tilePosition)));
+    if (uiController.buildMenu.enabled &&
+        uiController.buildMenu.selectedType != null) {
+      if (playerCanBuild(
+          _world, uiController.buildMenu.selectedType, session.player)) {
+        webSocketClient.webSocket.send(jsonEncode(BuildSolidObjectCommand(
+            uiController.buildMenu.selectedType, tilePosition)));
       }
     }
   }

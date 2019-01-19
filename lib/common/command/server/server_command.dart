@@ -6,10 +6,12 @@ import 'package:dart_game/common/command/server/logged_in_command.dart';
 import 'package:dart_game/common/command/server/move_solid_object_command.dart';
 import 'package:dart_game/common/command/server/remove_from_inventory_command.dart';
 import 'package:dart_game/common/command/server/remove_solid_object_command.dart';
+import 'package:dart_game/common/command/server/send_inventory_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
 import 'package:dart_game/common/command/server/set_equipped_item_server_command.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/session.dart';
+import 'package:dart_game/common/ui_controller.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'server_command.g.dart';
@@ -20,7 +22,7 @@ class ServerCommand {
 
   ServerCommand(this.type);
 
-  void execute(Session session, World world) {
+  void execute(Session session, World world, [UiController uiController]) {
     // must have an implementation because abstract class can't be serialized
     throw Exception('Implement me!');
   }
@@ -48,6 +50,8 @@ class ServerCommand {
         return SetEquippedItemServerCommand.fromJson(json);
       case ServerCommandType.addSoftObject:
         return AddSoftObjectCommand.fromJson(json);
+      case ServerCommandType.sendInventory:
+        return SendInventoryCommand.fromJson(json);
       case ServerCommandType.addTile:
       case ServerCommandType.removeSoftObject:
       case ServerCommandType.removeTile:

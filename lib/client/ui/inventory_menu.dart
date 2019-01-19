@@ -11,6 +11,8 @@ class InventoryMenu {
   SolidObject owner;
   SolidObject player;
   WebSocketClient webSocketClient;
+  int columns = 3;
+  int rows = 3;
 
   InventoryMenu(Box box, this.owner, this.player, this.webSocketClient) {
     moveAndResize(box);
@@ -21,13 +23,22 @@ class InventoryMenu {
   }
 
   void update() {
-    final int widthPerStack = box.width ~/ 9;
+    final int widthPerButton = box.width ~/ columns;
+    final int heightPerButton = box.height ~/ rows;
     buttons = [];
+    int row = 0;
+    int column = 0;
     for (var i = 0; i < owner.inventory.items.length; i++) {
-      final int left = box.left + i * widthPerStack + box.left;
+      final int left = box.left + column * widthPerButton;
+      final int top = box.top + row * heightPerButton;
       final newButton = InventoryButton(owner.inventory.items[i]);
-      newButton.box = Box(left, box.top, widthPerStack, box.height);
+      newButton.box = Box(left, top, widthPerButton, heightPerButton);
       buttons.add(newButton);
+      column++;
+      if (column == columns) {
+        column = 0;
+        row++;
+      }
     }
   }
 

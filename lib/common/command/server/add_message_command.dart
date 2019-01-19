@@ -3,6 +3,7 @@ import 'package:dart_game/common/command/server/server_command_type.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/message.dart';
 import 'package:dart_game/common/session.dart';
+import 'package:dart_game/common/ui_controller.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'add_message_command.g.dart';
@@ -13,14 +14,14 @@ class AddMessageCommand extends ServerCommand {
 
   AddMessageCommand(this.message) : super(ServerCommandType.addMessage);
 
-
   @override
-  void execute(Session session, World world) {
+  void execute(Session session, World world, [UiController uiController]) {
     world.messages.add(message);
   }
 
   /// Creates a new [AddMessageCommand] from a JSON object.
-  static AddMessageCommand fromJson(Map<dynamic, dynamic> json) => _$AddMessageCommandFromJson(json);
+  static AddMessageCommand fromJson(Map<dynamic, dynamic> json) =>
+      _$AddMessageCommandFromJson(json);
 
   /// Convert this object to a JSON object.
   @override

@@ -1,7 +1,6 @@
 import 'package:dart_game/common/building.dart';
 import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/command/client/client_command_type.dart';
-import 'package:dart_game/common/command/server/add_solid_object_command.dart';
 import 'package:dart_game/common/command/server/remove_from_inventory_command.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
@@ -53,7 +52,7 @@ class BuildSolidObjectCommand extends ClientCommand {
         return;
       }
     }
-    removeFromInventoryCommand.execute(client.session, world);
+    removeFromInventoryCommand.execute(client.session, world, null);
     final object = SolidObject(objectType, position);
     world.addSolidObject(object);
     client.sendCommand(removeFromInventoryCommand);

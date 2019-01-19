@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dart_game/common/age_component.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/constants.dart';
@@ -45,6 +47,9 @@ class SolidObject {
     if (_hungerComponent != null) {
       _hungerComponent.ownerId = _id;
     }
+    if (_inventory != null) {
+      _inventory.ownerId = _id;
+    }
   }
 
   String name;
@@ -53,8 +58,18 @@ class SolidObject {
 
   /// Inventory that can be accessed by using your hand on an object
   /// Example: fruits from trees, items from chests
-  Inventory inventory;
-  bool inventoryIsPrivate;
+  Inventory _inventory;
+
+
+  Inventory get inventory => _inventory;
+
+  set inventory(Inventory value) {
+    if (value == null) {
+      return;
+    }
+    value.ownerId = id;
+    _inventory = value;
+  }
 
   /// Inventory that contains objects that can be gathered by using a tool
   /// Example: iron from an iron vein, wood logs from a tree
@@ -64,8 +79,9 @@ class SolidObject {
   HungerComponent _hungerComponent;
   AgeComponent _ageComponent;
 
-  SolidObject([this.type, this._tilePosition])
-      : inventoryIsPrivate = false;
+  SolidObject([this.type, TilePosition tilePosition]) {
+    this.tilePosition = tilePosition;
+  }
 
   void move(int x, int y) {
     tilePosition.x += x;
@@ -119,6 +135,15 @@ class SolidObject {
   String toString() {
     return 'SolidObject{type: $type, id: $id, name: $name, _tilePosition: $_tilePosition, inventory: $inventory, nGatherableItems: $nGatherableItems, box: $box, alive: $alive, _hungerComponent: $_hungerComponent, _ageComponent: $_ageComponent}';
   }
+
+  double distanceFrom(SolidObject other) {
+    return sqrt(pow(other.tilePosition.x - tilePosition.x, 2) +
+        pow(other.tilePosition.y - tilePosition.y, 2));
+  }
+
+  bool isAdjacentTo(SolidObject other) {
+    return distanceFrom(other) < 2;
+  }
 }
 
 const int minutesPerYear = 525600;
@@ -143,6 +168,6 @@ SolidObject makePlayer(int x, int y) {
   final player = SolidObject(SolidObjectType.player, TilePosition(x, y));
   player.ageComponent = AgeComponent(100 * minutesPerYear);
   player.inventory = Inventory();
-  player.inventoryIsPrivate = true;
+  player.inventory.private = true;
   return player;
 }

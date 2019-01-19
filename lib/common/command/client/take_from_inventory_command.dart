@@ -25,7 +25,7 @@ class TakeFromInventoryCommand extends ClientCommand {
       return;
     }
     final SolidObject target = world.getSolidObject(ownerId);
-    if (target.inventoryIsPrivate) {
+    if (target.inventory.private) {
       print('Tried to take from a private inventory,'
           'this shouldn\'t be possible, cheater?');
       return;
