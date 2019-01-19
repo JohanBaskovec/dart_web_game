@@ -4,7 +4,8 @@ db_name: 'postgres'
 db_username: 'postgres'
 db_password: 'c4ef37c0fbd747da1c63c0f87d7c62df'
 
-frontend_host: 'http://localhost'
+frontend_scheme: http
+frontend_host: 'localhost'
 frontend_port: 8080
 
 backend_port: 8083

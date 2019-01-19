@@ -1,4 +1,5 @@
 import 'package:dart_game/common/command/server/add_solid_object_command.dart';
+
 import 'package:dart_game/common/command/server/move_solid_object_command.dart';
 import 'package:dart_game/common/command/server/remove_solid_object_command.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
@@ -6,14 +7,21 @@ import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/message.dart';
 import 'package:dart_game/common/size.dart';
 import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/server/game_server.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+part 'server_world.g.dart';
+
+@JsonSerializable(anyMap: true)
 class ServerWorld extends World {
+  @JsonKey(ignore: true)
   GameServer gameServer;
+
+  ServerWorld();
 
   ServerWorld.fromConstants() {
     tilesColumn = List(worldSize.x);
@@ -123,7 +131,10 @@ class ServerWorld extends World {
     gameServer.sendCommandToAllClients(command);
   }
 
+  /// Creates a new [ServerWorld] from a JSON object.
+  static ServerWorld fromJson(Map<dynamic, dynamic> json) => _$ServerWorldFromJson(json);
+
   /// Convert this object to a JSON object.
   @override
-  Map<String, dynamic> toJson() => super.toJson();
+  Map<String, dynamic> toJson() => _$ServerWorldToJson(this);
 }

@@ -8,13 +8,15 @@ part 'login_command.g.dart';
 
 @JsonSerializable(anyMap: true)
 class LoginCommand extends ClientCommand {
-  String name;
-  int id;
+  String username;
+  String password;
 
-  LoginCommand([this.name, this.id]) : super(ClientCommandType.login);
+  LoginCommand([this.username, this.password]) : super(ClientCommandType.login);
 
   @override
-  void execute(GameClient client, World world) {}
+  void execute(GameClient client, World world) {
+    client.login(username, password, world);
+  }
 
   /// Creates a new [LoginCommand] from a JSON object.
   static LoginCommand fromJson(Map<dynamic, dynamic> json) =>

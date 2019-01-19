@@ -14,16 +14,13 @@ part 'logged_in_command.g.dart';
 
 @JsonSerializable(anyMap: true)
 class LoggedInCommand extends ServerCommand {
-  int playerId;
-  Inventory playerInventory;
+  Session session;
   List<SoftObject> softObjects;
   List<List<SolidObjectSummary>> solidObjectSummariesColumns;
+  Inventory inventory;
 
-  LoggedInCommand(this.playerId, this.playerInventory, this.softObjects,
-      this.solidObjectSummariesColumns)
-      : assert(playerId != null),
-        assert(playerInventory != null),
-        assert(softObjects != null),
+  LoggedInCommand( this.session, this.softObjects, this.solidObjectSummariesColumns, this.inventory)
+      : assert(softObjects != null),
         assert(solidObjectSummariesColumns != null),
         super(ServerCommandType.loggedIn);
 
@@ -42,10 +39,11 @@ class LoggedInCommand extends ServerCommand {
       }
     }
     softObjects.forEach(world.addSoftObject);
-    session.player = world.getSolidObject(playerId);
-    session.player.inventory = playerInventory;
+    session.playerId = this.session.playerId;
+    session.player.inventory = inventory;
     assert(session.player != null);
     print('Executed LoggedInCommand\n');
+    session.loggedIn = true;
   }
 
   /// Creates a new [LoggedInCommand] from a JSON object.
@@ -58,6 +56,6 @@ class LoggedInCommand extends ServerCommand {
 
   @override
   String toString() {
-    return 'LoggedInCommand{playerId: $playerId, playerInventory: $playerInventory, softObjects: $softObjects, solidObjectSummariesColumns: $solidObjectSummariesColumns}';
+    return 'LoggedInCommand{session: $session, softObjects: $softObjects, solidObjectSummariesColumns: $solidObjectSummariesColumns}';
   }
 }

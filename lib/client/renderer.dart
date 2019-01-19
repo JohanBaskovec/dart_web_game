@@ -39,7 +39,7 @@ class Renderer {
   }
 
   void render(ClientWorld world) {
-    if (session.player == null) {
+    if (session.loggedIn == false) {
       return;
     }
     _canvas.width = window.innerWidth;

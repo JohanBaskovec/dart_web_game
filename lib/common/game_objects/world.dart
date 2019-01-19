@@ -55,7 +55,5 @@ class World {
   static World fromJson(Map<dynamic, dynamic> json) => _$WorldFromJson(json);
 
   /// Convert this object to a JSON object.
-  @override
   Map<String, dynamic> toJson() => _$WorldToJson(this);
-
 }

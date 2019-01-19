@@ -26,12 +26,9 @@ class ClientWorld extends World {
   @override
   void addSolidObject(SolidObject object) {
     assert(object != null);
-    final int objectAtPositionId =
-        solidObjectColumns[object.tilePosition.x][object.tilePosition.y];
-    assert(objectAtPositionId == null);
+    assert(object.id != null);
     solidObjectColumns[object.tilePosition.x][object.tilePosition.y] =
         object.id;
-    assert(solidObjects[object.id] == null);
     solidObjects[object.id] = object;
   }
 

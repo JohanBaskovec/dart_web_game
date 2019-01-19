@@ -13,6 +13,5 @@ class Message {
   static Message fromJson(Map<dynamic, dynamic> json) => _$MessageFromJson(json);
 
   /// Convert this object to a JSON object.
-  @override
   Map<String, dynamic> toJson() => _$MessageToJson(this);
 }

@@ -76,6 +76,9 @@ class InputManager {
       e.preventDefault();
     });
     _canvas.onMouseDown.listen((MouseEvent e) {
+      if (session.loggedIn == false) {
+        return;
+      }
       if (e.button == 2) {
         e.preventDefault();
       }
