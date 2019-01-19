@@ -56,7 +56,7 @@ class UseObjectOnSolidObjectCommand extends ClientCommand {
     if (target.nGatherableItems == 0) {
       world.removeSolidObject(target);
     }
-    print('Executed $this');
+    print('Executed $this\n');
   }
 
   /// Creates a new [UseObjectOnSolidObjectCommand] from a JSON object.

@@ -17,6 +17,7 @@ class AddMessageCommand extends ServerCommand {
   @override
   void execute(Session session, World world, [UiController uiController]) {
     world.messages.add(message);
+    print('Executed $this\n');
   }
 
   /// Creates a new [AddMessageCommand] from a JSON object.
@@ -26,4 +27,11 @@ class AddMessageCommand extends ServerCommand {
   /// Convert this object to a JSON object.
   @override
   Map<String, dynamic> toJson() => _$AddMessageCommandToJson(this);
+
+  @override
+  String toString() {
+    return 'AddMessageCommand{message: $message}';
+  }
+
+
 }

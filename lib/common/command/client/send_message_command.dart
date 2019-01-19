@@ -18,6 +18,7 @@ class SendMessageCommand extends ClientCommand {
   void execute(GameClient client, World world) {
     world.sendCommandToAllClients(
         AddMessageCommand(Message(client.session.player.name, message)));
+    print('Executed $this\n');
   }
 
   /// Creates a new [SendMessageCommand] from a JSON object.
@@ -27,4 +28,11 @@ class SendMessageCommand extends ClientCommand {
   /// Convert this object to a JSON object.
   @override
   Map<String, dynamic> toJson() => _$SendMessageCommandToJson(this);
+
+  @override
+  String toString() {
+    return 'SendMessageCommand{message: $message}';
+  }
+
+
 }

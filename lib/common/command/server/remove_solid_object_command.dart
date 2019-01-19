@@ -18,6 +18,7 @@ class RemoveSolidObjectCommand extends ServerCommand {
   @override
   void execute(Session session, World world, [UiController uiController]) {
     world.removeSolidObject(world.getSolidObject(id));
+    print('Executed $this\n');
   }
 
   /// Creates a new [RemoveSolidObjectCommand] from a JSON object.
@@ -27,4 +28,9 @@ class RemoveSolidObjectCommand extends ServerCommand {
   /// Convert this object to a JSON object.
   @override
   Map<String, dynamic> toJson() => _$RemoveSolidObjectCommandToJson(this);
+
+  @override
+  String toString() {
+    return 'RemoveSolidObjectCommand{id: $id}';
+  }
 }

@@ -19,6 +19,7 @@ class AddToInventoryCommand extends ServerCommand {
   void execute(Session session, World world, [UiController uiController]) {
     final SoftObject objectTaken = world.getSoftObject(objectId);
     session.player.inventory.addItem(objectTaken);
+    print('Executed $this\n');
   }
 
   /// Creates a new [AddToInventoryCommand] from a JSON object.
@@ -28,4 +29,11 @@ class AddToInventoryCommand extends ServerCommand {
   /// Convert this object to a JSON object.
   @override
   Map<String, dynamic> toJson() => _$AddToInventoryCommandToJson(this);
+
+  @override
+  String toString() {
+    return 'AddToInventoryCommand{objectId: $objectId}';
+  }
+
+
 }

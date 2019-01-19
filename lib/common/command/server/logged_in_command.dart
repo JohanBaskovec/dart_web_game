@@ -45,6 +45,7 @@ class LoggedInCommand extends ServerCommand {
     session.player = world.getSolidObject(playerId);
     session.player.inventory = playerInventory;
     assert(session.player != null);
+    print('Executed LoggedInCommand\n');
   }
 
   /// Creates a new [LoggedInCommand] from a JSON object.
@@ -54,4 +55,9 @@ class LoggedInCommand extends ServerCommand {
   /// Convert this object to a JSON object.
   @override
   Map<String, dynamic> toJson() => _$LoggedInCommandToJson(this);
+
+  @override
+  String toString() {
+    return 'LoggedInCommand{playerId: $playerId, playerInventory: $playerInventory, softObjects: $softObjects, solidObjectSummariesColumns: $solidObjectSummariesColumns}';
+  }
 }

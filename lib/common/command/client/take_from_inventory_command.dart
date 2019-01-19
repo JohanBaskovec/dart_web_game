@@ -44,7 +44,7 @@ class TakeFromInventoryCommand extends ClientCommand {
     client.sendCommand(removeFromInventoryCommand);
     client.sendCommand(addToInventoryCommand);
 
-    print('Executed $this');
+    print('Executed $this\n');
   }
 
   /// Creates a new [TakeFromInventoryCommand] from a JSON object.

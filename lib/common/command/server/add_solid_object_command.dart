@@ -17,6 +17,7 @@ class AddSolidObjectCommand extends ServerCommand {
   @override
   void execute(Session session, World world, [UiController uiController]) {
     world.addSolidObject(object);
+    print('Executed $this\n');
   }
 
   /// Creates a new [AddSolidObjectCommand] from a JSON object.
@@ -26,4 +27,9 @@ class AddSolidObjectCommand extends ServerCommand {
   /// Convert this object to a JSON object.
   @override
   Map<String, dynamic> toJson() => _$AddSolidObjectCommandToJson(this);
+
+  @override
+  String toString() {
+    return 'AddSolidObjectCommand{object: $object}';
+  }
 }

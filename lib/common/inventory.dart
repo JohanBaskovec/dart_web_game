@@ -20,7 +20,7 @@ class Inventory {
     }
     item.indexInInventory = items.length;
     items.add(item.id);
-    print('Added $item to inventory at position ${item.indexInInventory}');
+    print('Added $item to inventory at position ${item.indexInInventory}\n');
     currentlyEquiped ??= item.id;
   }
 

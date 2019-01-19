@@ -19,7 +19,7 @@ class AddSoftObjectCommand extends ServerCommand {
   @override
   void execute(Session session, World world, [UiController uiController]) {
     world.addSoftObject(object);
-    print('Executed $this');
+    print('Executed $this\n');
   }
 
   /// Creates a new [AddSoftObjectCommand] from a JSON object.

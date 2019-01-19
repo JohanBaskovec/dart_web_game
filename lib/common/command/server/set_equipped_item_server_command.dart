@@ -18,6 +18,7 @@ class SetEquippedItemServerCommand extends ServerCommand {
   @override
   void execute(Session session, World world, [UiController uiController]) {
     session.player.inventory.currentlyEquiped = itemId;
+    print('Executed $this\n');
   }
 
   /// Creates a new [SetEquippedItemServerCommand] from a JSON object.
@@ -27,4 +28,9 @@ class SetEquippedItemServerCommand extends ServerCommand {
   /// Convert this object to a JSON object.
   @override
   Map<String, dynamic> toJson() => _$SetEquippedItemServerCommandToJson(this);
+
+  @override
+  String toString() {
+    return 'SetEquippedItemServerCommand{itemId: $itemId}';
+  }
 }

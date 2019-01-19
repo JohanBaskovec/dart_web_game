@@ -30,7 +30,7 @@ class GameClient {
         command.execute(this, gameServer.world);
         final end = DateTime.now();
         final timeForRequest = end.difference(start);
-        print('Time for request: $timeForRequest');
+        print('Time for request: $timeForRequest\n');
       } catch (e, s) {
         print(e);
         print(s);

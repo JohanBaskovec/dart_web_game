@@ -23,7 +23,7 @@ class SendInventoryCommand extends ServerCommand {
     if (uiController != null) {
       uiController.displayInventory(world.getSolidObject(inventory.ownerId));
     }
-    print('Executed $this');
+    print('Executed $this\n');
   }
 
   /// Creates a new [SendInventoryCommand] from a JSON object.

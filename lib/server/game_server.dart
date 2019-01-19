@@ -70,7 +70,7 @@ class GameServer {
     final newClient = GameClient(Session(newPlayer), webSocket, this);
     newClient.onLeave = () {
       world.removeSolidObject(newPlayer);
-      print('Client disconnected.');
+      print('Client disconnected.\n');
       newClient.webSocket.close();
       clients.remove(newClient);
     };
@@ -97,7 +97,7 @@ class GameServer {
     }
     final LoggedInCommand loggedInCommand = LoggedInCommand(newPlayer.id,
         newPlayer.inventory, softObjects, solidObjectSummariesColumns);
-    print('Client connected!');
+    print('Client connected! $newPlayer\n');
     newClient.sendCommand(loggedInCommand);
   }
 
@@ -135,7 +135,7 @@ class GameServer {
       }
       final end = DateTime.now();
       final diff = end.difference(start);
-      print('Updated all solid objects in $diff');
+      print('Updated all solid objects in $diff\n');
     });
   }
 

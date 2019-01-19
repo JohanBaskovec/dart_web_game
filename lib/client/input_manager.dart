@@ -138,7 +138,7 @@ class InputManager {
   }
 
   void clickOnSolidObject(SolidObject object) {
-    print('Clicking on object: $object');
+    print('Clicking on object: $object\n');
     final SoftObject equippedObject =
         _world.softObjects[session.player.inventory.currentlyEquiped];
     if (equippedObject.type == SoftObjectType.hand) {
@@ -159,6 +159,7 @@ class InputManager {
   }
 
   void clickOnGround(TilePosition tilePosition) {
+    print('clickOnGround $tilePosition\n');
     if (uiController.buildMenu.enabled &&
         uiController.buildMenu.selectedType != null) {
       if (playerCanBuild(

@@ -20,7 +20,7 @@ class SetEquippedItemClientCommand extends ClientCommand {
     client.session.player.inventory.currentlyEquiped = itemId;
     final serverCommand = SetEquippedItemServerCommand(itemId);
     client.sendCommand(serverCommand);
-    print('Executed $this');
+    print('Executed $this\n');
   }
 
   /// Creates a new [SetEquippedItemClientCommand] from a JSON object.

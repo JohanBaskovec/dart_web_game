@@ -22,7 +22,7 @@ class RemoveFromInventoryCommand extends ServerCommand {
   void execute(Session session, World world, [UiController uiController]) {
     final Inventory inventory = world.solidObjects[ownerId].inventory;
     idsToRemove.forEach(inventory.items.remove);
-    print('Executed $this');
+    print('Executed $this\n');
   }
 
   /// Creates a new [RemoveFromInventoryCommand] from a JSON object.

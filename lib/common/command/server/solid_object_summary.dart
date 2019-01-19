@@ -16,4 +16,9 @@ class SolidObjectSummary {
 
   /// Convert this object to a JSON object.
   Map<String, dynamic> toJson() => _$SolidObjectSummaryToJson(this);
+
+  @override
+  String toString() {
+    return 'SolidObjectSummary{id: $id, objectType: $objectType}';
+  }
 }

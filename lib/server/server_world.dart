@@ -53,13 +53,13 @@ class ServerWorld extends World {
     assert(solidObjects[id] == null);
     solidObjects[id] = object;
     sendCommandToAllClients(AddSolidObjectCommand(object));
-    print('addSolidObject $object');
+    print('addSolidObject $object\n');
   }
 
   /// Remove solid object and send the command to all clients
   @override
   void removeSolidObject(SolidObject object) {
-    print('removeSolidObject $object');
+    print('removeSolidObject $object\n');
     assert(object != null);
     assert(solidObjectColumns[object.tilePosition.x][object.tilePosition.y] !=
         null);
@@ -75,6 +75,7 @@ class ServerWorld extends World {
   /// Move solid object and send move command to all clients
   @override
   void moveSolidObject(SolidObject object, TilePosition position) {
+    print('moveSolidObject $object to $position\n');
     assert(object != null);
     assert(position != null);
     solidObjectColumns[object.tilePosition.x][object.tilePosition.y] = null;
@@ -103,11 +104,12 @@ class ServerWorld extends World {
       object.id = id;
       softObjects[id] = object;
     }
-    print('addSoftObject $object');
+    print('addSoftObject $object\n');
   }
 
   @override
   void removeSoftObject(SoftObject object) {
+    print('removeSoftObject $object\n');
     assert(object != null);
     freeSoftObjectIds.add(object.id);
     softObjects.removeAt(object.id);
@@ -117,6 +119,7 @@ class ServerWorld extends World {
 
   @override
   void sendCommandToAllClients(ServerCommand command) {
+    print('sendCommandToAllClients $command\n');
     gameServer.sendCommandToAllClients(command);
   }
 

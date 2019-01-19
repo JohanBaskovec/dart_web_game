@@ -34,7 +34,7 @@ class OpenInventoryCommand extends ClientCommand {
 
     client.sendCommand(SendInventoryCommand(inventory, softObjects));
 
-    print('Executed $this');
+    print('Executed $this\n');
   }
 
   /// Creates a new [OpenInventoryCommand] from a JSON object.

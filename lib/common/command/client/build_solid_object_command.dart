@@ -48,7 +48,7 @@ class BuildSolidObjectCommand extends ClientCommand {
         }
       }
       if (quantityOwned < quantityNeeded) {
-        print('can\'t build object, not enough resources!');
+        print('can\'t build object, not enough resources!\n');
         return;
       }
     }
@@ -56,6 +56,7 @@ class BuildSolidObjectCommand extends ClientCommand {
     final object = SolidObject(objectType, position);
     world.addSolidObject(object);
     client.sendCommand(removeFromInventoryCommand);
+    print('Executed $this\n');
   }
 
   /// Creates a new [BuildSolidObjectCommand] from a JSON object.
@@ -65,4 +66,11 @@ class BuildSolidObjectCommand extends ClientCommand {
   /// Convert this object to a JSON object.
   @override
   Map<String, dynamic> toJson() => _$BuildSolidObjectCommandToJson(this);
+
+  @override
+  String toString() {
+    return 'BuildSolidObjectCommand{objectType: $objectType, position: $position}';
+  }
+
+
 }

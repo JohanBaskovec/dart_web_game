@@ -28,7 +28,7 @@ class MoveCommand extends ClientCommand {
         world.getObjectAt(target) == null) {
       world.moveSolidObject(player, target);
     }
-    print('Executed $this');
+    print('Executed $this\n');
   }
 
   /// Creates a new [MoveCommand] from a JSON object.

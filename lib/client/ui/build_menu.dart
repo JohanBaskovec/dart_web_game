@@ -32,7 +32,7 @@ class BuildMenu {
   bool clickAt(CanvasPosition canvasPosition) {
     for (BuildMenuButton button in buttons) {
       if (button.box.pointIsInBox(canvasPosition.x, canvasPosition.y)) {
-        print('clicking on button ${button.type}');
+        print('clicking on button ${button.type}\n');
         selectedType = button.type;
         return false;
       }

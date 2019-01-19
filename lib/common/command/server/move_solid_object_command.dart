@@ -24,6 +24,7 @@ class MoveSolidObjectCommand extends ServerCommand {
         null;
     world.solidObjects[objectId].moveTo(position);
     world.solidObjectColumns[position.x][position.y] = objectId;
+    print('Executed $this\n');
   }
 
   /// Creates a new [MoveSolidObjectCommand] from a JSON object.
@@ -33,4 +34,11 @@ class MoveSolidObjectCommand extends ServerCommand {
   /// Convert this object to a JSON object.
   @override
   Map<String, dynamic> toJson() => _$MoveSolidObjectCommandToJson(this);
+
+  @override
+  String toString() {
+    return 'MoveSolidObjectCommand{objectId: $objectId, position: $position}';
+  }
+
+
 }

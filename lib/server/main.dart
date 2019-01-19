@@ -11,7 +11,7 @@ class Server {
       const configurationFileName = 'conf.dev.yaml';
       final configurationFile = File(configurationFileName);
       if (!configurationFile.existsSync()) {
-        print('${configurationFile.path} does not exist!');
+        print('${configurationFile.path} does not exist!\n');
       }
       final String configurationFileContent =
           configurationFile.readAsStringSync();
