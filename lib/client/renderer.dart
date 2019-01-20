@@ -220,7 +220,7 @@ class Renderer {
     _canvas.width = window.innerWidth;
     _canvas.height = window.innerHeight;
     uiController.buildMenu.moveAndResize(
-        Box(_canvas.width ~/ 10, 100, _canvas.width ~/ 2, _canvas.height ~/ 2));
+        Box(_canvas.width ~/ 10, 100, 200, _canvas.height ~/ 2));
     uiController.inventory.moveAndResize(Box(
         20,
         (_canvas.height - _canvas.height / 10).toInt(),
