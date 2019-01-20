@@ -41,7 +41,6 @@ class ClientWorld extends World {
     solidObjectColumns[object.tilePosition.x][object.tilePosition.y] = null;
     solidObjects[object.id] = null;
   }
-
   @override
   void moveSolidObject(SolidObject object, TilePosition position) {
     assert(object != null);
@@ -77,5 +76,41 @@ class ClientWorld extends World {
     throw Exception('Can\'t send command to clients from a client!');
   }
 
+  @override
+  void update() {
+    final start = DateTime.now();
+    for (int i = 0; i < solidObjects.length; i++) {
+      final SolidObject object = solidObjects[i];
 
+      if (object != null) {
+        if (object.hungerComponent != null) {
+          object.hungerComponent.update(this);
+        }
+        if (object.ageComponent != null) {
+          object.ageComponent.update(this);
+        }
+
+        if (!object.alive) {
+          removeSolidObject(object);
+        }
+      }
+    }
+
+    for (int i = 0; i < softObjects.length; i++) {
+      final SoftObject object = softObjects[i];
+
+      if (object != null) {
+        if (object.ageComponent != null) {
+          object.ageComponent.update(this);
+        }
+
+        if (!object.alive) {
+          removeSoftObject(object);
+        }
+      }
+    }
+    final end = DateTime.now();
+    final diff = end.difference(start);
+    print('Updated all solid objects in $diff\n');
+  }
 }

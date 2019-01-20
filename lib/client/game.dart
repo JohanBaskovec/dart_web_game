@@ -24,6 +24,9 @@ class Game {
     Timer.periodic(Duration(milliseconds: (1000 / 60).floor()), (Timer timer) {
       renderer.render(world);
     });
+    Timer.periodic(Duration(seconds: 5), (Timer timer) {
+      world.update();
+    });
 
     final inputManager = InputManager(
         document.body, canvas, world, renderer, session, uiController);

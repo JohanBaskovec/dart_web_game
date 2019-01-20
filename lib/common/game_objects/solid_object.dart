@@ -6,6 +6,7 @@ import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/hunger_component.dart';
 import 'package:dart_game/common/inventory.dart';
 import 'package:dart_game/common/tile_position.dart';
+import 'package:dart_game/server/client.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'solid_object.g.dart';
@@ -54,6 +55,11 @@ class SolidObject {
   }
 
   String name;
+
+  int ownerId;
+
+  @JsonKey(ignore: true)
+  GameClient client;
 
   TilePosition _tilePosition;
 

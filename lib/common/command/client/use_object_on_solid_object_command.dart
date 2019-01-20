@@ -69,7 +69,7 @@ class UseObjectOnSolidObjectCommand extends ClientCommand {
     client.sendCommand(addToInventoryCommand);
 
     if (target.nGatherableItems == 0) {
-      world.removeSolidObject(target);
+      world.removeSolidObjectAndSynchronizeAllClients(target);
     }
   }
 

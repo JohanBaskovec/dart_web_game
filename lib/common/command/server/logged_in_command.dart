@@ -18,12 +18,13 @@ class LoggedInCommand extends ServerCommand {
   Session session;
   List<SoftObject> softObjects;
   List<List<SolidObjectSummary>> solidObjectSummariesColumns;
-  Inventory inventory;
+  SolidObject player;
   List<Message> messages;
 
   LoggedInCommand(this.session, this.softObjects,
-      this.solidObjectSummariesColumns, this.inventory, this.messages)
+      this.solidObjectSummariesColumns, this.player, this.messages)
       : assert(softObjects != null),
+        assert(player != null),
         assert(solidObjectSummariesColumns != null),
         super(ServerCommandType.loggedIn);
 
@@ -41,10 +42,10 @@ class LoggedInCommand extends ServerCommand {
         world.addSolidObject(object);
       }
     }
+    world.addSolidObject(player);
     softObjects.forEach(world.addSoftObject);
     world.messages = messages;
     session.playerId = this.session.playerId;
-    session.player.inventory = inventory;
     assert(session.player != null);
     print('Executed LoggedInCommand\n');
     session.loggedIn = true;

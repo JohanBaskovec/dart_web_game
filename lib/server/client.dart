@@ -69,6 +69,7 @@ class GameClient {
     assert(session != null);
     assert(session.player != null);
     assert(session.username != null);
+    session.player.client = this;
 
     final List<SoftObject> softObjects =
         List(session.player.inventory.items.length);
@@ -89,11 +90,13 @@ class GameClient {
         }
       }
     }
+    solidObjectSummariesColumns[session.player.tilePosition.x]
+        [session.player.tilePosition.y] = null;
     final LoggedInCommand loggedInCommand = LoggedInCommand(
         session,
         softObjects,
         solidObjectSummariesColumns,
-        session.player.inventory,
+        session.player,
         world.messages);
     print('Client connected! $session.player\n');
     sendCommand(loggedInCommand);

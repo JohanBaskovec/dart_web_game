@@ -12,5 +12,7 @@ enum ServerCommandType {
   setEquippedItem,
   addMessage,
   sendInventory,
+  updateHunger,
+  updateAge,
   unknown
 }

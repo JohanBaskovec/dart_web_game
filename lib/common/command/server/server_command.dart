@@ -52,6 +52,8 @@ class ServerCommand {
         return AddSoftObjectCommand.fromJson(json);
       case ServerCommandType.sendInventory:
         return SendInventoryCommand.fromJson(json);
+      case ServerCommandType.updateHunger:
+      case ServerCommandType.updateAge:
       case ServerCommandType.addTile:
       case ServerCommandType.removeSoftObject:
       case ServerCommandType.removeTile:

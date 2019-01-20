@@ -69,6 +69,13 @@ class ServerWorld extends World {
 
   /// Remove solid object and send the command to all clients
   @override
+  void removeSolidObjectAndSynchronizeAllClients(SolidObject object) {
+    removeSolidObject(object);
+    final removeCommand = RemoveSolidObjectCommand(object.id);
+    sendCommandToAllClients(removeCommand);
+  }
+
+  @override
   void removeSolidObject(SolidObject object) {
     print('removeSolidObject $object\n');
     assert(object != null);
@@ -78,10 +85,8 @@ class ServerWorld extends World {
     solidObjectColumns[object.tilePosition.x][object.tilePosition.y] = null;
     freeSolidObjectIds.add(object.id);
     solidObjects[object.id] = null;
-
-    final removeCommand = RemoveSolidObjectCommand(object.id);
-    sendCommandToAllClients(removeCommand);
   }
+
 
   /// Move solid object and send move command to all clients
   @override
@@ -140,4 +145,45 @@ class ServerWorld extends World {
   /// Convert this object to a JSON object.
   @override
   Map<String, dynamic> toJson() => _$ServerWorldToJson(this);
+
+  @override
+  void update() {
+    final start = DateTime.now();
+    for (int i = 0; i < solidObjects.length; i++) {
+      final SolidObject object = solidObjects[i];
+
+      if (object != null) {
+        if (object.hungerComponent != null) {
+          object.hungerComponent.update(this);
+        }
+        if (object.ageComponent != null) {
+          object.ageComponent.update(this);
+        }
+
+        if (!object.alive) {
+          // Remove without sending to clients because
+          // they have their own object update loop
+          // that delete dead objects
+          removeSolidObject(object);
+        }
+      }
+    }
+
+    for (int i = 0; i < softObjects.length; i++) {
+      final SoftObject object = softObjects[i];
+
+      if (object != null) {
+        if (object.ageComponent != null) {
+          object.ageComponent.update(this);
+        }
+
+        if (!object.alive) {
+          removeSoftObject(object);
+        }
+      }
+    }
+    final end = DateTime.now();
+    final diff = end.difference(start);
+    print('Updated all solid objects in $diff\n');
+  }
 }

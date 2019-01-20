@@ -1,6 +1,7 @@
 import 'package:dart_game/client/ui/build_menu.dart';
 import 'package:dart_game/client/ui/button.dart';
 import 'package:dart_game/client/ui/chat.dart';
+import 'package:dart_game/client/ui/hunger_ui.dart';
 import 'package:dart_game/client/ui/inventory_menu.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
 import 'package:dart_game/client/web_socket_client.dart';
@@ -19,11 +20,12 @@ class ClientUiController extends UiController {
   World world;
   WebSocketClient webSocketClient;
   Session session;
+  HungerUi hunger;
 
   InventoryMenu activeInventoryWindow;
 
   ClientUiController(this.session, this.world)
-      : inventory = PlayerInventoryMenu(session, null) {
+      : inventory = PlayerInventoryMenu(session, null), hunger = HungerUi(session) {
     inventory.uiController = this;
   }
 

@@ -76,6 +76,7 @@ class GameServer {
     final WebSocket webSocket = await WebSocketTransformer.upgrade(request);
     final newClient = GameClient(null, webSocket, this);
     newClient.onLeave = () async {
+      newClient.session.player.client = null;
       clients.remove(newClient);
       newClient.webSocket.close();
       print('Client disconnected.\n');
@@ -86,42 +87,9 @@ class GameServer {
 
   void startObjectsUpdate() {
     Timer.periodic(Duration(seconds: 5), (Timer timer) {
-      final start = DateTime.now();
-      for (int i = 0; i < world.solidObjects.length; i++) {
-        final SolidObject object = world.solidObjects[i];
-
-        if (object != null) {
-          if (object.hungerComponent != null) {
-            object.hungerComponent.update(world);
-          }
-          if (object.ageComponent != null) {
-            object.ageComponent.update(world);
-          }
-
-          if (!object.alive) {
-            world.removeSolidObject(object);
-          }
-        }
-      }
-      for (int i = 0; i < world.softObjects.length; i++) {
-        final SoftObject object = world.softObjects[i];
-
-        if (object != null) {
-          if (object.ageComponent != null) {
-            object.ageComponent.update(world);
-          }
-
-          if (!object.alive) {
-            world.removeSoftObject(object);
-          }
-        }
-      }
-      final end = DateTime.now();
-      final diff = end.difference(start);
-      print('Updated all solid objects in $diff\n');
+      world.update();
     });
   }
-
 
   void fillWorldWithStuff() {
     for (int x = 0; x < world.solidObjectColumns.length; x++) {

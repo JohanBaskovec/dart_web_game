@@ -21,7 +21,7 @@ class World {
 
   void addSolidObject(SolidObject object) {}
 
-  void removeSolidObject(SolidObject object) {}
+  void removeSolidObjectAndSynchronizeAllClients(SolidObject object) {}
 
   SoftObject addSoftObjectOfType(SoftObjectType type) {
     return null;
@@ -32,6 +32,8 @@ class World {
   void moveSolidObject(SolidObject object, TilePosition position) {}
 
   void removeSoftObject(SoftObject object) {}
+
+  void removeSolidObject(SolidObject object) {}
 
   SolidObject getObjectAt(TilePosition position) {
     if (solidObjectColumns[position.x][position.y] == null) {
@@ -56,4 +58,7 @@ class World {
 
   /// Convert this object to a JSON object.
   Map<String, dynamic> toJson() => _$WorldToJson(this);
+  
+  void update() {
+  }
 }
