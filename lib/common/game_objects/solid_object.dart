@@ -30,6 +30,7 @@ enum SolidObjectType {
   goldMine,
   foundry,
   oven,
+  box
 }
 
 @JsonSerializable(anyMap: true)
@@ -81,6 +82,13 @@ class SolidObject {
 
   SolidObject([this.type, TilePosition tilePosition]) {
     this.tilePosition = tilePosition;
+    switch (type) {
+      case SolidObjectType.box:
+        inventory = Inventory();
+        break;
+      default:
+        break;
+    }
   }
 
   void move(int x, int y) {

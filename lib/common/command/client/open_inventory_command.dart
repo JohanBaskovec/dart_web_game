@@ -23,6 +23,10 @@ class OpenInventoryCommand extends ClientCommand {
       print("Trying to get inventory of object that isn't adjacent, cheater?");
       return;
     }
+    if (owner.inventory == null) {
+      print("Tried to open inventory but object doesn't have one. $owner");
+      return;
+    }
     if (owner.inventory.private) {
       print('Tried to take from a private inventory,'
           'this shouldn\'t be possible, cheater?');

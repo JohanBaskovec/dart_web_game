@@ -6,7 +6,6 @@ import 'package:dart_game/client/renderer.dart';
 import 'package:dart_game/client/ui/client_ui_controller.dart';
 import 'package:dart_game/client/ui/inventory_menu.dart';
 import 'package:dart_game/client/web_socket_client.dart';
-import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/building.dart';
 import 'package:dart_game/common/command/client/build_solid_object_command.dart';
 import 'package:dart_game/common/command/client/move_command.dart';
@@ -31,6 +30,7 @@ class InputManager {
   Renderer renderer;
   final Session session;
   final ClientUiController uiController;
+  bool shift = false;
 
   InputManager(this._body, this._canvas, this._world, this.renderer,
       this.session, this.uiController);
@@ -42,10 +42,10 @@ class InputManager {
       }
     });
     _body.onKeyDown.listen((KeyboardEvent e) {
-      if (canvasActive && session.player != null) {
-        if (uiController.chat.enabled && uiController.chat.input.active) {
-          uiController.chat.type(e.key);
-        } else {
+      if (uiController.chat.enabled && uiController.chat.input.active) {
+        uiController.chat.type(e.key);
+      } else {
+        if (session.loggedIn) {
           switch (e.key) {
             case 'd':
               move(1, 0);
@@ -64,6 +64,23 @@ class InputManager {
               break;
           }
         }
+      }
+      switch (e.key) {
+        case 'Shift':
+          shift = true;
+          print('shift = $shift');
+          break;
+        case 'Backspace':
+          e.preventDefault();
+          break;
+      }
+    });
+    _body.onKeyUp.listen((KeyboardEvent e) {
+      switch (e.key) {
+        case 'Shift':
+          shift = false;
+          print('shift = $shift');
+          break;
       }
     });
     window.onResize.listen((Event e) {
@@ -98,14 +115,15 @@ class InputManager {
             return;
           }
         }
-        if (!uiController.inventory.clickAt(canvasPosition)) {
+        if (uiController.inventory.clickAt(canvasPosition, shift)) {
           return;
         }
+        uiController.activeInventoryWindow = null;
         for (InventoryMenu inventory in uiController.inventoryMenus) {
           if (e.button == 2) {
             uiController.inventoryMenus.remove(inventory);
           } else {
-            if (!inventory.clickAt(canvasPosition)) {
+            if (!inventory.clickAt(canvasPosition, inventory, shift)) {
               return;
             }
           }
@@ -145,7 +163,12 @@ class InputManager {
     final SoftObject equippedObject =
         _world.softObjects[session.player.inventory.currentlyEquiped];
     if (equippedObject.type == SoftObjectType.hand) {
-      webSocketClient.sendCommand(OpenInventoryCommand(object.id));
+      if (object.type == SolidObjectType.woodenChest ||
+          object.type == SolidObjectType.box ||
+          object.type == SolidObjectType.tree ||
+          object.type == SolidObjectType.appleTree) {
+        webSocketClient.sendCommand(OpenInventoryCommand(object.id));
+      }
     } else {
       if (!playerCanGather(session.player, _world, object.id)) {
         return;

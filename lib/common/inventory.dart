@@ -29,6 +29,10 @@ class Inventory {
     items.removeAt(stackIndex);
   }
 
+  bool contains(int id) {
+    return items.contains(id);
+  }
+
   int operator[](int i) => items[i];
 
   int get size => items.length;

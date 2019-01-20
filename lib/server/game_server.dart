@@ -17,7 +17,6 @@ class GameServer {
   int frontendPort;
   ServerWorld world;
   final List<GameClient> clients = [];
-  final Map<String, int> usernameToIdMap = {};
 
   GameServer.bind(this.port, this.frontendHost, this.frontendPort);
 

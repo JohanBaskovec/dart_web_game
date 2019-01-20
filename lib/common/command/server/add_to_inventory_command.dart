@@ -1,6 +1,7 @@
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
+import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/ui_controller.dart';
@@ -10,15 +11,17 @@ part 'add_to_inventory_command.g.dart';
 
 @JsonSerializable(anyMap: true)
 class AddToInventoryCommand extends ServerCommand {
+  int targetId;
   int objectId;
 
-  AddToInventoryCommand(this.objectId)
+  AddToInventoryCommand(this.targetId, this.objectId)
       : super(ServerCommandType.addToInventory);
 
   @override
   void execute(Session session, World world, [UiController uiController]) {
     final SoftObject objectTaken = world.getSoftObject(objectId);
-    session.player.inventory.addItem(objectTaken);
+    final SolidObject target = world.getSolidObject(targetId);
+    target.inventory.addItem(objectTaken);
     print('Executed $this\n');
   }
 

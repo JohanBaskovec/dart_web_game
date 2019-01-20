@@ -38,7 +38,8 @@ class TakeFromInventoryCommand extends ClientCommand {
         RemoveFromInventoryCommand(target.id, [itemId]);
     removeFromInventoryCommand.execute(client.session, world);
 
-    final addToInventoryCommand = AddToInventoryCommand(itemId);
+    final addToInventoryCommand =
+        AddToInventoryCommand(client.session.player.id, itemId);
     addToInventoryCommand.execute(client.session, world);
 
     client.sendCommand(removeFromInventoryCommand);

@@ -16,10 +16,13 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'server_world.g.dart';
 
+
 @JsonSerializable(anyMap: true)
 class ServerWorld extends World {
   @JsonKey(ignore: true)
   GameServer gameServer;
+
+  Map<String, int> usernameToIdMap = {};
 
   ServerWorld();
 

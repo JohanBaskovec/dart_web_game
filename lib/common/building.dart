@@ -4,7 +4,8 @@ import 'package:dart_game/common/game_objects/world.dart';
 
 final Map<SolidObjectType, Map<SoftObjectType, int>> buildingRecipes = {
   SolidObjectType.woodenWall: {SoftObjectType.log: 2},
-  SolidObjectType.campFire: {SoftObjectType.log: 1, SoftObjectType.leaves: 2}
+  SolidObjectType.campFire: {SoftObjectType.log: 1, SoftObjectType.leaves: 2},
+  SolidObjectType.box: {}
 };
 
 bool playerCanBuild(World world, SolidObjectType type, SolidObject player) {

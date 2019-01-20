@@ -6,7 +6,7 @@ enum ClientCommandType {
   setEquippedItem,
   sendMessage,
   takeFromInventory,
-  addToInventory,
+  moveToInventory,
   openInventory,
   unknown
 }

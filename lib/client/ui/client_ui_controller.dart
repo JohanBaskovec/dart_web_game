@@ -18,16 +18,23 @@ class ClientUiController extends UiController {
   WebSocketClient webSocketClient;
   Session session;
 
+  InventoryMenu activeInventoryWindow;
+
   ClientUiController(this.session, this.world)
-      : inventory = PlayerInventoryMenu(session, null);
+      : inventory = PlayerInventoryMenu(session, null) {
+    inventory.uiController = this;
+  }
 
   @override
   void displayInventory(SolidObject target) {
-    inventoryMenus.add(InventoryMenu(
+    final inventoryMenu = InventoryMenu(
         Box(target.box.right, target.box.bottom, 120, 120),
         target,
         session.player,
-        webSocketClient));
+        webSocketClient,
+        this);
+    inventoryMenus.add(inventoryMenu);
+    activeInventoryWindow = inventoryMenu;
     return;
   }
 }

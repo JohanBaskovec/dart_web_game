@@ -47,7 +47,7 @@ class UseObjectOnSolidObjectCommand extends ClientCommand {
     final gatheredItem = world.addSoftObjectOfType(config.gatherableItemsType);
     final addObjectCommand = AddSoftObjectCommand(gatheredItem);
     addObjectCommand.execute(client.session, world);
-    final addToInventoryCommand = AddToInventoryCommand(gatheredItem.id);
+    final addToInventoryCommand = AddToInventoryCommand(player.id, gatheredItem.id);
     addToInventoryCommand.execute(client.session, world);
 
     client.sendCommand(addObjectCommand);

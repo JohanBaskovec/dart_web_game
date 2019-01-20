@@ -53,11 +53,11 @@ class GameClient {
     if (username == null || username.isEmpty) {
       print('Client tried to login with empty username!');
     }
-    int playerId = gameServer.usernameToIdMap[username];
+    int playerId = gameServer.world.usernameToIdMap[username];
     if (playerId == null) {
       final SolidObject player = addNewPlayerAtRandomPosition(world);
       playerId = player.id;
-      gameServer.usernameToIdMap[username] = playerId;
+      gameServer.world.usernameToIdMap[username] = playerId;
     }
     session = Session(playerId, username, world);
     assert(session != null);
