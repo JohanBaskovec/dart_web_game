@@ -12,7 +12,6 @@ import 'package:dart_game/common/command/client/move_command.dart';
 import 'package:dart_game/common/command/client/open_inventory_command.dart';
 import 'package:dart_game/common/command/client/use_object_on_solid_object_command.dart';
 import 'package:dart_game/common/constants.dart';
-import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/session.dart';
@@ -191,8 +190,8 @@ class InputManager {
     print('clickOnGround $tilePosition\n');
     if (uiController.buildMenu.enabled &&
         uiController.buildMenu.selectedType != null) {
-      if (playerCanBuild(
-          _world, uiController.buildMenu.selectedType, session.player)) {
+      if (playerCanBuild(_world, uiController.buildMenu.selectedType,
+          session.player, tilePosition)) {
         webSocketClient.webSocket.send(jsonEncode(BuildSolidObjectCommand(
             uiController.buildMenu.selectedType, tilePosition)));
       }

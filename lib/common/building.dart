@@ -1,6 +1,7 @@
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/tile_position.dart';
 
 final Map<SolidObjectType, Map<SoftObjectType, int>> buildingRecipes = {
   SolidObjectType.woodenWall: {SoftObjectType.log: 2},
@@ -8,7 +9,12 @@ final Map<SolidObjectType, Map<SoftObjectType, int>> buildingRecipes = {
   SolidObjectType.box: {}
 };
 
-bool playerCanBuild(World world, SolidObjectType type, SolidObject player) {
+bool playerCanBuild(World world, SolidObjectType type, SolidObject player,
+    TilePosition position) {
+  if (position.distanceFrom(player.tilePosition) >= 2) {
+    return false;
+  }
+
   final Map<SoftObjectType, int> recipe = buildingRecipes[type];
   if (recipe == null) {
     return false;

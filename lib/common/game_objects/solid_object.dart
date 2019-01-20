@@ -61,7 +61,6 @@ class SolidObject {
   /// Example: fruits from trees, items from chests
   Inventory _inventory;
 
-
   Inventory get inventory => _inventory;
 
   set inventory(Inventory value) {
@@ -150,7 +149,11 @@ class SolidObject {
   }
 
   bool isAdjacentTo(SolidObject other) {
-    return distanceFrom(other) < 2;
+    return isAdjacentToPosition(other.tilePosition);
+  }
+
+  bool isAdjacentToPosition(TilePosition position) {
+    return position.distanceFrom(tilePosition) < 2;
   }
 }
 

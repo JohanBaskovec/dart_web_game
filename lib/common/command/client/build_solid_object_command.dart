@@ -2,6 +2,7 @@ import 'package:dart_game/common/building.dart';
 import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/command/client/client_command_type.dart';
 import 'package:dart_game/common/command/server/remove_from_inventory_command.dart';
+import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
@@ -21,6 +22,23 @@ class BuildSolidObjectCommand extends ClientCommand {
 
   @override
   void execute(GameClient client, World world) {
+    print('Executing $this\n');
+    if (position.x >= worldSize.x) {
+      print('position.x larger than worldSize.x!\n');
+      return;
+    }
+    if (position.x < 0) {
+      print('position.x less than 0!\n');
+      return;
+    }
+    if (position.y >= worldSize.y) {
+      print('position.y larger than worldSize.y!\n');
+      return;
+    }
+    if (position.y < 0) {
+      print('position.y smaller than 0!\n');
+      return;
+    }
     if (world.getObjectAt(position) != null) {
       print(
           'Tried to build an object but one already exists at that position!');
@@ -28,6 +46,10 @@ class BuildSolidObjectCommand extends ClientCommand {
     }
 
     final SolidObject player = client.session.player;
+    if (!player.isAdjacentToPosition(position)) {
+      print('Position is too far.');
+      return;
+    }
 
     final Map<SoftObjectType, int> recipe = buildingRecipes[objectType];
     final int playerInventoryLength = player.inventory.items.length;
@@ -56,7 +78,6 @@ class BuildSolidObjectCommand extends ClientCommand {
     final object = SolidObject(objectType, position);
     world.addSolidObject(object);
     client.sendCommand(removeFromInventoryCommand);
-    print('Executed $this\n');
   }
 
   /// Creates a new [BuildSolidObjectCommand] from a JSON object.
