@@ -60,6 +60,12 @@ class GameClient {
       gameServer.world.usernameToIdMap[username] = playerId;
     }
     session = Session(playerId, username, world);
+    // player is dead
+    if (session.player == null) {
+      final SolidObject player = addNewPlayerAtRandomPosition(world);
+      session.playerId = player.id;
+      gameServer.world.usernameToIdMap[username] = player.id;
+    }
     assert(session != null);
     assert(session.player != null);
     assert(session.username != null);
