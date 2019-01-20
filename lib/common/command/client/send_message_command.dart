@@ -16,8 +16,10 @@ class SendMessageCommand extends ClientCommand {
 
   @override
   void execute(GameClient client, World world) {
-    world.sendCommandToAllClients(
-        AddMessageCommand(Message(client.session.player.name, message)));
+    final addMessageCommand =
+        AddMessageCommand(Message(client.session.player.name, message));
+    addMessageCommand.execute(client.session, world);
+    world.sendCommandToAllClients(addMessageCommand);
     print('Executed $this\n');
   }
 
@@ -33,6 +35,4 @@ class SendMessageCommand extends ClientCommand {
   String toString() {
     return 'SendMessageCommand{message: $message}';
   }
-
-
 }

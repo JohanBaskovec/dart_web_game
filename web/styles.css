@@ -8,3 +8,7 @@ html, body {
   font-family: 'Roboto', sans-serif;
 }
 
+@font-face {
+    font-family: gameFont;
+    src: url('Retroville.ttf');
+}

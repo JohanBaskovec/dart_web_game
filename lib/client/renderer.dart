@@ -35,7 +35,7 @@ class Renderer {
       solidImages[type].src = '/$type.png';
     }
 
-    resizeWindows();
+    initializeUi();
   }
 
   void render(ClientWorld world) {
@@ -69,25 +69,32 @@ class Renderer {
       }
     }
     _ctx.setTransform(1, 0, 0, 1, 0, 0);
+    _ctx.fillRect(
+        uiController.buildButton.box.left,
+        uiController.buildButton.box.top,
+        uiController.buildButton.box.width,
+        uiController.buildButton.box.height
+    );
+    _ctx.fillStyle = 'white';
+    _ctx.font = '12px gameFont';
+    _ctx.fillText(
+        'Build',
+        uiController.buildButton.box.left + 28,
+        uiController.buildButton.box.top + 19);
     if (session.player != null) {
-      _ctx.fillStyle = 'black';
       uiController.inventory.update();
+      _ctx.fillStyle = 'black';
       _ctx.fillRect(
           uiController.inventory.box.left,
           uiController.inventory.box.top,
           uiController.inventory.box.width,
           uiController.inventory.box.height);
-      final double widthPerStack = uiController.inventory.box.width / 9;
-      for (var i = 0; i < session.player.inventory.items.length; i++) {
-        final int itemId = session.player.inventory.items[i];
+      for (var i = 0; i < uiController.inventory.buttons.length; i++) {
+        final InventoryButton button = uiController.inventory.buttons[i];
+        final int itemId = button.itemId;
         final SoftObject item = world.getSoftObject(itemId);
-        final double left = i * widthPerStack + uiController.inventory.box.left;
-        _ctx.drawImageScaled(
-            softImages[item.type],
-            left,
-            uiController.inventory.box.top,
-            widthPerStack,
-            uiController.inventory.box.height);
+        _ctx.drawImageScaled(softImages[item.type], button.box.left,
+            button.box.top, button.box.width, button.box.height);
       }
     }
     if (uiController.buildMenu.enabled) {
@@ -145,8 +152,8 @@ class Renderer {
       _ctx.fillStyle = 'black';
       _ctx.fillText(
           uiController.chat.input.content,
-          uiController.chat.input.box.left,
-          uiController.chat.input.box.top + 8);
+          uiController.chat.input.box.left + 3,
+          uiController.chat.input.box.top + 10);
       _ctx.fillStyle = 'white';
       num height = 0;
       final List<String> lines = [];
@@ -173,8 +180,8 @@ class Renderer {
         }
       }
       for (int i = lines.length - 1; i > -1; i--) {
-        _ctx.fillText(lines[i], uiController.chat.box.left,
-            uiController.chat.input.box.top - 9 * i);
+        _ctx.fillText(lines[i], uiController.chat.box.left + 3,
+            uiController.chat.input.box.top - 15 * i - 5);
       }
     }
   }
@@ -216,20 +223,20 @@ class Renderer {
     cameraPosition = CanvasPosition(translateX, translateY);
   }
 
-  void resizeWindows() {
+  void initializeUi() {
     _canvas.width = window.innerWidth;
     _canvas.height = window.innerHeight;
-    uiController.buildMenu.moveAndResize(
-        Box(_canvas.width ~/ 10, 100, 200, _canvas.height ~/ 2));
-    uiController.inventory.moveAndResize(Box(
-        20,
-        (_canvas.height - _canvas.height / 10).toInt(),
-        (_canvas.width - 20 - _canvas.width / 3).toInt(),
-        _canvas.height ~/ 11));
+    print(
+        'Window width: ${window.innerWidth}, window height: ${window.innerHeight}');
+    uiController.buildMenu
+        .moveAndResize(Box(_canvas.width ~/ 10, 100, 200, _canvas.height ~/ 2));
+    uiController.inventory.reinitialize(_canvas.width, _canvas.height);
+    uiController.buildButton.box = Box(uiController.inventory.box.left,
+        uiController.inventory.box.top - 33, 90, 30);
     uiController.chat.moveAndResize(Box(
         uiController.inventory.box.right + 20,
         uiController.inventory.box.top - 100,
-        (_canvas.width / 3 - 40).toInt(),
+        _canvas.width - uiController.inventory.box.width - 60,
         100 + uiController.inventory.box.height));
   }
 }

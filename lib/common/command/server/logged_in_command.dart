@@ -5,6 +5,7 @@ import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/inventory.dart';
+import 'package:dart_game/common/message.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/ui_controller.dart';
@@ -18,8 +19,10 @@ class LoggedInCommand extends ServerCommand {
   List<SoftObject> softObjects;
   List<List<SolidObjectSummary>> solidObjectSummariesColumns;
   Inventory inventory;
+  List<Message> messages;
 
-  LoggedInCommand( this.session, this.softObjects, this.solidObjectSummariesColumns, this.inventory)
+  LoggedInCommand(this.session, this.softObjects,
+      this.solidObjectSummariesColumns, this.inventory, this.messages)
       : assert(softObjects != null),
         assert(solidObjectSummariesColumns != null),
         super(ServerCommandType.loggedIn);
@@ -39,6 +42,7 @@ class LoggedInCommand extends ServerCommand {
       }
     }
     softObjects.forEach(world.addSoftObject);
+    world.messages = messages;
     session.playerId = this.session.playerId;
     session.player.inventory = inventory;
     assert(session.player != null);

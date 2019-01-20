@@ -19,11 +19,20 @@ class PlayerInventoryMenu {
   Session session;
   WebSocketClient webSocketClient;
   ClientUiController uiController;
+  static const int marginBottom = 10;
+  static const int widthPerItem = 40;
+  static const int buttonHeight = 40;
+  static const int paddingTop = 10;
+  static const int paddingBottom = 10;
+  static const int paddingLeft = 10;
+  static const int paddingRight = 10;
+  static const int height = 40 + paddingTop + paddingBottom;
+  static const int width = 9 * 40 + paddingLeft + paddingRight;
 
   PlayerInventoryMenu(this.session, this.webSocketClient, [this.uiController]);
 
-  void moveAndResize(Box box) {
-    this.box = box;
+  void reinitialize(int screenWidth, int screenHeight) {
+    box = Box(20, screenHeight - height - marginBottom, width, height);
   }
 
   bool clickAt(CanvasPosition canvasPosition, bool shift) {
@@ -59,12 +68,12 @@ class PlayerInventoryMenu {
     if (session == null) {
       return;
     }
-    final int widthPerStack = box.width ~/ 9;
     buttons = [];
     for (var i = 0; i < session.player.inventory.items.length; i++) {
-      final int left = i * widthPerStack + box.left;
+      final int left = i * widthPerItem + box.left + paddingLeft;
       final newButton = InventoryButton(session.player.inventory.items[i]);
-      newButton.box = Box(left, box.top, widthPerStack, box.height);
+      newButton.box =
+          Box(left, box.top + paddingTop, widthPerItem, buttonHeight);
       buttons.add(newButton);
     }
   }

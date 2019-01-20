@@ -93,8 +93,8 @@ class GameClient {
         session,
         softObjects,
         solidObjectSummariesColumns,
-      session.player.inventory
-        );
+        session.player.inventory,
+        world.messages);
     print('Client connected! $session.player\n');
     sendCommand(loggedInCommand);
   }

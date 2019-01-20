@@ -1,4 +1,5 @@
 import 'package:dart_game/client/ui/build_menu.dart';
+import 'package:dart_game/client/ui/button.dart';
 import 'package:dart_game/client/ui/chat.dart';
 import 'package:dart_game/client/ui/inventory_menu.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
@@ -14,6 +15,7 @@ class ClientUiController extends UiController {
   Chat chat = Chat();
   PlayerInventoryMenu inventory;
   List<InventoryMenu> inventoryMenus = [];
+  Button buildButton = Button();
   World world;
   WebSocketClient webSocketClient;
   Session session;

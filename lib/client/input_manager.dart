@@ -84,10 +84,10 @@ class InputManager {
       }
     });
     window.onResize.listen((Event e) {
-      renderer.resizeWindows();
+      renderer.initializeUi();
     });
     _canvas.onResize.listen((Event e) {
-      renderer.resizeWindows();
+      renderer.initializeUi();
     });
     _canvas.onContextMenu.listen((MouseEvent e) {
       e.preventDefault();

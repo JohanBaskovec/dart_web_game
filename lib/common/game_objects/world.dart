@@ -17,7 +17,7 @@ class World {
   List<SoftObject> softObjects = [];
   List<int> freeSolidObjectIds = [];
   List<int> freeSoftObjectIds = [];
-  List<Message> messages = [Message('wow', 'ca marche?')];
+  List<Message> messages = [Message('wow', 'ça marche éé à@ç£汉字;')];
 
   void addSolidObject(SolidObject object) {}
 

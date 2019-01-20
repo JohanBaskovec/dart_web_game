@@ -8,4 +8,5 @@ class Button {
   void moveAndResize(Box box) {
     this.box = box;
   }
+
 }
