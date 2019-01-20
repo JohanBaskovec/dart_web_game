@@ -18,6 +18,15 @@ class OpenInventoryCommand extends ClientCommand {
 
   @override
   Future execute(GameClient client, World world) async {
+    print('Executing $this\n');
+    if (ownerId < 0) {
+      print('ownerId below 0.\n');
+      return;
+    }
+    if (ownerId >= world.solidObjects.length) {
+      print('ownerId too high.\n');
+      return;
+    }
     final SolidObject owner = world.getSolidObject(ownerId);
     if (!owner.isAdjacentTo(client.session.player)) {
       print("Trying to get inventory of object that isn't adjacent, cheater?");
@@ -37,8 +46,6 @@ class OpenInventoryCommand extends ClientCommand {
         inventory.items.map((int id) => world.getSoftObject(id)).toList();
 
     client.sendCommand(SendInventoryCommand(inventory, softObjects));
-
-    print('Executed $this\n');
   }
 
   /// Creates a new [OpenInventoryCommand] from a JSON object.

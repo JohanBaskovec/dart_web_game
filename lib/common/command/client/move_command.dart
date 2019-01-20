@@ -18,6 +18,7 @@ class MoveCommand extends ClientCommand {
 
   @override
   void execute(GameClient client, World world) {
+    print('Executing $this\n');
     final SolidObject player = client.session.player;
     final target =
         TilePosition(player.tilePosition.x + x, player.tilePosition.y + y);
@@ -27,8 +28,9 @@ class MoveCommand extends ClientCommand {
         target.y >= 0 &&
         world.getObjectAt(target) == null) {
       world.moveSolidObject(player, target);
+    } else {
+      print('Tried to move to tile outside of map.\n');
     }
-    print('Executed $this\n');
   }
 
   /// Creates a new [MoveCommand] from a JSON object.

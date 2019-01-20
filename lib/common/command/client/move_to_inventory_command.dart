@@ -21,7 +21,7 @@ class MoveToInventoryCommand extends ClientCommand {
 
   @override
   Future execute(GameClient client, World world) async {
-    print('Will execute $this.\n');
+    print('Executing $this.\n');
     if (targetId < 0) {
       print('targetId below 0.\n');
       return;

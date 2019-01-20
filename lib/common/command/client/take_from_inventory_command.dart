@@ -20,18 +20,36 @@ class TakeFromInventoryCommand extends ClientCommand {
 
   @override
   Future execute(GameClient client, World world) async {
+    print('Executing $this\n');
     final Inventory userInventory = client.session.player.inventory;
     if (userInventory.full) {
+      print('User inventory is full.\n');
+      return;
+    }
+    if (ownerId < 0) {
+      print('ownerId is less than 0\n');
+      return;
+    }
+    if (ownerId >= world.solidObjects.length) {
+      print('ownerId is too high.');
       return;
     }
     final SolidObject target = world.getSolidObject(ownerId);
+    if (target == null) {
+      print('Target is null.\n');
+      return;
+    }
     if (target.inventory.private) {
       print('Tried to take from a private inventory,'
-          'this shouldn\'t be possible, cheater?');
+          'this shouldn\'t be possible, cheater?\n');
       return;
     }
     if (!target.inventory.items.contains(itemId)) {
-      print("Tried to take an item that isn't in inventory! $this");
+      print("Tried to take an item that isn't in inventory!\n");
+      return;
+    }
+    if (!target.isAdjacentTo(client.session.player)) {
+      print('Target is too far.\n');
       return;
     }
     final removeFromInventoryCommand =
@@ -44,8 +62,6 @@ class TakeFromInventoryCommand extends ClientCommand {
 
     client.sendCommand(removeFromInventoryCommand);
     client.sendCommand(addToInventoryCommand);
-
-    print('Executed $this\n');
   }
 
   /// Creates a new [TakeFromInventoryCommand] from a JSON object.

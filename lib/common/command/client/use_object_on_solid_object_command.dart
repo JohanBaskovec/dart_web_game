@@ -13,6 +13,9 @@ part 'use_object_on_solid_object_command.g.dart';
 
 bool playerCanGather(SolidObject player, World world, int targetId) {
   final SolidObject target = world.getSolidObject(targetId);
+  if (!target.isAdjacentTo(player)) {
+    return false;
+  }
   final int equippedItemId = player.inventory.currentlyEquiped;
   final SoftObject item = world.getSoftObject(equippedItemId);
 
@@ -35,19 +38,31 @@ class UseObjectOnSolidObjectCommand extends ClientCommand {
 
   @override
   void execute(GameClient client, World world) {
+    print('Executing $this\n');
     final SolidObject player = client.session.player;
     if (!playerCanGather(player, world, targetId)) {
+      print("Player can't gather.\n");
+      return;
+    }
+    if (targetId < 0) {
+      print('targetId below 0.\n');
+      return;
+    }
+    if (targetId > world.solidObjects.length - 1) {
+      print('targetId too high.\n');
       return;
     }
     final SolidObject target = world.getSolidObject(targetId);
     final GatheringConfig config = gatheringConfigs[target.type];
 
+    assert(target.nGatherableItems > 0);
     target.nGatherableItems--;
 
     final gatheredItem = world.addSoftObjectOfType(config.gatherableItemsType);
     final addObjectCommand = AddSoftObjectCommand(gatheredItem);
     addObjectCommand.execute(client.session, world);
-    final addToInventoryCommand = AddToInventoryCommand(player.id, gatheredItem.id);
+    final addToInventoryCommand =
+        AddToInventoryCommand(player.id, gatheredItem.id);
     addToInventoryCommand.execute(client.session, world);
 
     client.sendCommand(addObjectCommand);
@@ -56,7 +71,6 @@ class UseObjectOnSolidObjectCommand extends ClientCommand {
     if (target.nGatherableItems == 0) {
       world.removeSolidObject(target);
     }
-    print('Executed $this\n');
   }
 
   /// Creates a new [UseObjectOnSolidObjectCommand] from a JSON object.

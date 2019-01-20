@@ -16,11 +16,20 @@ class SendMessageCommand extends ClientCommand {
 
   @override
   void execute(GameClient client, World world) {
+    print('Executing $this\n');
+    if (message == null) {
+      print('message is null.\n');
+    }
+    if (message.length > 255) {
+      print('message is too long.\n');
+    }
+    if (message.isEmpty) {
+      print('message is empty.\n');
+    }
     final addMessageCommand =
         AddMessageCommand(Message(client.session.player.name, message));
     addMessageCommand.execute(client.session, world);
     world.sendCommandToAllClients(addMessageCommand);
-    print('Executed $this\n');
   }
 
   /// Creates a new [SendMessageCommand] from a JSON object.
