@@ -143,7 +143,11 @@ class InputManager {
           if (objectId == null) {
             clickOnGround(tilePosition);
           } else {
-            clickOnSolidObject(_world.solidObjects[objectId]);
+            if (e.button == 2) {
+              rightClickOnSolidObject(_world.solidObjects[objectId]);
+            } else {
+              clickOnSolidObject(_world.solidObjects[objectId]);
+            }
           }
         }
       }
@@ -158,24 +162,23 @@ class InputManager {
     webSocketClient.webSocket.send(jsonEncode(command));
   }
 
+  void rightClickOnSolidObject(SolidObject object) {
+    print('Right clicking on object: $object\n');
+    if (object.type == SolidObjectType.woodenChest ||
+        object.type == SolidObjectType.box ||
+        object.type == SolidObjectType.tree ||
+        object.type == SolidObjectType.appleTree) {
+      webSocketClient.sendCommand(OpenInventoryCommand(object.id));
+    }
+  }
+
   void clickOnSolidObject(SolidObject object) {
     print('Clicking on object: $object\n');
-    final SoftObject equippedObject =
-        _world.softObjects[session.player.inventory.currentlyEquiped];
-    if (equippedObject.type == SoftObjectType.hand) {
-      if (object.type == SolidObjectType.woodenChest ||
-          object.type == SolidObjectType.box ||
-          object.type == SolidObjectType.tree ||
-          object.type == SolidObjectType.appleTree) {
-        webSocketClient.sendCommand(OpenInventoryCommand(object.id));
-      }
-    } else {
-      if (!playerCanGather(session.player, _world, object.id)) {
-        return;
-      }
-      final command = UseObjectOnSolidObjectCommand(object.id);
-      webSocketClient.webSocket.send(jsonEncode(command));
+    if (!playerCanGather(session.player, _world, object.id)) {
+      return;
     }
+    final command = UseObjectOnSolidObjectCommand(object.id);
+    webSocketClient.webSocket.send(jsonEncode(command));
   }
 
   bool get canClick {
