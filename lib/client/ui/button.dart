@@ -1,12 +1,13 @@
-import 'package:dart_game/common/box.dart';
+import 'package:dart_game/client/ui/ui_element.dart';
 
-class Button {
-  Box box;
+class Button extends UiElement {
+  Function onLeftClick;
 
   Button();
 
-  void moveAndResize(Box box) {
-    this.box = box;
+  void leftClick() {
+    if (onLeftClick != null) {
+      onLeftClick();
+    }
   }
-
 }

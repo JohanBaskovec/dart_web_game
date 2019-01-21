@@ -59,7 +59,10 @@ class InputManager {
               move(0, -1);
               break;
             case 'b':
-              uiController.buildMenu.enabled = !uiController.buildMenu.enabled;
+              uiController.buildMenu.toggleVisible();
+              break;
+            case 'c':
+              uiController.cookingMenu.toggleVisible();
               break;
           }
         }
@@ -102,7 +105,7 @@ class InputManager {
         if (renderer.cameraPosition == null) {
           return;
         }
-        if (uiController.buildMenu.enabled) {
+        if (uiController.buildMenu.visible) {
           if (!uiController.buildMenu.clickAt(canvasPosition)) {
             return;
           }
@@ -117,6 +120,12 @@ class InputManager {
             uiController.inventory.rightClickAt(canvasPosition);
           } else {
             uiController.inventory.clickAt(canvasPosition, shift);
+          }
+          return;
+        }
+        if (uiController.cookButton.contains(canvasPosition)) {
+          if (!isRightClick) {
+            uiController.cookButton.leftClick();
           }
           return;
         }
@@ -203,7 +212,7 @@ class InputManager {
 
   void clickOnGround(TilePosition tilePosition) {
     print('clickOnGround $tilePosition\n');
-    if (uiController.buildMenu.enabled &&
+    if (uiController.buildMenu.visible &&
         uiController.buildMenu.selectedType != null) {
       if (playerCanBuild(_world, uiController.buildMenu.selectedType,
           session.player, tilePosition)) {

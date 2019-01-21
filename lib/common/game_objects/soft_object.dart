@@ -37,7 +37,8 @@ enum SoftObjectType {
   worm,
   bread,
   rice,
-  fish
+  fish,
+  cookedSnake
 }
 
 /// Objects that can be traversed

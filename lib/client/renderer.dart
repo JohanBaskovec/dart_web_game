@@ -3,6 +3,7 @@ import 'dart:html';
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/client/client_world.dart';
 import 'package:dart_game/client/ui/client_ui_controller.dart';
+import 'package:dart_game/client/ui/cooking_menu.dart';
 import 'package:dart_game/client/ui/hunger_ui.dart';
 import 'package:dart_game/client/ui/inventory_menu.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
@@ -56,6 +57,7 @@ class Renderer {
 
     _ctx.setTransform(1, 0, 0, 1, 0, 0);
     renderBuildButton();
+    renderCookButton();
     renderPlayerInventory(world);
     renderBuildMenu();
     renderInventoryMenus(world);
@@ -136,9 +138,41 @@ class Renderer {
       }
     }
   }
+  
+  void renderCookingMenu() {
+    final CookingMenu cookingMenu = uiController.cookingMenu;
+    if (uiController.cookingMenu.visible) {
+      _ctx.fillStyle = 'black';
+      _ctx.fillRect(
+          uiController.cookingMenu.box.left,
+          uiController.cookingMenu.box.top,
+          uiController.cookingMenu.box.width,
+          uiController.cookingMenu.box.height);
+
+      for (int i = 0; i < uiController.cookingMenu.buttons.length; i++) {
+        final button = uiController.cookingMenu.buttons[i];
+        _ctx.drawImageScaled(solidImages[button.type], button.box.left,
+            button.box.top, button.box.width, button.box.height);
+        _ctx.fillStyle = 'white';
+        var k = 0;
+        for (MapEntry<SoftObjectType, int> ingredientList
+        in buildingRecipes[button.type].entries) {
+          _ctx.fillText(
+              '${ingredientList.key}: ${ingredientList.value}',
+              uiController.cookingMenu.box.left + 40,
+              uiController.cookingMenu.box.top +
+                  button.box.height * i +
+                  15 +
+                  k * 10);
+          k++;
+        }
+        _ctx.fillStyle = 'black';
+      }
+    }
+  }
 
   void renderBuildMenu() {
-    if (uiController.buildMenu.enabled) {
+    if (uiController.buildMenu.visible) {
       _ctx.fillStyle = 'black';
       _ctx.fillRect(
           uiController.buildMenu.box.left,
@@ -185,6 +219,15 @@ class Renderer {
             button.box.top, button.box.width, button.box.height);
       }
     }
+  }
+
+  void renderCookButton() {
+    _ctx.fillStyle = 'black';
+    fillBox(uiController.cookButton.box);
+    _ctx.fillStyle = 'white';
+    _ctx.font = '12px gameFont';
+    _ctx.fillText('Cook', uiController.cookButton.box.left + 28,
+        uiController.cookButton.box.top + 19);
   }
 
   void renderBuildButton() {
@@ -258,17 +301,7 @@ class Renderer {
     _canvas.width = screenWidth;
     _canvas.height = screenHeight;
     print('Window width: $screenWidth, window height: $screenHeight');
-    uiController.buildMenu
-        .moveAndResize(Box(screenWidth ~/ 10, 100, 200, screenHeight ~/ 2));
-    uiController.inventory.reinitialize(screenWidth, screenHeight);
-    uiController.buildButton.box = Box(uiController.inventory.box.left,
-        uiController.inventory.box.top - 33, 90, 30);
-    uiController.chat.moveAndResize(Box(
-        uiController.inventory.box.right + 20,
-        uiController.inventory.box.top - 100,
-        screenWidth - uiController.inventory.box.width - 60,
-        100 + uiController.inventory.box.height));
-    uiController.hunger.reinitialize(screenWidth, screenHeight);
+    uiController.initialize(screenWidth, screenHeight);
   }
 
   void fillBox(Box box) {

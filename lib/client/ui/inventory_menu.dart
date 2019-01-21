@@ -1,6 +1,6 @@
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
-import 'package:dart_game/client/ui/window.dart';
+import 'package:dart_game/client/ui/ui_element.dart';
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/command/client/take_from_inventory_command.dart';
@@ -8,7 +8,7 @@ import 'package:dart_game/common/command/client/use_item_command.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/ui_controller.dart';
 
-class InventoryMenu extends Window {
+class InventoryMenu extends UiElement {
   List<InventoryButton> buttons = [];
   SolidObject owner;
   SolidObject player;

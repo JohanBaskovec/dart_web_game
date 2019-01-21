@@ -9,6 +9,18 @@ final Map<SolidObjectType, Map<SoftObjectType, int>> buildingRecipes = {
   SolidObjectType.box: {}
 };
 
+class CraftingConfiguration {
+  SolidObjectType ovenType;
+  Map<SoftObjectType, int> requiredItems;
+
+  CraftingConfiguration(this.ovenType, this.requiredItems);
+}
+
+final Map<SoftObjectType, CraftingConfiguration> craftingRecipes = {
+  SoftObjectType.cookedSnake:
+      CraftingConfiguration(SolidObjectType.campFire, {SoftObjectType.snake: 1})
+};
+
 bool playerCanBuild(World world, SolidObjectType type, SolidObject player,
     TilePosition position) {
   if (position.distanceFrom(player.tilePosition) >= 2) {
