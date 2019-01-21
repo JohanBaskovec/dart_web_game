@@ -188,6 +188,7 @@ class Renderer {
   }
 
   void renderBuildButton() {
+    _ctx.fillStyle = 'black';
     fillBox(uiController.buildButton.box);
     _ctx.fillStyle = 'white';
     _ctx.font = '12px gameFont';
