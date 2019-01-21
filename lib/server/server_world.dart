@@ -1,3 +1,5 @@
+import 'package:dart_game/common/age_component.dart';
+import 'package:dart_game/common/command/food_component.dart';
 import 'package:dart_game/common/command/server/add_solid_object_command.dart';
 
 import 'package:dart_game/common/command/server/move_solid_object_command.dart';
@@ -100,6 +102,13 @@ class ServerWorld extends World {
     final serverCommand =
         MoveSolidObjectCommand(object.id, object.tilePosition);
     sendCommandToAllClients(serverCommand);
+  }
+
+  SoftObject addApple() {
+    final SoftObject apple = addSoftObjectOfType(SoftObjectType.apple);
+    apple.foodComponent = FoodComponent(30);
+    apple.ageComponent = AgeComponent(minutesPerYear);
+    return apple;
   }
 
   @override

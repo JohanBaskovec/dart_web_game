@@ -13,7 +13,12 @@ part 'use_object_on_solid_object_command.g.dart';
 
 bool playerCanGather(SolidObject player, World world, int targetId) {
   final SolidObject target = world.getSolidObject(targetId);
+  if (target == null) {
+    print('playerCanGather: target is false.\n');
+    return false;
+  }
   if (!target.isAdjacentTo(player)) {
+    print("playerCanGather: target isn't adjacent to user.\n");
     return false;
   }
   final int equippedItemId = player.inventory.currentlyEquiped;

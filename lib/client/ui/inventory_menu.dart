@@ -1,13 +1,14 @@
 import 'package:dart_game/client/canvas_position.dart';
-import 'package:dart_game/client/ui/client_ui_controller.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
+import 'package:dart_game/client/ui/window.dart';
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/command/client/take_from_inventory_command.dart';
+import 'package:dart_game/common/command/client/use_item_command.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
+import 'package:dart_game/common/ui_controller.dart';
 
-class InventoryMenu {
-  Box box = Box(0, 0, 0, 0);
+class InventoryMenu extends Window {
   List<InventoryButton> buttons = [];
   SolidObject owner;
   SolidObject player;
@@ -15,7 +16,7 @@ class InventoryMenu {
   int columns = 3;
   int rows = 3;
   bool active = true;
-  ClientUiController uiController;
+  UiController uiController;
 
   InventoryMenu(Box box, this.owner, this.player, this.webSocketClient,
       this.uiController) {
@@ -46,22 +47,26 @@ class InventoryMenu {
     }
   }
 
-  bool clickAt(CanvasPosition canvasPosition, InventoryMenu playerInventory,
-      bool shift) {
-    if (box.pointIsInBox(canvasPosition.x, canvasPosition.y)) {
-      active = true;
-      uiController.activeInventoryWindow = this;
-    } else {
-      active = false;
+  void leftClick(CanvasPosition canvasPosition, InventoryMenu playerInventory) {
+  }
+
+  void shiftClick(CanvasPosition canvasPosition, InventoryMenu playerInventory) {
+    for (int i = 0; i < buttons.length; i++) {
+      if (buttons[i].box.pointIsInBox(canvasPosition.x, canvasPosition.y)) {
+        final int itemId = buttons[i].itemId;
+        webSocketClient
+            .sendCommand(TakeFromInventoryCommand(owner.id, itemId));
+      }
     }
-    if (shift) {
-      for (int i = 0; i < buttons.length; i++) {
-        if (buttons[i].box.pointIsInBox(canvasPosition.x, canvasPosition.y)) {
-          final int itemId = buttons[i].itemId;
-          webSocketClient
-              .sendCommand(TakeFromInventoryCommand(owner.id, itemId));
-          return false;
-        }
+  }
+
+  /// Returns true if no button was clicked on window should be dismissed
+  bool rightClick(CanvasPosition canvasPosition) {
+    for (int i = 0; i < buttons.length; i++) {
+      if (buttons[i].box.pointIsInBox(canvasPosition.x, canvasPosition.y)) {
+        final int itemId = buttons[i].itemId;
+        webSocketClient.sendCommand(UseItemCommand(itemId));
+        return false;
       }
     }
     return true;

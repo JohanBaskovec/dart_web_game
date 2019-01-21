@@ -24,6 +24,10 @@ class MoveSolidObjectCommand extends ServerCommand {
         null;
     world.solidObjects[objectId].moveTo(position);
     world.solidObjectColumns[position.x][position.y] = objectId;
+    if (uiController != null) {
+      uiController.onPlayerMove();
+    }
+
     print('Executed $this\n');
   }
 

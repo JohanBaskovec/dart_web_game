@@ -18,6 +18,7 @@ class Inventory {
     if (items.length == 9) {
       return;
     }
+    item.ownerId = ownerId;
     item.indexInInventory = items.length;
     items.add(item.id);
     print('Added $item to inventory at position ${item.indexInInventory}\n');

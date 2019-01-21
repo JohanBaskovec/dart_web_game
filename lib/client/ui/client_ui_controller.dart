@@ -41,4 +41,15 @@ class ClientUiController extends UiController {
     activeInventoryWindow = inventoryMenu;
     return;
   }
+
+  @override
+  void onPlayerMove() {
+    for (int i = 0 ; i < inventoryMenus.length ; i++) {
+      final inventory = inventoryMenus[i];
+      if (!inventory.owner.isAdjacentTo(session.player)) {
+        inventoryMenus.remove(inventory);
+        i--;
+      }
+    }
+  }
 }

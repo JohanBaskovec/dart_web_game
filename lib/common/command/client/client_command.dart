@@ -7,6 +7,7 @@ import 'package:dart_game/common/command/client/open_inventory_command.dart';
 import 'package:dart_game/common/command/client/send_message_command.dart';
 import 'package:dart_game/common/command/client/set_equipped_item_client_command.dart';
 import 'package:dart_game/common/command/client/take_from_inventory_command.dart';
+import 'package:dart_game/common/command/client/use_item_command.dart';
 import 'package:dart_game/common/command/client/use_object_on_solid_object_command.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/server/client.dart';
@@ -45,6 +46,8 @@ class ClientCommand {
         return LoginCommand.fromJson(json);
       case ClientCommandType.moveToInventory:
         return MoveToInventoryCommand.fromJson(json);
+      case ClientCommandType.useItem:
+        return UseItemCommand.fromJson(json);
       case ClientCommandType.unknown:
         break;
     }

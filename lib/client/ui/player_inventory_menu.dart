@@ -1,10 +1,12 @@
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/client/ui/button.dart';
 import 'package:dart_game/client/ui/client_ui_controller.dart';
+import 'package:dart_game/client/ui/window.dart';
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/command/client/move_to_inventory_command.dart';
 import 'package:dart_game/common/command/client/set_equipped_item_client_command.dart';
+import 'package:dart_game/common/command/client/use_item_command.dart';
 import 'package:dart_game/common/session.dart';
 
 class InventoryButton extends Button {
@@ -13,8 +15,7 @@ class InventoryButton extends Button {
   InventoryButton(this.itemId);
 }
 
-class PlayerInventoryMenu {
-  Box box = Box(0, 0, 0, 0);
+class PlayerInventoryMenu extends Window {
   List<InventoryButton> buttons = [];
   Session session;
   WebSocketClient webSocketClient;
@@ -35,10 +36,7 @@ class PlayerInventoryMenu {
     box = Box(20, screenHeight - height - marginBottom, width, height);
   }
 
-  bool clickAt(CanvasPosition canvasPosition, bool shift) {
-    if (session == null) {
-      return true;
-    }
+  void clickAt(CanvasPosition canvasPosition, bool shift) {
     final activeInventoryWindow = uiController.activeInventoryWindow;
     if (shift && activeInventoryWindow != null) {
       for (int i = 0; i < buttons.length; i++) {
@@ -58,10 +56,16 @@ class PlayerInventoryMenu {
         }
       }
     }
-    if (box.pointIsInBox(canvasPosition.x, canvasPosition.y)) {
-      return true;
+  }
+
+  void rightClickAt(CanvasPosition position) {
+    for (int i = 0; i < buttons.length; i++) {
+      if (buttons[i].box.pointIsInBox(position.x, position.y)) {
+        print('Right-click on item n°$i in player inventory');
+        webSocketClient.sendCommand(UseItemCommand(buttons[i].itemId));
+        break;
+      }
     }
-    return false;
   }
 
   void update() {
@@ -77,4 +81,5 @@ class PlayerInventoryMenu {
       buttons.add(newButton);
     }
   }
+
 }

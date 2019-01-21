@@ -95,9 +95,7 @@ class InputManager {
       if (session.loggedIn == false) {
         return;
       }
-      if (e.button == 2) {
-        e.preventDefault();
-      }
+      final bool isRightClick = e.button == 2;
       final CanvasPosition canvasPosition =
           renderer.getCursorPositionInCanvas(e);
       if (canClick) {
@@ -114,17 +112,34 @@ class InputManager {
             return;
           }
         }
-        if (uiController.inventory.clickAt(canvasPosition, shift)) {
+        if (uiController.inventory.contains(canvasPosition)) {
+          if (isRightClick) {
+            uiController.inventory.rightClickAt(canvasPosition);
+          } else {
+            uiController.inventory.clickAt(canvasPosition, shift);
+          }
           return;
         }
         uiController.activeInventoryWindow = null;
-        for (InventoryMenu inventory in uiController.inventoryMenus) {
-          if (e.button == 2) {
-            uiController.inventoryMenus.remove(inventory);
-          } else {
-            if (!inventory.clickAt(canvasPosition, inventory, shift)) {
-              return;
+        for (int i = 0 ; i < uiController.inventoryMenus.length ; i++) {
+          final inventory = uiController.inventoryMenus[i];
+          if (inventory.contains(canvasPosition)) {
+            inventory.active = true;
+            uiController.activeInventoryWindow = inventory;
+
+            if (isRightClick) {
+              if (inventory.rightClick(canvasPosition)) {
+                uiController.inventoryMenus.remove(inventory);
+                i--;
+              }
+            } else if (shift) {
+              inventory.shiftClick(canvasPosition, inventory);
+            } else {
+              inventory.leftClick(canvasPosition, inventory);
             }
+            return;
+          } else {
+            inventory.active = false;
           }
         }
         uiController.chat.input.active = false;

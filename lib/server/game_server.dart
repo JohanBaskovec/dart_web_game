@@ -76,7 +76,9 @@ class GameServer {
     final WebSocket webSocket = await WebSocketTransformer.upgrade(request);
     final newClient = GameClient(null, webSocket, this);
     newClient.onLeave = () async {
-      newClient.session.player.client = null;
+      if (newClient.session != null) {
+        newClient.session?.player?.client = null;
+      }
       clients.remove(newClient);
       newClient.webSocket.close();
       print('Client disconnected.\n');
@@ -98,13 +100,13 @@ class GameServer {
         if (rand < 40) {
           final tree = makeTree(x, y);
           world.addSolidObject(tree);
-          final int nLeaves = randomGenerator.nextInt(6) + 1;
+          final int nLeaves = randomGenerator.nextInt(2) + 1;
           for (int i = 0; i < nLeaves; i++) {
             final leaves = world.addSoftObjectOfType(SoftObjectType.leaves);
             tree.inventory.addItem(leaves);
           }
 
-          final int nSnakes = randomGenerator.nextInt(6) + 1;
+          final int nSnakes = randomGenerator.nextInt(2);
           for (int i = 0; i < nSnakes; i++) {
             final snake = world.addSoftObjectOfType(SoftObjectType.snake);
             tree.inventory.addItem(snake);
@@ -112,10 +114,9 @@ class GameServer {
         } else if (rand < 80) {
           final tree = makeAppleTree(x, y);
           world.addSolidObject(tree);
-          final int nApples = randomGenerator.nextInt(6) + 1;
+          final int nApples = randomGenerator.nextInt(2) + 1;
           for (int i = 0; i < nApples; i++) {
-            tree.inventory
-                .addItem(world.addSoftObjectOfType(SoftObjectType.apple));
+            tree.inventory.addItem(world.addApple());
           }
         }
       }

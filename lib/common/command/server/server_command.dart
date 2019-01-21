@@ -9,6 +9,7 @@ import 'package:dart_game/common/command/server/remove_solid_object_command.dart
 import 'package:dart_game/common/command/server/send_inventory_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
 import 'package:dart_game/common/command/server/set_equipped_item_server_command.dart';
+import 'package:dart_game/common/command/server/set_hunger_command.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/ui_controller.dart';
@@ -52,8 +53,9 @@ class ServerCommand {
         return AddSoftObjectCommand.fromJson(json);
       case ServerCommandType.sendInventory:
         return SendInventoryCommand.fromJson(json);
-      case ServerCommandType.updateHunger:
-      case ServerCommandType.updateAge:
+      case ServerCommandType.setHunger:
+        return SetHungerCommand.fromJson(json);
+      case ServerCommandType.setAge:
       case ServerCommandType.addTile:
       case ServerCommandType.removeSoftObject:
       case ServerCommandType.removeTile:

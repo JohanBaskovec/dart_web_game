@@ -8,5 +8,6 @@ enum ClientCommandType {
   takeFromInventory,
   moveToInventory,
   openInventory,
+  useItem,
   unknown
 }

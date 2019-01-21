@@ -17,7 +17,7 @@ class RemoveSolidObjectCommand extends ServerCommand {
 
   @override
   void execute(Session session, World world, [UiController uiController]) {
-    world.removeSolidObjectAndSynchronizeAllClients(world.getSolidObject(id));
+    world.removeSolidObject(world.getSolidObject(id));
     print('Executed $this\n');
   }
 

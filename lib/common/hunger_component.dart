@@ -32,6 +32,4 @@ class HungerComponent {
   String toString() {
     return 'HungerComponent{hunger: $hunger, increasePerSecond: $increasePerSecond, ownerId: $ownerId}';
   }
-
-
 }

@@ -1,4 +1,5 @@
 import 'package:dart_game/common/age_component.dart';
+import 'package:dart_game/common/command/food_component.dart';
 import 'package:dart_game/common/world_position.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -43,6 +44,7 @@ enum SoftObjectType {
 @JsonSerializable(anyMap: true)
 class SoftObject {
   int id;
+  int ownerId;
   SoftObjectType type;
   WorldPosition position;
   /// index in inventory if it's in one
@@ -50,18 +52,12 @@ class SoftObject {
   bool alive = true;
 
   AgeComponent _ageComponent;
+  FoodComponent foodComponent;
 
   SoftObject([this.type, this.position]);
 
   /// Creates a new [SoftObject] from a JSON object.
-  static SoftObject fromJson(Map<dynamic, dynamic> json) {
-    final type = _$enumDecode(_$SoftObjectTypeEnumMap, json['type']);
-    switch (type) {
-      default:
-        return _$SoftObjectFromJson(json);
-        break;
-    }
-  }
+  static SoftObject fromJson(Map<dynamic, dynamic> json) => _$SoftObjectFromJson(json);
 
   AgeComponent get ageComponent => _ageComponent;
 
@@ -78,7 +74,7 @@ class SoftObject {
 
   @override
   String toString() {
-    return 'SoftObject{id: $id, type: $type, position: $position, indexInInventory: $indexInInventory, alive: $alive, _ageComponent: $_ageComponent}';
+    return 'SoftObject{id: $id, type: $type, position: $position, indexInInventory: $indexInInventory, alive: $alive, _ageComponent: $_ageComponent, foodComponent: $foodComponent}';
   }
 
 
