@@ -59,9 +59,11 @@ class InputManager {
               move(0, -1);
               break;
             case 'b':
+              uiController.cookingMenu.visible = false;
               uiController.buildMenu.toggleVisible();
               break;
             case 'c':
+              uiController.buildMenu.visible = false;
               uiController.cookingMenu.toggleVisible();
               break;
           }
