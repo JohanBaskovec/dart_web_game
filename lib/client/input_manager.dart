@@ -130,11 +130,13 @@ class InputManager {
           }
           return;
         }
-        if (uiController.cookButton.contains(canvasPosition)) {
-          if (!isRightClick) {
-            uiController.cookButton.leftClick();
+        if (!isRightClick) {
+          if (uiController.cookButton.tryLeftClick(canvasPosition)) {
+            return;
           }
-          return;
+          if (uiController.buildButton.tryLeftClick(canvasPosition)) {
+            return;
+          }
         }
         uiController.activeInventoryWindow = null;
         for (int i = 0; i < uiController.inventoryMenus.length; i++) {

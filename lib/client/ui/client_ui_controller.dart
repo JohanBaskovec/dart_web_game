@@ -45,7 +45,12 @@ class ClientUiController extends UiController {
     inventory.uiController = this;
     cookButton = CookButton();
     cookButton.onLeftClick = () {
-      cookingMenu.visible = true;
+      buildMenu.visible = false;
+      cookingMenu.toggleVisible();
+    };
+    buildButton.onLeftClick = () {
+      cookingMenu.visible = false;
+      buildMenu.toggleVisible();
     };
     cookingMenu = CookingMenu(session, world, null);
     cookingMenu.visible = false;
