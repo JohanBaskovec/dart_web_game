@@ -144,7 +144,7 @@ class ServerWorld extends World {
     print('removeSoftObject $object\n');
     assert(object != null);
     freeSoftObjectIds.add(object.id);
-    softObjects.removeAt(object.id);
+    softObjects[object.id] = null;
   }
 
   Size get dimension => worldSize;
