@@ -97,7 +97,7 @@ class GameServer {
     for (int x = 0; x < world.solidObjectColumns.length; x++) {
       for (int y = 0; y < world.solidObjectColumns[x].length; y++) {
         final int rand = randomGenerator.nextInt(100);
-        if (rand < 40) {
+        if (rand < 10) {
           final tree = makeTree(x, y);
           world.addSolidObject(tree);
           final int nLeaves = randomGenerator.nextInt(2) + 1;
@@ -111,7 +111,7 @@ class GameServer {
             final snake = world.addSoftObjectOfType(SoftObjectType.snake);
             tree.inventory.addItem(snake);
           }
-        } else if (rand < 80) {
+        } else if (rand < 20) {
           final tree = makeAppleTree(x, y);
           world.addSolidObject(tree);
           final int nApples = randomGenerator.nextInt(2) + 1;

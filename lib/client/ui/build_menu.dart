@@ -1,4 +1,5 @@
 import 'package:dart_game/client/canvas_position.dart';
+import 'package:dart_game/client/ui/ui_element.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/building.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
@@ -10,9 +11,7 @@ class BuildMenuButton extends Button {
   BuildMenuButton(this.type);
 }
 
-class BuildMenu {
-  bool enabled = false;
-  Box box = Box(0, 0, 0, 0);
+class BuildMenu extends UiElement {
   List<BuildMenuButton> buttons = [];
   SolidObjectType selectedType;
 
@@ -22,11 +21,12 @@ class BuildMenu {
     }
   }
 
-  void moveAndResize(Box box) {
+  @override
+  set box(Box value) {
+    super.box = value;
     for (var i = 0 ; i < buttons.length ; i++) {
       buttons[i].box = Box(box.left, box.top + 40 * i, 40, 40);
     }
-    this.box = box;
   }
 
   bool clickAt(CanvasPosition canvasPosition) {

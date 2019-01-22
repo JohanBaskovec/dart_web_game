@@ -1,7 +1,7 @@
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/client/ui/button.dart';
 import 'package:dart_game/client/ui/client_ui_controller.dart';
-import 'package:dart_game/client/ui/window.dart';
+import 'package:dart_game/client/ui/ui_element.dart';
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/command/client/move_to_inventory_command.dart';
@@ -15,7 +15,7 @@ class InventoryButton extends Button {
   InventoryButton(this.itemId);
 }
 
-class PlayerInventoryMenu extends Window {
+class PlayerInventoryMenu extends UiElement {
   List<InventoryButton> buttons = [];
   Session session;
   WebSocketClient webSocketClient;

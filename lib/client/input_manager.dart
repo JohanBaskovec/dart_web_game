@@ -4,7 +4,6 @@ import 'dart:html';
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/client/renderer.dart';
 import 'package:dart_game/client/ui/client_ui_controller.dart';
-import 'package:dart_game/client/ui/inventory_menu.dart';
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/common/building.dart';
 import 'package:dart_game/common/command/client/build_solid_object_command.dart';
@@ -59,7 +58,13 @@ class InputManager {
               move(0, -1);
               break;
             case 'b':
-              uiController.buildMenu.enabled = !uiController.buildMenu.enabled;
+              uiController.cookingMenu.visible = false;
+              uiController.buildMenu.toggleVisible();
+              break;
+            case 'c':
+              uiController.buildMenu.visible = false;
+              uiController.cookingMenu.update();
+              uiController.cookingMenu.toggleVisible();
               break;
           }
         }
@@ -102,8 +107,13 @@ class InputManager {
         if (renderer.cameraPosition == null) {
           return;
         }
-        if (uiController.buildMenu.enabled) {
+        if (uiController.buildMenu.visible) {
           if (!uiController.buildMenu.clickAt(canvasPosition)) {
+            return;
+          }
+        }
+        if (uiController.cookingMenu.visible) {
+          if (uiController.cookingMenu.clickAt(canvasPosition)) {
             return;
           }
         }
@@ -120,8 +130,14 @@ class InputManager {
           }
           return;
         }
+        if (uiController.cookButton.contains(canvasPosition)) {
+          if (!isRightClick) {
+            uiController.cookButton.leftClick();
+          }
+          return;
+        }
         uiController.activeInventoryWindow = null;
-        for (int i = 0 ; i < uiController.inventoryMenus.length ; i++) {
+        for (int i = 0; i < uiController.inventoryMenus.length; i++) {
           final inventory = uiController.inventoryMenus[i];
           if (inventory.contains(canvasPosition)) {
             inventory.active = true;
@@ -172,8 +188,19 @@ class InputManager {
   }
 
   void move(int x, int y) {
-    final command = MoveCommand(x, y);
-    webSocketClient.webSocket.send(jsonEncode(command));
+    final target = TilePosition(
+        session.player.tilePosition.x + x, session.player.tilePosition.y + y);
+    if (target.x < worldSize.x &&
+        target.x >= 0 &&
+        target.y < worldSize.y &&
+        target.y >= 0 &&
+        _world.getObjectAt(target) == null) {
+      final command = MoveCommand(x, y);
+      webSocketClient.webSocket.send(jsonEncode(command));
+    } else {
+      print("Can't move to $target.\n");
+      return;
+    }
   }
 
   void rightClickOnSolidObject(SolidObject object) {
@@ -203,7 +230,7 @@ class InputManager {
 
   void clickOnGround(TilePosition tilePosition) {
     print('clickOnGround $tilePosition\n');
-    if (uiController.buildMenu.enabled &&
+    if (uiController.buildMenu.visible &&
         uiController.buildMenu.selectedType != null) {
       if (playerCanBuild(_world, uiController.buildMenu.selectedType,
           session.player, tilePosition)) {

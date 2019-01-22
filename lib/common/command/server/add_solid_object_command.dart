@@ -18,6 +18,9 @@ class AddSolidObjectCommand extends ServerCommand {
   void execute(Session session, World world, [UiController uiController]) {
     world.addSolidObject(object);
     print('Executed $this\n');
+    if (uiController != null) {
+      uiController.updateCraftingMenu();
+    }
   }
 
   /// Creates a new [AddSolidObjectCommand] from a JSON object.

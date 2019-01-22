@@ -52,32 +52,9 @@ class BuildSolidObjectCommand extends ClientCommand {
     }
 
     final Map<SoftObjectType, int> recipe = buildingRecipes[objectType];
-    final int playerInventoryLength = player.inventory.items.length;
-    final removeFromInventoryCommand =
-        RemoveFromInventoryCommand(player.id, []);
-    for (var type in recipe.keys) {
-      final int quantityNeeded = recipe[type];
-      int quantityOwned = 0;
-      for (int i = 0; i < playerInventoryLength; i++) {
-        final int itemId = player.inventory.items[i];
-        final SoftObject item = world.getSoftObject(itemId);
-        if (item.type == type) {
-          quantityOwned++;
-          removeFromInventoryCommand.idsToRemove.add(itemId);
-          if (quantityOwned == quantityNeeded) {
-            break;
-          }
-        }
-      }
-      if (quantityOwned < quantityNeeded) {
-        print('can\'t build object, not enough resources!\n');
-        return;
-      }
-    }
-    removeFromInventoryCommand.execute(client.session, world, null);
+    removeItemsFromInventory(client, recipe, world);
     final object = SolidObject(objectType, position);
     world.addSolidObject(object);
-    client.sendCommand(removeFromInventoryCommand);
   }
 
   /// Creates a new [BuildSolidObjectCommand] from a JSON object.

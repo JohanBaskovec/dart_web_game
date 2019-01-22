@@ -3,6 +3,7 @@ import 'dart:html';
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/client/client_world.dart';
 import 'package:dart_game/client/ui/client_ui_controller.dart';
+import 'package:dart_game/client/ui/cooking_menu.dart';
 import 'package:dart_game/client/ui/hunger_ui.dart';
 import 'package:dart_game/client/ui/inventory_menu.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
@@ -11,6 +12,7 @@ import 'package:dart_game/common/building.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
+import 'package:dart_game/common/i18n.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/world_position.dart';
@@ -56,8 +58,10 @@ class Renderer {
 
     _ctx.setTransform(1, 0, 0, 1, 0, 0);
     renderBuildButton();
+    renderCookButton();
     renderPlayerInventory(world);
     renderBuildMenu();
+    renderCookingMenu();
     renderInventoryMenus(world);
     renderChat(world);
     renderHungerMeter();
@@ -137,8 +141,36 @@ class Renderer {
     }
   }
 
+  void renderCookingMenu() {
+    final CookingMenu cookingMenu = uiController.cookingMenu;
+    if (cookingMenu.visible) {
+      _ctx.fillStyle = 'black';
+      _ctx.fillRect(cookingMenu.box.left, cookingMenu.box.top,
+          cookingMenu.box.width, cookingMenu.box.height);
+
+      for (int i = 0; i < cookingMenu.buttons.length; i++) {
+        final button = cookingMenu.buttons[i];
+        _ctx.drawImageScaled(softImages[button.objectType], button.box.left,
+            button.box.top, button.box.width, button.box.height);
+        _ctx.fillStyle = 'white';
+        var k = 0;
+        final CraftingConfiguration craftingConfig =
+            craftingRecipes[button.objectType];
+        for (var requiredItems in craftingConfig.requiredItems.entries) {
+          _ctx.fillText(
+              '${t(requiredItems.key.toString())}: ${requiredItems.value}',
+              cookingMenu.box.left + 40,
+              cookingMenu.box.top + button.box.height * i + 15 + k * 10);
+          k++;
+        }
+        k++;
+        _ctx.fillStyle = 'black';
+      }
+    }
+  }
+
   void renderBuildMenu() {
-    if (uiController.buildMenu.enabled) {
+    if (uiController.buildMenu.visible) {
       _ctx.fillStyle = 'black';
       _ctx.fillRect(
           uiController.buildMenu.box.left,
@@ -155,7 +187,7 @@ class Renderer {
         for (MapEntry<SoftObjectType, int> ingredientList
             in buildingRecipes[button.type].entries) {
           _ctx.fillText(
-              '${ingredientList.key}: ${ingredientList.value}',
+              '${t(ingredientList.key.toString())}: ${ingredientList.value}',
               uiController.buildMenu.box.left + 40,
               uiController.buildMenu.box.top +
                   button.box.height * i +
@@ -185,6 +217,15 @@ class Renderer {
             button.box.top, button.box.width, button.box.height);
       }
     }
+  }
+
+  void renderCookButton() {
+    _ctx.fillStyle = 'black';
+    fillBox(uiController.cookButton.box);
+    _ctx.fillStyle = 'white';
+    _ctx.font = '12px gameFont';
+    _ctx.fillText('Cook', uiController.cookButton.box.left + 28,
+        uiController.cookButton.box.top + 19);
   }
 
   void renderBuildButton() {
@@ -258,17 +299,7 @@ class Renderer {
     _canvas.width = screenWidth;
     _canvas.height = screenHeight;
     print('Window width: $screenWidth, window height: $screenHeight');
-    uiController.buildMenu
-        .moveAndResize(Box(screenWidth ~/ 10, 100, 200, screenHeight ~/ 2));
-    uiController.inventory.reinitialize(screenWidth, screenHeight);
-    uiController.buildButton.box = Box(uiController.inventory.box.left,
-        uiController.inventory.box.top - 33, 90, 30);
-    uiController.chat.moveAndResize(Box(
-        uiController.inventory.box.right + 20,
-        uiController.inventory.box.top - 100,
-        screenWidth - uiController.inventory.box.width - 60,
-        100 + uiController.inventory.box.height));
-    uiController.hunger.reinitialize(screenWidth, screenHeight);
+    uiController.initialize(screenWidth, screenHeight);
   }
 
   void fillBox(Box box) {
