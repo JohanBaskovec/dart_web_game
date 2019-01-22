@@ -45,10 +45,6 @@ bool playerCanCraft(World world, SoftObjectType type, SolidObject player) {
     print("Can't craft item $type because it has no config.\n");
     return false;
   }
-  if (player.inventory.full) {
-    print("Can't craft item because player's inventory is full.\n");
-    return false;
-  }
 
   if (config.workbench != null) {
     SolidObject workBench;
