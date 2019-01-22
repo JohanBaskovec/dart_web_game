@@ -4,8 +4,10 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:dart_game/common/command/server/server_command.dart';
+import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
+import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/server/client.dart';
 import 'package:dart_game/server/server_world.dart';
 
@@ -119,6 +121,18 @@ class GameServer {
             tree.inventory.addItem(world.addApple());
           }
         }
+      }
+    }
+    for (int x = 0 ; x < worldSize.x ; x++) {
+      for (int y = 0; y < worldSize.y; y++) {
+        final int rand = randomGenerator.nextInt(2);
+        TileType type;
+        if (rand == 0) {
+          type = TileType.grass;
+        } else {
+          type = TileType.dirt;
+        }
+        world.addTileOfType(type, x, y);
       }
     }
   }

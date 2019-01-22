@@ -27,6 +27,10 @@ class World {
     return null;
   }
 
+  Tile addTileOfType(TileType type, int x, int y) {
+    return null;
+  }
+
   void addSoftObject(SoftObject object) {}
 
   void moveSolidObject(SolidObject object, TilePosition position) {}

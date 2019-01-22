@@ -13,11 +13,6 @@ class ClientWorld extends World {
     for (int x = 0; x < worldSize.x; x++) {
       tilesColumn[x] = List(worldSize.y);
     }
-    for (List<Tile> column in tilesColumn) {
-      for (int i = 0; i < column.length; i++) {
-        column[i] = Tile();
-      }
-    }
 
     for (int x = 0; x < worldSize.x; x++) {
       solidObjectColumns[x] = List(worldSize.y);

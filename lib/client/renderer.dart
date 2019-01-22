@@ -14,6 +14,7 @@ import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/i18n.dart';
 import 'package:dart_game/common/session.dart';
+import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/world_position.dart';
 
@@ -24,6 +25,7 @@ class Renderer {
   CanvasPosition cameraPosition;
   Map<SoftObjectType, ImageElement> softImages = {};
   Map<SolidObjectType, ImageElement> solidImages = {};
+  Map<TileType, ImageElement> tileImages = {};
   final Session session;
   final ClientUiController uiController;
 
@@ -36,6 +38,10 @@ class Renderer {
     for (SolidObjectType type in SolidObjectType.values) {
       solidImages[type] = ImageElement();
       solidImages[type].src = '/$type.png';
+    }
+    for (TileType type in TileType.values) {
+      tileImages[type] = ImageElement();
+      tileImages[type].src = '/$type.png';
     }
 
     initializeUi();
@@ -53,8 +59,16 @@ class Renderer {
     if (cameraPosition != null) {
       _ctx.translate(cameraPosition.x, cameraPosition.y);
     }
+    
+    final Box renderingBox = Box(
+      session.player.box.left - ((_canvas.width / 2) * (1 / scale)).toInt(),
+      session.player.box.top - ((_canvas.height / 2) * (1 / scale)).toInt(),
+      ((_canvas.width) * (1 / scale)).toInt(),
+      ((_canvas.height) * (1 / scale)).toInt(),
+    );
 
-    renderSolidObjects(world);
+    renderGround(world, renderingBox);
+    renderSolidObjects(world, renderingBox);
 
     _ctx.setTransform(1, 0, 0, 1, 0, 0);
     renderBuildButton();
@@ -237,13 +251,7 @@ class Renderer {
         uiController.buildButton.box.top + 19);
   }
 
-  void renderSolidObjects(ClientWorld world) {
-    final Box renderingBox = Box(
-      session.player.box.left - ((_canvas.width / 2) * (1 / scale)).toInt(),
-      session.player.box.top - ((_canvas.height / 2) * (1 / scale)).toInt(),
-      ((_canvas.width) * (1 / scale)).toInt(),
-      ((_canvas.height) * (1 / scale)).toInt(),
-    );
+  void renderSolidObjects(ClientWorld world, Box renderingBox) {
     for (SolidObject object in world.solidObjects) {
       if (object != null &&
           object.box.left < renderingBox.right &&
@@ -304,5 +312,20 @@ class Renderer {
 
   void fillBox(Box box) {
     _ctx.fillRect(box.left, box.top, box.width, box.height);
+  }
+
+  void renderGround(ClientWorld world, Box renderingBox) {
+    for (int x = 0 ; x < worldSize.x ; x++) {
+      for (int y = 0; y < worldSize.y; y++) {
+        final tile = world.tilesColumn[x][y];
+        if (tile.box.left < renderingBox.right &&
+            tile.box.right > renderingBox.left &&
+            tile.box.bottom > renderingBox.top &&
+            tile.box.top < renderingBox.bottom) {
+          _ctx.drawImageScaled(tileImages[tile.tileType], tile.box.left,
+              tile.box.top, tile.box.width, tile.box.height);
+        }
+      }
+    }
   }
 }

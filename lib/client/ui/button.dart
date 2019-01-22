@@ -13,9 +13,11 @@ class Button extends UiElement {
     }
   }
 
-  void tryLeftClick(CanvasPosition canvasPosition) {
+  bool tryLeftClick(CanvasPosition canvasPosition) {
     if (box.pointIsInBox(canvasPosition.x, canvasPosition.y)) {
       leftClick();
+      return true;
     }
+    return false;
   }
 }

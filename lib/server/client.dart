@@ -97,7 +97,8 @@ class GameClient {
         softObjects,
         solidObjectSummariesColumns,
         session.player,
-        world.messages);
+        world.messages,
+        world.tilesColumn);
     print('Client connected! $session.player\n');
     sendCommand(loggedInCommand);
   }

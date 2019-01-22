@@ -1,12 +1,14 @@
+import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
 import 'package:dart_game/common/command/server/solid_object_summary.dart';
+import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
-import 'package:dart_game/common/inventory.dart';
 import 'package:dart_game/common/message.dart';
 import 'package:dart_game/common/session.dart';
+import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/ui_controller.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -20,9 +22,15 @@ class LoggedInCommand extends ServerCommand {
   List<List<SolidObjectSummary>> solidObjectSummariesColumns;
   SolidObject player;
   List<Message> messages;
+  List<List<Tile>> tilesColumn;
 
-  LoggedInCommand(this.session, this.softObjects,
-      this.solidObjectSummariesColumns, this.player, this.messages)
+  LoggedInCommand(
+      this.session,
+      this.softObjects,
+      this.solidObjectSummariesColumns,
+      this.player,
+      this.messages,
+      this.tilesColumn)
       : assert(softObjects != null),
         assert(player != null),
         assert(solidObjectSummariesColumns != null),
@@ -45,6 +53,13 @@ class LoggedInCommand extends ServerCommand {
     world.addSolidObject(player);
     softObjects.forEach(world.addSoftObject);
     world.messages = messages;
+    world.tilesColumn = tilesColumn;
+    for (int x = 0 ; x < worldSize.x ; x++) {
+      for (int y = 0; y < worldSize.y; y++) {
+        world.tilesColumn[x][y].box = Box(x * tileSize, y * tileSize, tileSize, tileSize);
+        world.tilesColumn[x][y].position = TilePosition(x, y);
+      }
+    }
     session.playerId = this.session.playerId;
     assert(session.player != null);
     print('Executed LoggedInCommand\n');
@@ -61,6 +76,6 @@ class LoggedInCommand extends ServerCommand {
 
   @override
   String toString() {
-    return 'LoggedInCommand{session: $session, softObjects: $softObjects, solidObjectSummariesColumns: $solidObjectSummariesColumns}';
+    return 'LoggedInCommand{session: $session, softObjects: $softObjects, solidObjectSummariesColumns: $solidObjectSummariesColumns, player: $player, messages: $messages, tilesColumn: $tilesColumn}';
   }
 }
