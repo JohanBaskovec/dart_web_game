@@ -4,7 +4,6 @@ import 'dart:html';
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/client/renderer.dart';
 import 'package:dart_game/client/ui/client_ui_controller.dart';
-import 'package:dart_game/client/ui/inventory_menu.dart';
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/common/building.dart';
 import 'package:dart_game/common/command/client/build_solid_object_command.dart';
@@ -64,6 +63,7 @@ class InputManager {
               break;
             case 'c':
               uiController.buildMenu.visible = false;
+              uiController.cookingMenu.update();
               uiController.cookingMenu.toggleVisible();
               break;
           }
@@ -112,6 +112,11 @@ class InputManager {
             return;
           }
         }
+        if (uiController.cookingMenu.visible) {
+          if (uiController.cookingMenu.clickAt(canvasPosition)) {
+            return;
+          }
+        }
         if (uiController.chat.enabled) {
           if (!uiController.chat.clickAt(canvasPosition)) {
             return;
@@ -132,7 +137,7 @@ class InputManager {
           return;
         }
         uiController.activeInventoryWindow = null;
-        for (int i = 0 ; i < uiController.inventoryMenus.length ; i++) {
+        for (int i = 0; i < uiController.inventoryMenus.length; i++) {
           final inventory = uiController.inventoryMenus[i];
           if (inventory.contains(canvasPosition)) {
             inventory.active = true;
@@ -183,8 +188,19 @@ class InputManager {
   }
 
   void move(int x, int y) {
-    final command = MoveCommand(x, y);
-    webSocketClient.webSocket.send(jsonEncode(command));
+    final target = TilePosition(
+        session.player.tilePosition.x + x, session.player.tilePosition.y + y);
+    if (target.x < worldSize.x &&
+        target.x >= 0 &&
+        target.y < worldSize.y &&
+        target.y >= 0 &&
+        _world.getObjectAt(target) == null) {
+      final command = MoveCommand(x, y);
+      webSocketClient.webSocket.send(jsonEncode(command));
+    } else {
+      print("Can't move to $target.\n");
+      return;
+    }
   }
 
   void rightClickOnSolidObject(SolidObject object) {

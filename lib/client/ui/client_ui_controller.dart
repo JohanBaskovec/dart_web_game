@@ -23,7 +23,15 @@ class ClientUiController extends UiController {
   Button buildButton = Button();
   Button cookButton;
   World world;
-  WebSocketClient webSocketClient;
+  WebSocketClient _webSocketClient;
+
+  WebSocketClient get webSocketClient => _webSocketClient;
+
+  set webSocketClient(WebSocketClient value) {
+    cookingMenu.webSocketClient = value;
+    _webSocketClient = value;
+  }
+
   Session session;
   HungerUi hunger;
 
@@ -37,7 +45,7 @@ class ClientUiController extends UiController {
     cookButton.onLeftClick = () {
       cookingMenu.visible = true;
     };
-    cookingMenu = CookingMenu(session, world);
+    cookingMenu = CookingMenu(session, world, null);
     cookingMenu.visible = false;
     buildMenu.visible = false;
   }
@@ -64,6 +72,7 @@ class ClientUiController extends UiController {
         i--;
       }
     }
+    updateCraftingMenu();
   }
 
   void initialize(int screenWidth, int screenHeight) {
@@ -76,10 +85,16 @@ class ClientUiController extends UiController {
     hunger.reinitialize(screenWidth, screenHeight);
 
     final int craftingMenuTop = hunger.box.bottom + 5;
-    final int craftingMenuWidth = buildButton.box.width + cookButton.box.width + 3;
+    final int craftingMenuWidth =
+        buildButton.box.width + cookButton.box.width + 3;
     buildMenu.box = Box(inventory.box.left, craftingMenuTop, craftingMenuWidth,
         buildButton.box.top - craftingMenuTop - 5);
-    cookingMenu.box = Box(inventory.box.left, craftingMenuTop, craftingMenuWidth,
-        buildButton.box.top - craftingMenuTop - 5);
+    cookingMenu.box = Box(inventory.box.left, craftingMenuTop,
+        craftingMenuWidth, buildButton.box.top - craftingMenuTop - 5);
+  }
+
+  @override
+  void updateCraftingMenu() {
+    cookingMenu.update();
   }
 }

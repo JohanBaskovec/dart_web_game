@@ -116,6 +116,13 @@ class ServerWorld extends World {
     assert(type != null);
     final object = SoftObject(type);
     addSoftObject(object);
+    switch (type) {
+      case SoftObjectType.cookedSnake:
+        object.foodComponent = FoodComponent(60);
+        break;
+      default:
+        break;
+    }
     return object;
   }
 

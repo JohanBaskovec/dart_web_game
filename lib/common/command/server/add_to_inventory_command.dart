@@ -22,6 +22,9 @@ class AddToInventoryCommand extends ServerCommand {
     final SoftObject objectTaken = world.getSoftObject(objectId);
     final SolidObject target = world.getSolidObject(targetId);
     target.inventory.addItem(objectTaken);
+    if (uiController != null) {
+      uiController.updateCraftingMenu();
+    }
     print('Executed $this\n');
   }
 

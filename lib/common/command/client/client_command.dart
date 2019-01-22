@@ -1,5 +1,6 @@
 import 'package:dart_game/common/command/client/build_solid_object_command.dart';
 import 'package:dart_game/common/command/client/client_command_type.dart';
+import 'package:dart_game/common/command/client/craft_command.dart';
 import 'package:dart_game/common/command/client/login_command.dart';
 import 'package:dart_game/common/command/client/move_command.dart';
 import 'package:dart_game/common/command/client/move_to_inventory_command.dart';
@@ -48,6 +49,8 @@ class ClientCommand {
         return MoveToInventoryCommand.fromJson(json);
       case ClientCommandType.useItem:
         return UseItemCommand.fromJson(json);
+      case ClientCommandType.craft:
+        return CraftCommand.fromJson(json);
       case ClientCommandType.unknown:
         break;
     }

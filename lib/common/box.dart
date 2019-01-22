@@ -17,10 +17,10 @@ class Box {
         bottom = top + height;
 
   bool pointIsInBox(double x, double y) {
-    return x > left &&
-        x < right &&
-        y > top &&
-        y < bottom;
+    return x >= left &&
+        x <= right &&
+        y >= top &&
+        y <= bottom;
   }
 
   void move(int x, int y) {
@@ -37,6 +37,22 @@ class Box {
     bottom = y + height;
   }
 
+  void clamp(Box worldBox) {
+    if (left < worldBox.left) {
+      left = worldBox.left;
+    }
+    if (right > worldBox.right) {
+      right = worldBox.right;
+    }
+    if (top < worldBox.top) {
+      top = worldBox.top;
+    }
+    if (bottom > worldBox.bottom) {
+      bottom = worldBox.bottom;
+    }
+    width = right - left;
+    height = bottom - top;
+  }
 
   @override
   String toString() {

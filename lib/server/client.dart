@@ -130,9 +130,11 @@ class GameClient {
       newPlayer.inventory
           .addItem(world.addSoftObjectOfType(SoftObjectType.log));
       newPlayer.inventory
-          .addItem(world.addSoftObjectOfType(SoftObjectType.log));
+          .addItem(world.addSoftObjectOfType(SoftObjectType.leaves));
       newPlayer.inventory
           .addItem(world.addSoftObjectOfType(SoftObjectType.leaves));
+      newPlayer.inventory
+          .addItem(world.addSoftObjectOfType(SoftObjectType.snake));
       world.addSolidObject(newPlayer);
     }
     return newPlayer;
