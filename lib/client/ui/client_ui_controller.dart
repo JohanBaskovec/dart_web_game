@@ -38,6 +38,8 @@ class ClientUiController extends UiController {
       cookingMenu.visible = true;
     };
     cookingMenu = CookingMenu(session, world);
+    cookingMenu.visible = false;
+    buildMenu.visible = false;
   }
 
   @override
@@ -65,14 +67,19 @@ class ClientUiController extends UiController {
   }
 
   void initialize(int screenWidth, int screenHeight) {
-    buildMenu.box = Box(screenWidth ~/ 10, 100, 200, screenHeight ~/ 2);
     inventory.reinitialize(screenWidth, screenHeight);
     buildButton.box = Box(inventory.box.left, inventory.box.top - 33, 90, 30);
-    cookingMenu.box = Box(inventory.box.left, 50, 200, 500);
     cookButton.box = Box(inventory.box.left + buildButton.box.width + 3,
         inventory.box.top - 33, 90, 30);
     chat.moveAndResize(Box(inventory.box.right + 20, inventory.box.top - 100,
         screenWidth - inventory.box.width - 60, 100 + inventory.box.height));
     hunger.reinitialize(screenWidth, screenHeight);
+
+    final int craftingMenuTop = hunger.box.bottom + 5;
+    final int craftingMenuWidth = buildButton.box.width + cookButton.box.width + 3;
+    buildMenu.box = Box(inventory.box.left, craftingMenuTop, craftingMenuWidth,
+        buildButton.box.top - craftingMenuTop - 5);
+    cookingMenu.box = Box(inventory.box.left, craftingMenuTop, craftingMenuWidth,
+        buildButton.box.top - craftingMenuTop - 5);
   }
 }

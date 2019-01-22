@@ -12,6 +12,7 @@ import 'package:dart_game/common/building.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
+import 'package:dart_game/common/i18n.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/world_position.dart';
@@ -60,6 +61,7 @@ class Renderer {
     renderCookButton();
     renderPlayerInventory(world);
     renderBuildMenu();
+    renderCookingMenu();
     renderInventoryMenus(world);
     renderChat(world);
     renderHungerMeter();
@@ -138,34 +140,30 @@ class Renderer {
       }
     }
   }
-  
+
   void renderCookingMenu() {
     final CookingMenu cookingMenu = uiController.cookingMenu;
-    if (uiController.cookingMenu.visible) {
+    if (cookingMenu.visible) {
       _ctx.fillStyle = 'black';
-      _ctx.fillRect(
-          uiController.cookingMenu.box.left,
-          uiController.cookingMenu.box.top,
-          uiController.cookingMenu.box.width,
-          uiController.cookingMenu.box.height);
+      _ctx.fillRect(cookingMenu.box.left, cookingMenu.box.top,
+          cookingMenu.box.width, cookingMenu.box.height);
 
-      for (int i = 0; i < uiController.cookingMenu.buttons.length; i++) {
-        final button = uiController.cookingMenu.buttons[i];
-        _ctx.drawImageScaled(solidImages[button.type], button.box.left,
+      for (int i = 0; i < cookingMenu.buttons.length; i++) {
+        final button = cookingMenu.buttons[i];
+        _ctx.drawImageScaled(softImages[button.objectType], button.box.left,
             button.box.top, button.box.width, button.box.height);
         _ctx.fillStyle = 'white';
         var k = 0;
-        for (MapEntry<SoftObjectType, int> ingredientList
-        in buildingRecipes[button.type].entries) {
+        final CraftingConfiguration craftingConfig =
+            craftingRecipes[button.objectType];
+        for (var requiredItems in craftingConfig.requiredItems.entries) {
           _ctx.fillText(
-              '${ingredientList.key}: ${ingredientList.value}',
-              uiController.cookingMenu.box.left + 40,
-              uiController.cookingMenu.box.top +
-                  button.box.height * i +
-                  15 +
-                  k * 10);
+              '${t(requiredItems.key.toString())}: ${requiredItems.value}',
+              cookingMenu.box.left + 40,
+              cookingMenu.box.top + button.box.height * i + 15 + k * 10);
           k++;
         }
+        k++;
         _ctx.fillStyle = 'black';
       }
     }
@@ -189,7 +187,7 @@ class Renderer {
         for (MapEntry<SoftObjectType, int> ingredientList
             in buildingRecipes[button.type].entries) {
           _ctx.fillText(
-              '${ingredientList.key}: ${ingredientList.value}',
+              '${t(ingredientList.key.toString())}: ${ingredientList.value}',
               uiController.buildMenu.box.left + 40,
               uiController.buildMenu.box.top +
                   button.box.height * i +
