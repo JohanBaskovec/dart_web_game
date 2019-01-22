@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dart_game/client/ui/build_menu.dart';
 import 'package:dart_game/client/ui/button.dart';
 import 'package:dart_game/client/ui/chat.dart';
@@ -80,8 +82,9 @@ class ClientUiController extends UiController {
     buildButton.box = Box(inventory.box.left, inventory.box.top - 33, 90, 30);
     cookButton.box = Box(inventory.box.left + buildButton.box.width + 3,
         inventory.box.top - 33, 90, 30);
+    final int chatWidth = max(100, screenWidth - inventory.box.width - 60);
     chat.moveAndResize(Box(inventory.box.right + 20, inventory.box.top - 100,
-        screenWidth - inventory.box.width - 60, 100 + inventory.box.height));
+        chatWidth, 100 + inventory.box.height));
     hunger.reinitialize(screenWidth, screenHeight);
 
     final int craftingMenuTop = hunger.box.bottom + 5;
