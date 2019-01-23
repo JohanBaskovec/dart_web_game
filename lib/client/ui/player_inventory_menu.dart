@@ -36,24 +36,39 @@ class PlayerInventoryMenu extends UiElement {
     box = Box(20, screenHeight - height - marginBottom, width, height);
   }
 
-  void clickAt(CanvasPosition canvasPosition, bool shift) {
-    final activeInventoryWindow = uiController.activeInventoryWindow;
-    if (shift && activeInventoryWindow != null) {
+  bool shiftLeftClick(CanvasPosition position) {
+    if (uiController.craftingInventory.visible) {
       for (int i = 0; i < buttons.length; i++) {
-        if (buttons[i].box.pointIsInBox(canvasPosition.x, canvasPosition.y)) {
+        if (buttons[i].box.pointIsInBox(position.x, position.y)) {
+          uiController.craftingInventory.items.add(buttons[i].itemId);
+          uiController.craftingInventory.update();
+          session.player.inventory.items.remove(buttons[i].itemId);
           print('Shift-left-click on item n°$i in player inventory');
-          webSocketClient.sendCommand(MoveToInventoryCommand(
-              activeInventoryWindow.owner.id, buttons[i].itemId));
-          break;
+          return true;
         }
       }
-    } else if (!shift) {
-      for (int i = 0; i < buttons.length; i++) {
-        if (buttons[i].box.pointIsInBox(canvasPosition.x, canvasPosition.y)) {
-          print('Left-click on item n°$i in player inventory');
-          webSocketClient.sendCommand(SetEquippedItemClientCommand(i));
-          break;
+    } else {
+      final activeInventoryWindow = uiController.activeInventoryWindow;
+      if (activeInventoryWindow != null) {
+        for (int i = 0; i < buttons.length; i++) {
+          if (buttons[i].box.pointIsInBox(position.x, position.y)) {
+            print('Shift-left-click on item n°$i in player inventory');
+            webSocketClient.sendCommand(MoveToInventoryCommand(
+                activeInventoryWindow.owner.id, buttons[i].itemId));
+            return true;
+          }
         }
+      }
+    }
+    return false;
+  }
+
+  void leftClick(CanvasPosition canvasPosition) {
+    for (int i = 0; i < buttons.length; i++) {
+      if (buttons[i].box.pointIsInBox(canvasPosition.x, canvasPosition.y)) {
+        print('Left-click on item n°$i in player inventory');
+        webSocketClient.sendCommand(SetEquippedItemClientCommand(i));
+        break;
       }
     }
   }

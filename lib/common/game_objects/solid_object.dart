@@ -5,6 +5,7 @@ import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/hunger_component.dart';
 import 'package:dart_game/common/inventory.dart';
+import 'package:dart_game/common/player_skills.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/server/client.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -39,6 +40,8 @@ class SolidObject {
   SolidObjectType type;
   int _id;
 
+  PlayerSkills playerSkills;
+
   int get id => _id;
 
   void set id(int value) {
@@ -55,7 +58,7 @@ class SolidObject {
   }
 
   String name;
-
+  double quality;
   int ownerId;
 
   @JsonKey(ignore: true)
@@ -85,7 +88,7 @@ class SolidObject {
   HungerComponent _hungerComponent;
   AgeComponent _ageComponent;
 
-  SolidObject([this.type, TilePosition tilePosition]) {
+  SolidObject(this.quality, [this.type, TilePosition tilePosition]) {
     this.tilePosition = tilePosition;
     switch (type) {
       case SolidObjectType.box:
@@ -144,9 +147,10 @@ class SolidObject {
   /// Convert this object to a JSON object.
   Map<String, dynamic> toJson() => _$SolidObjectToJson(this);
 
+
   @override
   String toString() {
-    return 'SolidObject{type: $type, id: $id, name: $name, _tilePosition: $_tilePosition, inventory: $inventory, nGatherableItems: $nGatherableItems, box: $box, alive: $alive, _hungerComponent: $_hungerComponent, _ageComponent: $_ageComponent}';
+    return 'SolidObject{type: $type, _id: $_id, playerSkills: $playerSkills, name: $name, quality: $quality, ownerId: $ownerId, client: $client, _tilePosition: $_tilePosition, _inventory: $_inventory, nGatherableItems: $nGatherableItems, box: $box, alive: $alive, _hungerComponent: $_hungerComponent, _ageComponent: $_ageComponent}';
   }
 
   double distanceFrom(SolidObject other) {
@@ -165,16 +169,16 @@ class SolidObject {
 
 const int minutesPerYear = 525600;
 
-SolidObject makeTree(int x, int y) {
-  final tree = SolidObject(SolidObjectType.tree, TilePosition(x, y));
+SolidObject makeTree(double quality, int x, int y) {
+  final tree = SolidObject(quality, SolidObjectType.tree, TilePosition(x, y));
   tree.ageComponent = AgeComponent(1000 * minutesPerYear);
   tree.inventory = Inventory();
   tree.nGatherableItems = 1;
   return tree;
 }
 
-SolidObject makeAppleTree(int x, int y) {
-  final tree = SolidObject(SolidObjectType.appleTree, TilePosition(x, y));
+SolidObject makeAppleTree(double quality, int x, int y) {
+  final tree = SolidObject(quality, SolidObjectType.appleTree, TilePosition(x, y));
   tree.ageComponent = AgeComponent(1000 * minutesPerYear);
   tree.inventory = Inventory();
   tree.nGatherableItems = 1;
@@ -182,7 +186,7 @@ SolidObject makeAppleTree(int x, int y) {
 }
 
 SolidObject makePlayer(int x, int y) {
-  final player = SolidObject(SolidObjectType.player, TilePosition(x, y));
+  final player = SolidObject(1, SolidObjectType.player, TilePosition(x, y));
   player.ageComponent = AgeComponent(100 * minutesPerYear);
   player.inventory = Inventory();
   player.inventory.private = true;

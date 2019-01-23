@@ -6,6 +6,7 @@ import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/gathering.dart';
+import 'package:dart_game/common/player_skills.dart';
 import 'package:dart_game/server/client.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -63,7 +64,10 @@ class UseObjectOnSolidObjectCommand extends ClientCommand {
     assert(target.nGatherableItems > 0);
     target.nGatherableItems--;
 
-    final gatheredItem = world.addSoftObjectOfType(config.gatherableItemsType);
+    final woodCuttingSkill = player.playerSkills.skills[SkillType.woodcutting];
+    final double quality = woodCuttingSkill * target.quality;
+    final gatheredItem =
+        world.addSoftObjectOfType(quality, config.gatherableItemsType);
     final addObjectCommand = AddSoftObjectCommand(gatheredItem);
     addObjectCommand.execute(client.session, world);
     final addToInventoryCommand =

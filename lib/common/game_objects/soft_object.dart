@@ -51,11 +51,12 @@ class SoftObject {
   /// index in inventory if it's in one
   int indexInInventory;
   bool alive = true;
+  double quality;
 
   AgeComponent _ageComponent;
   FoodComponent foodComponent;
 
-  SoftObject([this.type, this.position]);
+  SoftObject(this.quality, this.type, [this.position]);
 
   /// Creates a new [SoftObject] from a JSON object.
   static SoftObject fromJson(Map<dynamic, dynamic> json) => _$SoftObjectFromJson(json);

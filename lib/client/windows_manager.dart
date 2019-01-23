@@ -1,5 +1,5 @@
-import 'package:dart_game/client/ui/inventory_menu.dart';
+import 'package:dart_game/client/ui/entity_inventory_menu.dart';
 
 class WindowsManager {
-  List<InventoryMenu> inventoryMenus = [];
+  List<EntityInventoryMenu> inventoryMenus = [];
 }

@@ -11,6 +11,7 @@ import 'package:dart_game/common/command/client/move_command.dart';
 import 'package:dart_game/common/command/client/open_inventory_command.dart';
 import 'package:dart_game/common/command/client/use_object_on_solid_object_command.dart';
 import 'package:dart_game/common/constants.dart';
+import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/session.dart';
@@ -30,8 +31,8 @@ class InputManager {
   final ClientUiController uiController;
   bool shift = false;
 
-  InputManager(this._body, this._canvas, this._world, this.renderer,
-      this.session, this.uiController);
+  InputManager(
+      this._body, this._canvas, this._world, this.renderer, this.session, this.uiController);
 
   void listen() {
     _body.onClick.listen((MouseEvent e) {
@@ -101,19 +102,28 @@ class InputManager {
         return;
       }
       final bool isRightClick = e.button == 2;
-      final CanvasPosition canvasPosition =
-          renderer.getCursorPositionInCanvas(e);
+      final CanvasPosition canvasPosition = renderer.getCursorPositionInCanvas(e);
       if (canClick) {
         if (renderer.cameraPosition == null) {
           return;
         }
         if (uiController.buildMenu.visible) {
-          if (!uiController.buildMenu.clickAt(canvasPosition)) {
+          if (uiController.buildMenu.leftClickAt(canvasPosition)) {
             return;
+          }
+        }
+        if (uiController.craftingInventory.visible) {
+          if (shift) {
+            if (uiController.craftingInventory.shiftClick(canvasPosition)) {
+              return;
+            }
           }
         }
         if (uiController.cookingMenu.visible) {
           if (uiController.cookingMenu.clickAt(canvasPosition)) {
+            return;
+          }
+          if (uiController.craftingInventory.okButton.tryLeftClick(canvasPosition)) {
             return;
           }
         }
@@ -125,8 +135,10 @@ class InputManager {
         if (uiController.inventory.contains(canvasPosition)) {
           if (isRightClick) {
             uiController.inventory.rightClickAt(canvasPosition);
+          } else if (shift) {
+            uiController.inventory.shiftLeftClick(canvasPosition);
           } else {
-            uiController.inventory.clickAt(canvasPosition, shift);
+            uiController.inventory.leftClick(canvasPosition);
           }
           return;
         }
@@ -151,9 +163,7 @@ class InputManager {
                 i--;
               }
             } else if (shift) {
-              inventory.shiftClick(canvasPosition, inventory);
-            } else {
-              inventory.leftClick(canvasPosition, inventory);
+              inventory.shiftClick(canvasPosition);
             }
             return;
           } else {
@@ -164,14 +174,12 @@ class InputManager {
         final WorldPosition mousePosition =
             renderer.getWorldPositionFromCanvasPosition(canvasPosition);
         final TilePosition tilePosition = TilePosition(
-            (mousePosition.x / tileSize).floor(),
-            (mousePosition.y / tileSize).floor());
+            (mousePosition.x / tileSize).floor(), (mousePosition.y / tileSize).floor());
         if (tilePosition.x >= 0 &&
             tilePosition.x < worldSize.x &&
             tilePosition.y >= 0 &&
             tilePosition.y < worldSize.y) {
-          final objectId =
-              _world.solidObjectColumns[tilePosition.x][tilePosition.y];
+          final objectId = _world.solidObjectColumns[tilePosition.x][tilePosition.y];
           if (objectId == null) {
             clickOnGround(tilePosition);
           } else {
@@ -190,8 +198,8 @@ class InputManager {
   }
 
   void move(int x, int y) {
-    final target = TilePosition(
-        session.player.tilePosition.x + x, session.player.tilePosition.y + y);
+    final target =
+        TilePosition(session.player.tilePosition.x + x, session.player.tilePosition.y + y);
     if (target.x < worldSize.x &&
         target.x >= 0 &&
         target.y < worldSize.y &&
@@ -225,19 +233,19 @@ class InputManager {
   }
 
   bool get canClick {
-    return DateTime.now()
-        .subtract(minDurationBetweenAction)
-        .isAfter(lastClickTime);
+    return DateTime.now().subtract(minDurationBetweenAction).isAfter(lastClickTime);
   }
 
   void clickOnGround(TilePosition tilePosition) {
     print('clickOnGround $tilePosition\n');
-    if (uiController.buildMenu.visible &&
-        uiController.buildMenu.selectedType != null) {
-      if (playerCanBuild(_world, uiController.buildMenu.selectedType,
-          session.player, tilePosition)) {
+    if (uiController.buildMenu.visible && uiController.buildMenu.selectedType != null) {
+      final Iterable<SoftObject> items = _world.getSoftObjects(uiController.craftingInventory.items);
+      if (playerCanBuild(
+          items, _world, uiController.buildMenu.selectedType, session.player, tilePosition)) {
         webSocketClient.webSocket.send(jsonEncode(BuildSolidObjectCommand(
-            uiController.buildMenu.selectedType, tilePosition)));
+            uiController.buildMenu.selectedType,
+            tilePosition,
+            uiController.craftingInventory.items)));
       }
     }
   }

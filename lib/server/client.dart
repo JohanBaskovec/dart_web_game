@@ -10,6 +10,7 @@ import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/hunger_component.dart';
+import 'package:dart_game/common/player_skills.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/server/game_server.dart';
@@ -118,24 +119,33 @@ class GameClient {
     }
     if (newPlayer != null) {
       newPlayer.hungerComponent = HungerComponent(0, 1) as HungerComponent;
-      newPlayer.inventory
-          .addItem(world.addSoftObjectOfType(SoftObjectType.hand));
-      newPlayer.inventory
-          .addItem(world.addSoftObjectOfType(SoftObjectType.axe));
-      newPlayer.inventory
-          .addItem(world.addSoftObjectOfType(SoftObjectType.log));
-      newPlayer.inventory
-          .addItem(world.addSoftObjectOfType(SoftObjectType.log));
-      newPlayer.inventory
-          .addItem(world.addSoftObjectOfType(SoftObjectType.log));
-      newPlayer.inventory
-          .addItem(world.addSoftObjectOfType(SoftObjectType.log));
-      newPlayer.inventory
-          .addItem(world.addSoftObjectOfType(SoftObjectType.leaves));
-      newPlayer.inventory
-          .addItem(world.addSoftObjectOfType(SoftObjectType.leaves));
-      newPlayer.inventory
-          .addItem(world.addSoftObjectOfType(SoftObjectType.snake));
+      final Map<SkillType, double> skills = {
+        SkillType.survival: gameServer.randomGenerator.nextDouble(),
+        SkillType.cooking: gameServer.randomGenerator.nextDouble(),
+        SkillType.carpentry: gameServer.randomGenerator.nextDouble(),
+        SkillType.woodcutting: gameServer.randomGenerator.nextDouble(),
+      };
+
+      newPlayer.playerSkills = PlayerSkills(skills);
+
+      newPlayer.inventory.addItem(world.addSoftObjectOfType(
+          gameServer.randomGenerator.nextDouble(), SoftObjectType.hand));
+      newPlayer.inventory.addItem(world.addSoftObjectOfType(
+          gameServer.randomGenerator.nextDouble(), SoftObjectType.axe));
+      newPlayer.inventory.addItem(world.addSoftObjectOfType(
+          gameServer.randomGenerator.nextDouble(), SoftObjectType.log));
+      newPlayer.inventory.addItem(world.addSoftObjectOfType(
+          gameServer.randomGenerator.nextDouble(), SoftObjectType.log));
+      newPlayer.inventory.addItem(world.addSoftObjectOfType(
+          gameServer.randomGenerator.nextDouble(), SoftObjectType.log));
+      newPlayer.inventory.addItem(world.addSoftObjectOfType(
+          gameServer.randomGenerator.nextDouble(), SoftObjectType.log));
+      newPlayer.inventory.addItem(world.addSoftObjectOfType(
+          gameServer.randomGenerator.nextDouble(), SoftObjectType.leaves));
+      newPlayer.inventory.addItem(world.addSoftObjectOfType(
+          gameServer.randomGenerator.nextDouble(), SoftObjectType.leaves));
+      newPlayer.inventory.addItem(world.addSoftObjectOfType(
+          gameServer.randomGenerator.nextDouble(), SoftObjectType.snake));
       world.addSolidObject(newPlayer);
     }
     return newPlayer;

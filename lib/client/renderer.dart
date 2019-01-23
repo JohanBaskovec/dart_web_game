@@ -5,13 +5,14 @@ import 'package:dart_game/client/client_world.dart';
 import 'package:dart_game/client/ui/client_ui_controller.dart';
 import 'package:dart_game/client/ui/cooking_menu.dart';
 import 'package:dart_game/client/ui/hunger_ui.dart';
-import 'package:dart_game/client/ui/inventory_menu.dart';
+import 'package:dart_game/client/ui/entity_inventory_menu.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/building.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
+import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/i18n.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/tile.dart';
@@ -59,7 +60,7 @@ class Renderer {
     if (cameraPosition != null) {
       _ctx.translate(cameraPosition.x, cameraPosition.y);
     }
-    
+
     final Box renderingBox = Box(
       session.player.box.left - ((_canvas.width / 2) * (1 / scale)).toInt(),
       session.player.box.top - ((_canvas.height / 2) * (1 / scale)).toInt(),
@@ -74,7 +75,8 @@ class Renderer {
     renderBuildButton();
     renderCookButton();
     renderPlayerInventory(world);
-    renderBuildMenu();
+    renderBuildMenu(world);
+    renderCraftingInventory(world);
     renderCookingMenu();
     renderInventoryMenus(world);
     renderChat(world);
@@ -139,7 +141,7 @@ class Renderer {
   }
 
   void renderInventoryMenus(ClientWorld world) {
-    for (InventoryMenu inventory in uiController.inventoryMenus) {
+    for (EntityInventoryMenu inventory in uiController.inventoryMenus) {
       inventory.update();
       _ctx.fillStyle = 'black';
       _ctx.fillRect(inventory.box.left, inventory.box.top, inventory.box.width,
@@ -183,34 +185,63 @@ class Renderer {
     }
   }
 
-  void renderBuildMenu() {
-    if (uiController.buildMenu.visible) {
+  void renderBuildMenu(World world) {
+    final buildMenu = uiController.buildMenu;
+    if (buildMenu.visible) {
       _ctx.fillStyle = 'black';
       _ctx.fillRect(
-          uiController.buildMenu.box.left,
-          uiController.buildMenu.box.top,
-          uiController.buildMenu.box.width,
-          uiController.buildMenu.box.height);
+          buildMenu.box.left,
+          buildMenu.box.top,
+          buildMenu.box.width,
+          buildMenu.box.height);
 
-      for (int i = 0; i < uiController.buildMenu.buttons.length; i++) {
-        final button = uiController.buildMenu.buttons[i];
+      for (int i = 0; i < buildMenu.buttons.length; i++) {
+        final button = buildMenu.buttons[i];
         _ctx.drawImageScaled(solidImages[button.type], button.box.left,
             button.box.top, button.box.width, button.box.height);
         _ctx.fillStyle = 'white';
         var k = 0;
+        final BuildingConfiguration craftingConfiguration =
+            buildingRecipes[button.type];
         for (MapEntry<SoftObjectType, int> ingredientList
-            in buildingRecipes[button.type].entries) {
+            in craftingConfiguration.requiredItems.entries) {
           _ctx.fillText(
               '${t(ingredientList.key.toString())}: ${ingredientList.value}',
-              uiController.buildMenu.box.left + 40,
-              uiController.buildMenu.box.top +
+              buildMenu.box.left + 40,
+              buildMenu.box.top +
                   button.box.height * i +
                   15 +
                   k * 10);
           k++;
         }
         _ctx.fillStyle = 'black';
+
       }
+
+    }
+  }
+  
+  void renderCraftingInventory(World world) {
+    final inventory = uiController.craftingInventory;
+    if (inventory.visible) {
+      _ctx.fillStyle = 'black';
+      _ctx.fillRect(inventory.box.left, inventory.box.top, inventory.box.width,
+          inventory.box.height);
+      for (var i = 0; i < inventory.buttons.length; i++) {
+        final int itemId = inventory.buttons[i].itemId;
+        final SoftObject item = world.getSoftObject(itemId);
+        final InventoryButton button = inventory.buttons[i];
+        final type = item.type;
+        _ctx.drawImageScaled(softImages[type], button.box.left, button.box.top,
+            button.box.width, button.box.height);
+      }
+
+      _ctx.fillStyle = 'black';
+      fillBox(inventory.okButton.box);
+      _ctx.fillStyle = 'white';
+      _ctx.font = '12px gameFont';
+      _ctx.fillText('OK', inventory.okButton.box.left + 28,
+          inventory.okButton.box.top + 19);
     }
   }
 
@@ -315,7 +346,7 @@ class Renderer {
   }
 
   void renderGround(ClientWorld world, Box renderingBox) {
-    for (int x = 0 ; x < worldSize.x ; x++) {
+    for (int x = 0; x < worldSize.x; x++) {
       for (int y = 0; y < worldSize.y; y++) {
         final tile = world.tilesColumn[x][y];
         if (tile.box.left < renderingBox.right &&

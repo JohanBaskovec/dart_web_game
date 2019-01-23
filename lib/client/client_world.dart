@@ -46,9 +46,9 @@ class ClientWorld extends World {
   }
 
   @override
-  SoftObject addSoftObjectOfType(SoftObjectType type) {
+  SoftObject addSoftObjectOfType(double quality, SoftObjectType type) {
     assert(type != null);
-    final object = SoftObject(type);
+    final object = SoftObject(quality, type);
     return object;
   }
 

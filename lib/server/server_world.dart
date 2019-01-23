@@ -99,17 +99,17 @@ class ServerWorld extends World {
     sendCommandToAllClients(serverCommand);
   }
 
-  SoftObject addApple() {
-    final SoftObject apple = addSoftObjectOfType(SoftObjectType.apple);
+  SoftObject addApple(double quality) {
+    final SoftObject apple = addSoftObjectOfType(quality, SoftObjectType.apple);
     apple.foodComponent = FoodComponent(30);
     apple.ageComponent = AgeComponent(minutesPerYear);
     return apple;
   }
 
   @override
-  SoftObject addSoftObjectOfType(SoftObjectType type) {
+  SoftObject addSoftObjectOfType(double quality, SoftObjectType type) {
     assert(type != null);
-    final object = SoftObject(type);
+    final object = SoftObject(quality, type);
     addSoftObject(object);
     switch (type) {
       case SoftObjectType.cookedSnake:

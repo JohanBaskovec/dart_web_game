@@ -14,6 +14,7 @@ class CookingMenu extends UiElement {
   World world;
   List<CookingMenuButton> buttons = [];
   WebSocketClient webSocketClient;
+  SoftObjectType selectedItemType;
 
   CookingMenu(this.session, this.world, this.webSocketClient);
 
@@ -29,16 +30,13 @@ class CookingMenu extends UiElement {
     }
     buttons = [];
     var i = 0;
-    for (MapEntry<SoftObjectType, CraftingConfiguration> config
-        in craftingRecipes.entries) {
-      if (playerCanCraft(world, config.key, session.player)) {
-        final button = CookingMenuButton(
-            config.key, Box(box.left, box.top + 40 * i, 40, 40));
+    for (MapEntry<SoftObjectType, CraftingConfiguration> config in craftingRecipes.entries) {
+      final Iterable<SoftObject> itemsInInventory =
+          session.player.inventory.items.map(world.getSoftObject);
+      if (playerCanCraft(itemsInInventory, world, config.key, session.player)) {
+        final button = CookingMenuButton(config.key, Box(box.left, box.top + 40 * i, 40, 40));
         button.onLeftClick = () {
-          print('clicking on button ${button.objectType}\n');
-          if (playerCanCraft(world, config.key, session.player)) {
-            webSocketClient.sendCommand(CraftCommand(config.key));
-          }
+          selectedItemType = button.objectType;
         };
         buttons.add(button);
         i++;

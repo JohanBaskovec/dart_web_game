@@ -45,7 +45,7 @@ class LoggedInCommand extends ServerCommand {
         if (summary == null) {
           continue;
         }
-        final object = SolidObject(summary.objectType, TilePosition(x, y));
+        final object = SolidObject(1, summary.objectType, TilePosition(x, y));
         object.id = summary.id;
         world.addSolidObject(object);
       }

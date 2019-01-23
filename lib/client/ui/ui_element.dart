@@ -2,7 +2,7 @@ import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/common/box.dart';
 
 abstract class UiElement {
-  Box _box = Box(0, 0, 0, 0);
+  Box _box;
   bool visible = true;
 
   UiElement([this._box]);

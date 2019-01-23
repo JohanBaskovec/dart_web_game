@@ -100,30 +100,34 @@ class GameServer {
       for (int y = 0; y < world.solidObjectColumns[x].length; y++) {
         final int rand = randomGenerator.nextInt(100);
         if (rand < 10) {
-          final tree = makeTree(x, y);
+          final tree = makeTree(randomGenerator.nextDouble(), x, y);
           world.addSolidObject(tree);
           final int nLeaves = randomGenerator.nextInt(2) + 1;
           for (int i = 0; i < nLeaves; i++) {
-            final leaves = world.addSoftObjectOfType(SoftObjectType.leaves);
+            final leaves = world.addSoftObjectOfType(
+                randomGenerator.nextDouble(), SoftObjectType.leaves);
             tree.inventory.addItem(leaves);
           }
 
           final int nSnakes = randomGenerator.nextInt(2);
           for (int i = 0; i < nSnakes; i++) {
-            final snake = world.addSoftObjectOfType(SoftObjectType.snake);
+            final snake = world.addSoftObjectOfType(
+                randomGenerator.nextDouble(), SoftObjectType.snake);
             tree.inventory.addItem(snake);
           }
         } else if (rand < 20) {
-          final tree = makeAppleTree(x, y);
+          final tree = makeAppleTree(randomGenerator.nextDouble(), x, y);
           world.addSolidObject(tree);
+
           final int nApples = randomGenerator.nextInt(2) + 1;
           for (int i = 0; i < nApples; i++) {
-            tree.inventory.addItem(world.addApple());
+            tree.inventory
+                .addItem(world.addApple(randomGenerator.nextDouble()));
           }
         }
       }
     }
-    for (int x = 0 ; x < worldSize.x ; x++) {
+    for (int x = 0; x < worldSize.x; x++) {
       for (int y = 0; y < worldSize.y; y++) {
         final int rand = randomGenerator.nextInt(2);
         TileType type;

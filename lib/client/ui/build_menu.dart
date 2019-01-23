@@ -1,9 +1,13 @@
 import 'package:dart_game/client/canvas_position.dart';
+import 'package:dart_game/client/ui/button.dart';
+import 'package:dart_game/client/ui/crafting_inventory.dart';
+import 'package:dart_game/client/ui/inventory_menu.dart';
+import 'package:dart_game/client/ui/player_inventory_menu.dart';
 import 'package:dart_game/client/ui/ui_element.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/building.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
-import 'package:dart_game/client/ui/button.dart';
+import 'package:dart_game/common/session.dart';
 
 class BuildMenuButton extends Button {
   SolidObjectType type;
@@ -11,11 +15,20 @@ class BuildMenuButton extends Button {
   BuildMenuButton(this.type);
 }
 
+class BuildIngredientsButton extends Button {
+  int itemId;
+
+  BuildIngredientsButton(this.itemId);
+}
+
+
 class BuildMenu extends UiElement {
   List<BuildMenuButton> buttons = [];
+  Session session;
+
   SolidObjectType selectedType;
 
-  BuildMenu() {
+  BuildMenu(this.session): super() {
     for (SolidObjectType type in buildingRecipes.keys) {
       buttons.add(BuildMenuButton(type));
     }
@@ -24,19 +37,19 @@ class BuildMenu extends UiElement {
   @override
   set box(Box value) {
     super.box = value;
-    for (var i = 0 ; i < buttons.length ; i++) {
+    for (var i = 0; i < buttons.length; i++) {
       buttons[i].box = Box(box.left, box.top + 40 * i, 40, 40);
     }
   }
 
-  bool clickAt(CanvasPosition canvasPosition) {
+  bool leftClickAt(CanvasPosition canvasPosition) {
     for (BuildMenuButton button in buttons) {
       if (button.box.pointIsInBox(canvasPosition.x, canvasPosition.y)) {
         print('clicking on button ${button.type}\n');
         selectedType = button.type;
-        return false;
+        return true;
       }
     }
-    return true;
+    return false;
   }
 }

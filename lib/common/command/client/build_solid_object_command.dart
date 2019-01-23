@@ -16,8 +16,9 @@ part 'build_solid_object_command.g.dart';
 class BuildSolidObjectCommand extends ClientCommand {
   SolidObjectType objectType;
   TilePosition position;
+  List<int> itemIds;
 
-  BuildSolidObjectCommand(this.objectType, this.position)
+  BuildSolidObjectCommand(this.objectType, this.position, this.itemIds)
       : super(ClientCommandType.buildSolidObject);
 
   @override
@@ -40,8 +41,7 @@ class BuildSolidObjectCommand extends ClientCommand {
       return;
     }
     if (world.getObjectAt(position) != null) {
-      print(
-          'Tried to build an object but one already exists at that position!');
+      print('Tried to build an object but one already exists at that position!\n');
       return;
     }
 
@@ -51,9 +51,40 @@ class BuildSolidObjectCommand extends ClientCommand {
       return;
     }
 
-    final Map<SoftObjectType, int> recipe = buildingRecipes[objectType];
-    removeItemsFromInventory(client, recipe, world);
-    final object = SolidObject(objectType, position);
+    final Iterable<SoftObject> items = itemIds.map((itemId) => world.getSoftObject(itemId));
+    if (!playerCanBuild(items, world, objectType, player, position)) {
+      print("Can't build object. The position is too far away "
+          'or not enough items.\n');
+      return;
+    }
+
+    for (int itemId in itemIds) {
+      if (!player.inventory.contains(itemId)) {
+        print("Player inventory doesn't contain $itemId\n");
+        return;
+      }
+    }
+
+    double quality = 0;
+
+    final BuildingConfiguration recipe = buildingRecipes[objectType];
+    final List<SoftObject> itemsToConsume =
+        consumeItemsForCrafting(client, recipe.requiredItems, items, world);
+
+    final removeFromInventoryCommand = RemoveFromInventoryCommand(player.id, []);
+    for (SoftObject item in itemsToConsume) {
+      quality += item.quality;
+      removeFromInventoryCommand.idsToRemove.add(item.id);
+      world.removeSoftObject(item);
+    }
+    quality /= items.length;
+    final double skill = player.playerSkills.skills[recipe.skillRequired];
+    quality *= skill;
+
+    removeFromInventoryCommand.execute(client.session, world);
+    client.sendCommand(removeFromInventoryCommand);
+
+    final object = SolidObject(quality, objectType, position);
     world.addSolidObject(object);
   }
 
@@ -69,6 +100,4 @@ class BuildSolidObjectCommand extends ClientCommand {
   String toString() {
     return 'BuildSolidObjectCommand{objectType: $objectType, position: $position}';
   }
-
-
 }

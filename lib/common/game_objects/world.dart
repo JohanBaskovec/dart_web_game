@@ -23,7 +23,7 @@ class World {
 
   void removeSolidObjectAndSynchronizeAllClients(SolidObject object) {}
 
-  SoftObject addSoftObjectOfType(SoftObjectType type) {
+  SoftObject addSoftObjectOfType(double quality, SoftObjectType type) {
     return null;
   }
 
@@ -54,6 +54,9 @@ class World {
     return softObjects[id];
   }
 
+  List<SoftObject> getSoftObjects(Iterable<int> ids) {
+    return ids.map((itemId) => softObjects[itemId]).toList();
+  }
 
   void sendCommandToAllClients(ServerCommand command) {}
 
@@ -62,7 +65,6 @@ class World {
 
   /// Convert this object to a JSON object.
   Map<String, dynamic> toJson() => _$WorldToJson(this);
-  
-  void update() {
-  }
+
+  void update() {}
 }
