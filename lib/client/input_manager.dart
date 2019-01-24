@@ -31,8 +31,8 @@ class InputManager {
   final ClientUiController uiController;
   bool shift = false;
 
-  InputManager(
-      this._body, this._canvas, this._world, this.renderer, this.session, this.uiController);
+  InputManager(this._body, this._canvas, this._world, this.renderer,
+      this.session, this.uiController);
 
   void listen() {
     _body.onClick.listen((MouseEvent e) {
@@ -102,7 +102,8 @@ class InputManager {
         return;
       }
       final bool isRightClick = e.button == 2;
-      final CanvasPosition canvasPosition = renderer.getCursorPositionInCanvas(e);
+      final CanvasPosition canvasPosition =
+          renderer.getCursorPositionInCanvas(e);
       if (canClick) {
         if (renderer.cameraPosition == null) {
           return;
@@ -123,7 +124,8 @@ class InputManager {
           if (uiController.cookingMenu.clickAt(canvasPosition)) {
             return;
           }
-          if (uiController.craftingInventory.okButton.tryLeftClick(canvasPosition)) {
+          if (uiController.craftingInventory.okButton
+              .tryLeftClick(canvasPosition)) {
             return;
           }
         }
@@ -174,12 +176,14 @@ class InputManager {
         final WorldPosition mousePosition =
             renderer.getWorldPositionFromCanvasPosition(canvasPosition);
         final TilePosition tilePosition = TilePosition(
-            (mousePosition.x / tileSize).floor(), (mousePosition.y / tileSize).floor());
+            (mousePosition.x / tileSize).floor(),
+            (mousePosition.y / tileSize).floor());
         if (tilePosition.x >= 0 &&
             tilePosition.x < worldSize.x &&
             tilePosition.y >= 0 &&
             tilePosition.y < worldSize.y) {
-          final objectId = _world.solidObjectColumns[tilePosition.x][tilePosition.y];
+          final objectId =
+              _world.solidObjectColumns[tilePosition.x][tilePosition.y];
           if (objectId == null) {
             clickOnGround(tilePosition);
           } else {
@@ -198,8 +202,8 @@ class InputManager {
   }
 
   void move(int x, int y) {
-    final target =
-        TilePosition(session.player.tilePosition.x + x, session.player.tilePosition.y + y);
+    final target = TilePosition(
+        session.player.tilePosition.x + x, session.player.tilePosition.y + y);
     if (target.x < worldSize.x &&
         target.x >= 0 &&
         target.y < worldSize.y &&
@@ -225,7 +229,14 @@ class InputManager {
 
   void clickOnSolidObject(SolidObject object) {
     print('Clicking on object: $object\n');
-    if (!playerCanGather(session.player, _world, object.id)) {
+    final int currentlyEquippedId = session.player.inventory.currentlyEquiped;
+    final SoftObject currentlyEquipped =
+        _world.getSoftObject(currentlyEquippedId);
+    if (object.type == SolidObjectType.player && !currentlyEquipped.isWeapon) {
+      return;
+    }
+    if (object.type != SolidObjectType.player &&
+        !playerCanGather(session.player, _world, object.id)) {
       return;
     }
     final command = UseObjectOnSolidObjectCommand(object.id);
@@ -233,15 +244,19 @@ class InputManager {
   }
 
   bool get canClick {
-    return DateTime.now().subtract(minDurationBetweenAction).isAfter(lastClickTime);
+    return DateTime.now()
+        .subtract(minDurationBetweenAction)
+        .isAfter(lastClickTime);
   }
 
   void clickOnGround(TilePosition tilePosition) {
     print('clickOnGround $tilePosition\n');
-    if (uiController.buildMenu.visible && uiController.buildMenu.selectedType != null) {
-      final Iterable<SoftObject> items = _world.getSoftObjects(uiController.craftingInventory.items);
-      if (playerCanBuild(
-          items, _world, uiController.buildMenu.selectedType, session.player, tilePosition)) {
+    if (uiController.buildMenu.visible &&
+        uiController.buildMenu.selectedType != null) {
+      final Iterable<SoftObject> items =
+          _world.getSoftObjects(uiController.craftingInventory.items);
+      if (playerCanBuild(items, _world, uiController.buildMenu.selectedType,
+          session.player, tilePosition)) {
         webSocketClient.webSocket.send(jsonEncode(BuildSolidObjectCommand(
             uiController.buildMenu.selectedType,
             tilePosition,

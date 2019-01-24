@@ -1,5 +1,6 @@
 import 'package:dart_game/common/age_component.dart';
 import 'package:dart_game/common/command/food_component.dart';
+import 'package:dart_game/common/player_skills.dart';
 import 'package:dart_game/common/world_position.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -71,6 +72,9 @@ class SoftObject {
     _ageComponent.ownerId = id;
   }
 
+  bool get isWeapon {
+    return weaponTypeToSkillMap[type] != null;
+  }
   /// Convert this object to a JSON object.
   Map<String, dynamic> toJson() => _$SoftObjectToJson(this);
 

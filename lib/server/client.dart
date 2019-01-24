@@ -9,6 +9,7 @@ import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/health/health_component.dart';
 import 'package:dart_game/common/hunger_component.dart';
 import 'package:dart_game/common/player_skills.dart';
 import 'package:dart_game/common/session.dart';
@@ -28,6 +29,10 @@ class GameClient {
 
   void sendCommand(ServerCommand command) {
     webSocket.add(jsonEncode(command.toJson()));
+  }
+
+  void sendCommands(Iterable<ServerCommand> commands) {
+    commands.forEach(sendCommand);
   }
 
   void listen() {
@@ -118,13 +123,11 @@ class GameClient {
       }
     }
     if (newPlayer != null) {
-      newPlayer.hungerComponent = HungerComponent(0, 1) as HungerComponent;
-      final Map<SkillType, double> skills = {
-        SkillType.survival: gameServer.randomGenerator.nextDouble(),
-        SkillType.cooking: gameServer.randomGenerator.nextDouble(),
-        SkillType.carpentry: gameServer.randomGenerator.nextDouble(),
-        SkillType.woodcutting: gameServer.randomGenerator.nextDouble(),
-      };
+      newPlayer.hungerComponent = HungerComponent(0, 1);
+      final Map<SkillType, double> skills = {};
+      for (var skillType in SkillType.values) {
+        skills[skillType] = gameServer.randomGenerator.nextDouble();
+      }
 
       newPlayer.playerSkills = PlayerSkills(skills);
 
@@ -146,6 +149,7 @@ class GameClient {
           gameServer.randomGenerator.nextDouble(), SoftObjectType.leaves));
       newPlayer.inventory.addItem(world.addSoftObjectOfType(
           gameServer.randomGenerator.nextDouble(), SoftObjectType.snake));
+      newPlayer.healthComponent = HealthComponent.normalHumanBody(newPlayer.id);
       world.addSolidObject(newPlayer);
     }
     return newPlayer;

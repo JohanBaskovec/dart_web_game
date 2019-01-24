@@ -183,6 +183,8 @@ class ServerWorld extends World {
           // Remove without sending to clients because
           // they have their own object update loop
           // that delete dead objects
+          final command = RemoveSolidObjectCommand(object.id);
+          sendCommandToAllClients(command);
           removeSolidObject(object);
         }
       }

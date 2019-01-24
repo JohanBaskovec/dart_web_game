@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:dart_game/common/age_component.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/constants.dart';
+import 'package:dart_game/common/health/health_component.dart';
 import 'package:dart_game/common/hunger_component.dart';
 import 'package:dart_game/common/inventory.dart';
 import 'package:dart_game/common/player_skills.dart';
@@ -60,6 +61,16 @@ class SolidObject {
   String name;
   double quality;
   int ownerId;
+  HealthComponent _healthComponent;
+
+  HealthComponent get healthComponent => _healthComponent;
+
+  set healthComponent(HealthComponent value) {
+    if (value != null) {
+      value.ownerId = id;
+    }
+    _healthComponent = value;
+  }
 
   @JsonKey(ignore: true)
   GameClient client;
@@ -147,10 +158,9 @@ class SolidObject {
   /// Convert this object to a JSON object.
   Map<String, dynamic> toJson() => _$SolidObjectToJson(this);
 
-
   @override
   String toString() {
-    return 'SolidObject{type: $type, _id: $_id, playerSkills: $playerSkills, name: $name, quality: $quality, ownerId: $ownerId, client: $client, _tilePosition: $_tilePosition, _inventory: $_inventory, nGatherableItems: $nGatherableItems, box: $box, alive: $alive, _hungerComponent: $_hungerComponent, _ageComponent: $_ageComponent}';
+    return 'SolidObject{type: $type, _id: $_id, playerSkills: $playerSkills, name: $name, quality: $quality, ownerId: $ownerId, healthComponent: $healthComponent, client: $client, _tilePosition: $_tilePosition, _inventory: $_inventory, nGatherableItems: $nGatherableItems, box: $box, alive: $alive, _hungerComponent: $_hungerComponent, _ageComponent: $_ageComponent}';
   }
 
   double distanceFrom(SolidObject other) {
@@ -178,7 +188,8 @@ SolidObject makeTree(double quality, int x, int y) {
 }
 
 SolidObject makeAppleTree(double quality, int x, int y) {
-  final tree = SolidObject(quality, SolidObjectType.appleTree, TilePosition(x, y));
+  final tree =
+      SolidObject(quality, SolidObjectType.appleTree, TilePosition(x, y));
   tree.ageComponent = AgeComponent(1000 * minutesPerYear);
   tree.inventory = Inventory();
   tree.nGatherableItems = 1;

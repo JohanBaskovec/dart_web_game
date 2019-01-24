@@ -127,8 +127,8 @@ class Renderer {
             }
           }
           lines.add(line.toString());
+          height += 18;
         }
-        height += 8;
         if (height > uiController.chat.box.height) {
           break;
         }

@@ -1,0 +1,17 @@
+enum BodyPartType {
+  head,
+  leg,
+  foot,
+  arm,
+  hand,
+  eye,
+  torso,
+  upperBody,
+  stomach,
+  mouth,
+  jaw,
+  lung,
+  liver,
+  heart,
+  knee,
+}
