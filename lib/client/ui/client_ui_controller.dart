@@ -10,6 +10,7 @@ import 'package:dart_game/client/ui/hunger_ui.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/common/box.dart';
+import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/session.dart';
@@ -28,6 +29,7 @@ class ClientUiController extends UiController {
   Button cookButton;
   World world;
   WebSocketClient _webSocketClient;
+  SoftObject draggedItem;
 
   WebSocketClient get webSocketClient => _webSocketClient;
 

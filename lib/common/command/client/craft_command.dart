@@ -23,7 +23,8 @@ class CraftCommand extends ClientCommand {
   void execute(GameClient client, World world) {
     print('Executing $this\n');
     final SolidObject player = client.session.player;
-    final Iterable<SoftObject> items = itemIds.map((itemId) => world.getSoftObject(itemId));
+    final Iterable<SoftObject> items =
+        itemIds.map((itemId) => world.getSoftObject(itemId));
     if (!playerCanCraft(items, world, objectType, player)) {
       print("Player can't craft $objectType\n");
       return;
@@ -35,10 +36,13 @@ class CraftCommand extends ClientCommand {
       }
     }
 
-    final Map<SoftObjectType, int> recipe = craftingRecipes[objectType].requiredItems;
-    final List<SoftObject> itemsToConsume = consumeItemsForCrafting(client, recipe, items, world);
+    final Map<SoftObjectType, int> recipe =
+        craftingRecipes[objectType].requiredItems;
+    final List<SoftObject> itemsToConsume =
+        consumeItemsForCrafting(client, recipe, items, world);
 
-    final removeFromInventoryCommand = RemoveFromInventoryCommand(player.id, []);
+    final removeFromInventoryCommand =
+        RemoveFromInventoryCommand(player.id, []);
     double quality = 0;
     for (SoftObject item in itemsToConsume) {
       quality += item.quality;
@@ -49,16 +53,19 @@ class CraftCommand extends ClientCommand {
     removeFromInventoryCommand.execute(client.session, world);
     client.sendCommand(removeFromInventoryCommand);
 
-    final SoftObject craftedItem = world.addSoftObjectOfType(quality, objectType);
+    final SoftObject craftedItem =
+        world.addSoftObjectOfType(quality, objectType);
     final addSoftObjectCommand = AddSoftObjectCommand(craftedItem);
     client.sendCommand(addSoftObjectCommand);
-    final addToInventoryCommand = AddToInventoryCommand(player.id, craftedItem.id);
+    final addToInventoryCommand =
+        AddToInventoryCommand(player.id, craftedItem.id);
     addToInventoryCommand.execute(client.session, world);
     client.sendCommand(addToInventoryCommand);
   }
 
   /// Creates a new [CraftCommand] from a JSON object.
-  static CraftCommand fromJson(Map<dynamic, dynamic> json) => _$CraftCommandFromJson(json);
+  static CraftCommand fromJson(Map<dynamic, dynamic> json) =>
+      _$CraftCommandFromJson(json);
 
   /// Convert this object to a JSON object.
   @override

@@ -7,6 +7,7 @@ enum ServerCommandType {
   removeFromInventory,
   addSoftObject,
   removeSoftObject,
+  moveSoftObject,
   addTile,
   removeTile,
   setEquippedItem,

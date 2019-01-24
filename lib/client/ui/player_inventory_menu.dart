@@ -63,6 +63,16 @@ class PlayerInventoryMenu extends UiElement {
     return false;
   }
 
+  int dragClick(CanvasPosition canvasPosition) {
+    for (int i = 0; i < buttons.length; i++) {
+      if (buttons[i].box.pointIsInBox(canvasPosition.x, canvasPosition.y)) {
+        print('Drag-click on item ${buttons[i].itemId} in player inventory');
+        return buttons[i].itemId;
+      }
+    }
+    return null;
+  }
+
   void leftClick(CanvasPosition canvasPosition) {
     for (int i = 0; i < buttons.length; i++) {
       if (buttons[i].box.pointIsInBox(canvasPosition.x, canvasPosition.y)) {

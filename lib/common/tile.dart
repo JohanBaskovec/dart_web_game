@@ -10,6 +10,8 @@ enum TileType { grass, dirt }
 @JsonSerializable(anyMap: true)
 class Tile {
   TileType tileType;
+  List<int> itemsOnGround = [];
+
   @JsonKey(ignore: true)
   Box box;
   @JsonKey(ignore: true)

@@ -54,6 +54,10 @@ class World {
     return softObjects[id];
   }
 
+  Tile getTileAt(TilePosition position) {
+    return tilesColumn[position.x][position.y];
+  }
+
   List<SoftObject> getSoftObjects(Iterable<int> ids) {
     return ids.map((itemId) => softObjects[itemId]).toList();
   }

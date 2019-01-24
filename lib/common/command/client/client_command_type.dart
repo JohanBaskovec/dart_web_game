@@ -10,5 +10,6 @@ enum ClientCommandType {
   openInventory,
   useItem,
   craft,
+  dropItem,
   unknown
 }

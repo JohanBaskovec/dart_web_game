@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/command/server/logged_in_command.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
+import 'package:dart_game/common/command/server/server_command_type.dart';
 import 'package:dart_game/common/command/server/solid_object_summary.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
@@ -13,6 +15,7 @@ import 'package:dart_game/common/health/health_component.dart';
 import 'package:dart_game/common/hunger_component.dart';
 import 'package:dart_game/common/player_skills.dart';
 import 'package:dart_game/common/session.dart';
+import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/server/game_server.dart';
 
@@ -77,10 +80,17 @@ class GameClient {
     assert(session.username != null);
     session.player.client = this;
 
-    final List<SoftObject> softObjects =
-        List(session.player.inventory.items.length);
+    final List<SoftObject> softObjects = [];
     for (int i = 0; i < session.player.inventory.size; i++) {
-      softObjects[i] = world.getSoftObject(session.player.inventory[i]);
+      softObjects.add(world.getSoftObject(session.player.inventory[i]));
+    }
+    for (int x = 0 ; x < worldSize.x ; x++) {
+      for (int y = 0 ; y < worldSize.y ; y++) {
+        final Tile tile = world.tilesColumn[x][y];
+        for (int objectId in tile.itemsOnGround) {
+          softObjects.add(world.getSoftObject(objectId));
+        }
+      }
     }
     final List<List<SolidObjectSummary>> solidObjectSummariesColumns =
         List(worldSize.x);

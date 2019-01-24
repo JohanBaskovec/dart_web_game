@@ -7,6 +7,7 @@ import 'package:dart_game/client/ui/client_ui_controller.dart';
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/common/building.dart';
 import 'package:dart_game/common/command/client/build_solid_object_command.dart';
+import 'package:dart_game/common/command/client/drop_item_command.dart';
 import 'package:dart_game/common/command/client/move_command.dart';
 import 'package:dart_game/common/command/client/open_inventory_command.dart';
 import 'package:dart_game/common/command/client/use_object_on_solid_object_command.dart';
@@ -15,6 +16,7 @@ import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/session.dart';
+import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/world_position.dart';
 
@@ -30,6 +32,7 @@ class InputManager {
   final Session session;
   final ClientUiController uiController;
   bool shift = false;
+  CanvasPosition mousePosition = CanvasPosition(0, 0);
 
   InputManager(this._body, this._canvas, this._world, this.renderer,
       this.session, this.uiController);
@@ -98,6 +101,21 @@ class InputManager {
       e.preventDefault();
     });
     _canvas.onMouseDown.listen((MouseEvent e) {
+      final CanvasPosition canvasPosition =
+          renderer.getCursorPositionInCanvas(e);
+      final int draggedItemId =
+          uiController.inventory.dragClick(canvasPosition);
+      if (draggedItemId != null) {
+        uiController.draggedItem = _world.getSoftObject(draggedItemId);
+        print(uiController.draggedItem);
+      }
+    });
+
+    _canvas.onMouseMove.listen((MouseEvent e) {
+      mousePosition.x = e.client.x.toDouble();
+      mousePosition.y = e.client.y.toDouble();
+    });
+    _canvas.onMouseUp.listen((MouseEvent e) {
       if (session.loggedIn == false) {
         return;
       }
@@ -185,7 +203,15 @@ class InputManager {
           final objectId =
               _world.solidObjectColumns[tilePosition.x][tilePosition.y];
           if (objectId == null) {
-            clickOnGround(tilePosition);
+            if (uiController.draggedItem == null) {
+              clickOnGround(tilePosition);
+            } else {
+              final Tile tile = _world.getTileAt(tilePosition);
+              final command = DropItemCommand(mousePosition, uiController.draggedItem.id);
+              webSocketClient.sendCommand(command);
+              print('Dropping item ${uiController.draggedItem}\n');
+              print('Items on this tile: ${tile.itemsOnGround}\n');
+            }
           } else {
             if (e.button == 2) {
               rightClickOnSolidObject(_world.solidObjects[objectId]);
@@ -194,6 +220,8 @@ class InputManager {
             }
           }
         }
+        print('Released dragged item!\n');
+        uiController.draggedItem = null;
       }
     });
     _canvas.onMouseWheel.listen((WheelEvent e) {

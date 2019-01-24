@@ -2,10 +2,11 @@ import 'dart:html';
 
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/client/client_world.dart';
+import 'package:dart_game/client/input_manager.dart';
 import 'package:dart_game/client/ui/client_ui_controller.dart';
 import 'package:dart_game/client/ui/cooking_menu.dart';
-import 'package:dart_game/client/ui/hunger_ui.dart';
 import 'package:dart_game/client/ui/entity_inventory_menu.dart';
+import 'package:dart_game/client/ui/hunger_ui.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/building.dart';
@@ -29,6 +30,7 @@ class Renderer {
   Map<TileType, ImageElement> tileImages = {};
   final Session session;
   final ClientUiController uiController;
+  InputManager inputManager;
 
   Renderer(this._canvas, this.uiController, this.session)
       : _ctx = _canvas.getContext('2d') as CanvasRenderingContext2D {
@@ -70,6 +72,7 @@ class Renderer {
 
     renderGround(world, renderingBox);
     renderSolidObjects(world, renderingBox);
+    renderSoftObjects(world, renderingBox);
 
     _ctx.setTransform(1, 0, 0, 1, 0, 0);
     renderBuildButton();
@@ -81,6 +84,10 @@ class Renderer {
     renderInventoryMenus(world);
     renderChat(world);
     renderHungerMeter();
+    if (uiController.draggedItem != null) {
+      _ctx.drawImageScaled(softImages[uiController.draggedItem.type],
+          inputManager.mousePosition.x, inputManager.mousePosition.y, 40, 40);
+    }
   }
 
   void renderHungerMeter() {
@@ -189,10 +196,7 @@ class Renderer {
     final buildMenu = uiController.buildMenu;
     if (buildMenu.visible) {
       _ctx.fillStyle = 'black';
-      _ctx.fillRect(
-          buildMenu.box.left,
-          buildMenu.box.top,
-          buildMenu.box.width,
+      _ctx.fillRect(buildMenu.box.left, buildMenu.box.top, buildMenu.box.width,
           buildMenu.box.height);
 
       for (int i = 0; i < buildMenu.buttons.length; i++) {
@@ -208,19 +212,14 @@ class Renderer {
           _ctx.fillText(
               '${t(ingredientList.key.toString())}: ${ingredientList.value}',
               buildMenu.box.left + 40,
-              buildMenu.box.top +
-                  button.box.height * i +
-                  15 +
-                  k * 10);
+              buildMenu.box.top + button.box.height * i + 15 + k * 10);
           k++;
         }
         _ctx.fillStyle = 'black';
-
       }
-
     }
   }
-  
+
   void renderCraftingInventory(World world) {
     final inventory = uiController.craftingInventory;
     if (inventory.visible) {
@@ -356,6 +355,15 @@ class Renderer {
           _ctx.drawImageScaled(tileImages[tile.tileType], tile.box.left,
               tile.box.top, tile.box.width, tile.box.height);
         }
+      }
+    }
+  }
+
+  void renderSoftObjects(ClientWorld world, Box renderingBox) {
+    for (SoftObject object in world.softObjects) {
+      if (object != null && object.position != null) {
+        _ctx.drawImageScaled(softImages[object.type], object.position.x,
+            object.position.y, 20, 20);
       }
     }
   }
