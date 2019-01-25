@@ -71,8 +71,8 @@ class Renderer {
     );
 
     renderGround(world, renderingBox);
-    renderSolidObjects(world, renderingBox);
     renderSoftObjects(world, renderingBox);
+    renderSolidObjects(world, renderingBox);
 
     _ctx.setTransform(1, 0, 0, 1, 0, 0);
     renderBuildButton();
@@ -366,5 +366,17 @@ class Renderer {
             object.position.y, 20, 20);
       }
     }
+  }
+
+  bool imageIsTransparent(
+      ImageElement image, int x, int y, Box box) {
+    final CanvasElement imgCanvas = document.getElementById('fake-canvas');
+    final CanvasRenderingContext2D ctx = imgCanvas.getContext('2d');
+    imgCanvas.width = image.width;
+    imgCanvas.height = image.height;
+    ctx.drawImageScaled(image, 0, 0, box.width, box.height);
+    final data = ctx.getImageData(x, y, 1, 1).data;
+    final int pixelTransparency = data[3];
+    return pixelTransparency < 40;
   }
 }

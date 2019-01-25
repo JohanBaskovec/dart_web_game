@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:dart_game/common/constants.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'tile_position.g.dart';
@@ -11,7 +12,10 @@ class TilePosition {
   int y;
 
   TilePosition(this.x, this.y);
-  
+
+  bool get isInWorldBound =>
+      x >= 0 && x < worldSize.x && y >= 0 && y < worldSize.y;
+
   /// Creates a new [TilePosition] from a JSON object.
   static TilePosition fromJson(Map<dynamic, dynamic> json) =>
       _$TilePositionFromJson(json);

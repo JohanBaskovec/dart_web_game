@@ -12,15 +12,15 @@ import 'package:dart_game/common/world_position.dart';
 import 'package:dart_game/server/client.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'drop_item_command.g.dart';
+part 'move_item_command.g.dart';
 
 @JsonSerializable(anyMap: true)
-class DropItemCommand extends ClientCommand {
+class MoveItemCommand extends ClientCommand {
   WorldPosition position;
   int itemId;
 
-  DropItemCommand(this.position, this.itemId)
-      : super(ClientCommandType.dropItem);
+  MoveItemCommand(this.position, this.itemId)
+      : super(ClientCommandType.moveItem);
 
   @override
   void execute(GameClient client, World world) {
@@ -30,7 +30,7 @@ class DropItemCommand extends ClientCommand {
         TilePosition(position.x ~/ tileSize, position.y ~/ tileSize);
     if (tilePos.x >= worldSize.x ||
         tilePos.x < 0 && tilePos.y >= worldSize.y && tilePos.y < 0) {
-      print('Tried to drop item on tile outside of map.\n');
+      print('Tried to Move item on tile outside of map.\n');
       return;
     }
     if (!player.isAdjacentToPosition(tilePos)) {
@@ -38,7 +38,7 @@ class DropItemCommand extends ClientCommand {
       return;
     }
     if (world.getObjectAt(tilePos) != null) {
-      print('Tried to drop item on tile occupied by solid object!');
+      print('Tried to Move item on tile occupied by solid object!');
       return;
     }
     if (!player.inventory.contains(itemId)) {
@@ -59,16 +59,16 @@ class DropItemCommand extends ClientCommand {
     world.sendCommandToAllClients(moveCommand);
   }
 
-  /// Creates a new [DropItemCommand] from a JSON object.
-  static DropItemCommand fromJson(Map<dynamic, dynamic> json) =>
-      _$DropItemCommandFromJson(json);
+  /// Creates a new [MoveItemCommand] from a JSON object.
+  static MoveItemCommand fromJson(Map<dynamic, dynamic> json) =>
+      _$MoveItemCommandFromJson(json);
 
   /// Convert this object to a JSON object.
   @override
-  Map<String, dynamic> toJson() => _$DropItemCommandToJson(this);
+  Map<String, dynamic> toJson() => _$MoveItemCommandToJson(this);
 
   @override
   String toString() {
-    return 'DropItemCommand{position: $position, itemId: $itemId}';
+    return 'MoveItemCommand{position: $position, itemId: $itemId}';
   }
 }

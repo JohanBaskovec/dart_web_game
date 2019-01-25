@@ -111,6 +111,7 @@ class ClientUiController extends UiController {
 
   @override
   void updateCraftingMenu() {
+    inventory.update();
     cookingMenu.update();
     craftingInventory.removeItemsNotInInventory();
   }

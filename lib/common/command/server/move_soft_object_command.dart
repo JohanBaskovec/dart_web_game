@@ -1,3 +1,4 @@
+import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
@@ -28,6 +29,7 @@ class MoveSoftObjectCommand extends ServerCommand {
       final TilePosition originalPosition = item.position.toTilePosition();
       final Tile originalTile = world.getTileAt(originalPosition);
       originalTile.itemsOnGround.remove(objectId);
+      item.initializeBox();
     }
 
     targetTile.itemsOnGround.add(item.id);

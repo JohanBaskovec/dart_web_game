@@ -11,5 +11,6 @@ enum ClientCommandType {
   useItem,
   craft,
   dropItem,
+  moveItem,
   unknown
 }

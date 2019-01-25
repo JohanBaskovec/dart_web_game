@@ -1,4 +1,5 @@
 import 'package:dart_game/common/age_component.dart';
+import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/command/food_component.dart';
 import 'package:dart_game/common/player_skills.dart';
 import 'package:dart_game/common/world_position.dart';
@@ -53,6 +54,11 @@ class SoftObject {
   int indexInInventory;
   bool alive = true;
   double quality;
+  @JsonKey(ignore: true)
+  Box box;
+  void initializeBox() {
+    box = Box(position.x.toInt(), position.y.toInt(), 20, 20);
+  }
 
   AgeComponent _ageComponent;
   FoodComponent foodComponent;
@@ -82,6 +88,7 @@ class SoftObject {
   String toString() {
     return 'SoftObject{id: $id, type: $type, position: $position, indexInInventory: $indexInInventory, alive: $alive, _ageComponent: $_ageComponent, foodComponent: $foodComponent}';
   }
+
 
 
 }

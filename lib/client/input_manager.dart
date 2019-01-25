@@ -109,6 +109,38 @@ class InputManager {
         uiController.draggedItem = _world.getSoftObject(draggedItemId);
         print(uiController.draggedItem);
       }
+
+      final WorldPosition mousePosition =
+          renderer.getWorldPositionFromCanvasPosition(canvasPosition);
+      final TilePosition tilePosition = mousePosition.toTilePosition();
+      if (tilePosition.isInWorldBound) {
+        final object = _world.getObjectAt(tilePosition);
+        if (object != null) {
+          final int relativeX = mousePosition.x.toInt() - object.box.left;
+          final int relativeY = mousePosition.y.toInt() - object.box.top;
+          if (!renderer.imageIsTransparent(renderer.solidImages[object.type], relativeX, relativeY, object.box)) {
+            return;
+          }
+        }
+        final Tile tile = _world.getTileAt(tilePosition);
+        if (tile.itemsOnGround.isNotEmpty) {
+          for (int i = tile.itemsOnGround.length - 1; i > -1; i--) {
+            final int itemId = tile.itemsOnGround[i];
+            final SoftObject item = _world.getSoftObject(itemId);
+            if (item.box.pointIsInBox(mousePosition.x, mousePosition.y)) {
+              final int relativeX = mousePosition.x.toInt() - item.box.left;
+              final int relativeY = mousePosition.y.toInt() - item.box.top;
+              final image = renderer.softImages[item.type];
+              if (!renderer.imageIsTransparent(image, relativeX, relativeY, item.box)) {
+                print('clicked on item ${item.type}!');
+                print('$relativeX:$relativeY');
+                uiController.draggedItem = item;
+                break;
+              }
+            }
+          }
+        }
+      }
     });
 
     _canvas.onMouseMove.listen((MouseEvent e) {
@@ -193,30 +225,25 @@ class InputManager {
         uiController.chat.input.active = false;
         final WorldPosition mousePosition =
             renderer.getWorldPositionFromCanvasPosition(canvasPosition);
-        final TilePosition tilePosition = TilePosition(
-            (mousePosition.x / tileSize).floor(),
-            (mousePosition.y / tileSize).floor());
-        if (tilePosition.x >= 0 &&
-            tilePosition.x < worldSize.x &&
-            tilePosition.y >= 0 &&
-            tilePosition.y < worldSize.y) {
-          final objectId =
-              _world.solidObjectColumns[tilePosition.x][tilePosition.y];
-          if (objectId == null) {
+        final TilePosition tilePosition = mousePosition.toTilePosition();
+        if (tilePosition.isInWorldBound) {
+          final object = _world.getObjectAt(tilePosition);
+          if (object == null) {
             if (uiController.draggedItem == null) {
               clickOnGround(tilePosition);
             } else {
               final Tile tile = _world.getTileAt(tilePosition);
-              final command = DropItemCommand(mousePosition, uiController.draggedItem.id);
+              final command =
+                  DropItemCommand(mousePosition, uiController.draggedItem.id);
               webSocketClient.sendCommand(command);
               print('Dropping item ${uiController.draggedItem}\n');
               print('Items on this tile: ${tile.itemsOnGround}\n');
             }
           } else {
             if (e.button == 2) {
-              rightClickOnSolidObject(_world.solidObjects[objectId]);
+              rightClickOnSolidObject(object);
             } else {
-              clickOnSolidObject(_world.solidObjects[objectId]);
+              clickOnSolidObject(object);
             }
           }
         }
@@ -257,6 +284,10 @@ class InputManager {
 
   void clickOnSolidObject(SolidObject object) {
     print('Clicking on object: $object\n');
+    if (object == session.player) {
+      print('Clicked on self.\n');
+      return;
+    }
     final int currentlyEquippedId = session.player.inventory.currentlyEquiped;
     final SoftObject currentlyEquipped =
         _world.getSoftObject(currentlyEquippedId);
