@@ -75,6 +75,10 @@ class World {
     return ids.map((itemId) => softObjects[itemId]).toList();
   }
 
+  void removeSoftObjectId(int id) {
+
+  }
+
   void sendCommandToAllClients(ServerCommand command) {}
 
   /// Creates a new [World] from a JSON object.

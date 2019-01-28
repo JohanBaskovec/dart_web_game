@@ -16,5 +16,6 @@ enum ServerCommandType {
   setHunger,
   setAge,
   dropSoftObject,
+  removeSoftObjectFromGround,
   unknown
 }

@@ -9,6 +9,7 @@ import 'package:dart_game/common/command/client/move_to_inventory_command.dart';
 import 'package:dart_game/common/command/client/open_inventory_command.dart';
 import 'package:dart_game/common/command/client/send_message_command.dart';
 import 'package:dart_game/common/command/client/set_equipped_item_client_command.dart';
+import 'package:dart_game/common/command/client/take_from_ground_command.dart';
 import 'package:dart_game/common/command/client/take_from_inventory_command.dart';
 import 'package:dart_game/common/command/client/use_item_command.dart';
 import 'package:dart_game/common/command/client/use_object_on_solid_object_command.dart';
@@ -57,6 +58,8 @@ class ClientCommand {
         return DropItemCommand.fromJson(json);
       case ClientCommandType.moveItem:
         return MoveItemCommand.fromJson(json);
+      case ClientCommandType.takeFromGround:
+        return TakeFromGroundCommand.fromJson(json);
       case ClientCommandType.unknown:
         break;
     }

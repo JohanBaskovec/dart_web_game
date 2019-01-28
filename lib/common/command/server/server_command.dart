@@ -7,6 +7,7 @@ import 'package:dart_game/common/command/server/logged_in_command.dart';
 import 'package:dart_game/common/command/server/move_soft_object_command.dart';
 import 'package:dart_game/common/command/server/move_solid_object_command.dart';
 import 'package:dart_game/common/command/server/remove_from_inventory_command.dart';
+import 'package:dart_game/common/command/server/remove_soft_object_from_ground_command.dart';
 import 'package:dart_game/common/command/server/remove_solid_object_command.dart';
 import 'package:dart_game/common/command/server/send_inventory_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
@@ -61,6 +62,8 @@ class ServerCommand {
         return MoveSoftObjectCommand.fromJson(json);
       case ServerCommandType.dropSoftObject:
         return DropSoftObjectServerCommand.fromJson(json);
+      case ServerCommandType.removeSoftObjectFromGround:
+        return RemoveSoftObjectFromGroundCommand.fromJson(json);
       case ServerCommandType.setAge:
       case ServerCommandType.addTile:
       case ServerCommandType.removeSoftObject:

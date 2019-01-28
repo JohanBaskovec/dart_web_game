@@ -54,15 +54,18 @@ class SoftObject {
   WorldPosition get position => _position;
 
   set position(WorldPosition value) {
+    _position = value;
     if (value == null) {
+      box = null;
       return;
     }
-    _position = value;
     box = Box(_position.x.toInt(), _position.y.toInt(), 20, 20);
   }
 
   /// index in inventory if it's in one
   int indexInInventory;
+  bool get inInventory => indexInInventory != null;
+
   bool alive = true;
   double quality;
   @JsonKey(ignore: true)

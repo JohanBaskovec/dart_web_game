@@ -2,7 +2,6 @@ import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/command/client/client_command_type.dart';
 import 'package:dart_game/common/command/server/add_soft_object_command.dart';
 import 'package:dart_game/common/command/server/drop_soft_object_server_command.dart';
-import 'package:dart_game/common/command/server/move_soft_object_command.dart';
 import 'package:dart_game/common/command/server/remove_from_inventory_command.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';

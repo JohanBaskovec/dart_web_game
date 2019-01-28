@@ -67,6 +67,14 @@ class ClientWorld extends World {
   }
 
   @override
+  void removeSoftObjectId(int id) {
+    if (softObjects.length <= id) {
+      return;
+    }
+    softObjects.removeAt(id);
+  }
+
+  @override
   void sendCommandToAllClients(ServerCommand command) {
     throw Exception('Can\'t send command to clients from a client!');
   }

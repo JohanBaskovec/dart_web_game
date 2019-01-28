@@ -23,6 +23,7 @@ class AddToInventoryCommand extends ServerCommand {
     final SolidObject target = world.getSolidObject(targetId);
     target.inventory.addItem(objectTaken);
     if (uiController != null) {
+      uiController.dropItemIfDragging(objectId);
       uiController.updateCraftingMenu();
     }
     print('Executed $this\n');
@@ -40,6 +41,4 @@ class AddToInventoryCommand extends ServerCommand {
   String toString() {
     return 'AddToInventoryCommand{objectId: $objectId}';
   }
-
-
 }

@@ -31,10 +31,20 @@ bool playerCanGather(SolidObject player, World world, int targetId) {
   final SoftObject item = world.getSoftObject(equippedItemId);
 
   final GatheringConfig config = gatheringConfigs[target.type];
-  if (config == null ||
-      item.type != config.tool ||
-      target.nGatherableItems == 0 ||
-      player.inventory.full) {
+  if (config == null) {
+    print("Object of type ${target.type} can't be mined.\n");
+    return false;
+  }
+  if (item.type != config.tool) {
+    print('Required item ${config.tool} not equipped.\n');
+    return false;
+  }
+  if (target.nGatherableItems == 0) {
+    print('No gatherable items left.\n');
+    return false;
+  }
+  if (player.inventory.full) {
+    print("Player's inventory is full.\n");
     return false;
   }
   return true;
@@ -88,18 +98,15 @@ class UseObjectOnSolidObjectCommand extends ClientCommand {
     final BodyPart bodyPart = bodyParts[r];
     target.healthComponent.attackBodyPart(bodyPart, damage);
     final List<AddMessageCommand> addMessageCommands = [];
-    addMessageCommands.add(AddMessageCommand(
-        Message('Combat', 'Attacked ${bodyPart.name}, causing $damage damages.')
-    ));
+    addMessageCommands.add(AddMessageCommand(Message(
+        'Combat', 'Attacked ${bodyPart.name}, causing $damage damages.')));
     if (bodyPart.status == BodyPartStatus.severed) {
       addMessageCommands.add(AddMessageCommand(
-          Message('Combat', '${bodyPart.name} has been severed!'))
-      );
+          Message('Combat', '${bodyPart.name} has been severed!')));
     }
     if (!target.healthComponent.alive) {
-      addMessageCommands.add(AddMessageCommand(
-          Message('Combat', '${target.name} is dead!'))
-      );
+      addMessageCommands
+          .add(AddMessageCommand(Message('Combat', '${target.name} is dead!')));
       target.alive = false;
     }
     for (ServerCommand command in addMessageCommands) {
@@ -117,11 +124,11 @@ class UseObjectOnSolidObjectCommand extends ClientCommand {
     final woodCuttingSkill = player.playerSkills.skills[SkillType.woodcutting];
     final double quality = woodCuttingSkill * target.quality;
     final gatheredItem =
-    world.addSoftObjectOfType(quality, config.gatherableItemsType);
+        world.addSoftObjectOfType(quality, config.gatherableItemsType);
     final addObjectCommand = AddSoftObjectCommand(gatheredItem);
     addObjectCommand.execute(client.session, world);
     final addToInventoryCommand =
-    AddToInventoryCommand(player.id, gatheredItem.id);
+        AddToInventoryCommand(player.id, gatheredItem.id);
     addToInventoryCommand.execute(client.session, world);
 
     client.sendCommand(addObjectCommand);
