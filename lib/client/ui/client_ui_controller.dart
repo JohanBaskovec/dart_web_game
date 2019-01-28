@@ -121,7 +121,7 @@ class ClientUiController extends UiController {
 
   @override
   void dropItemIfDragging(int id) {
-    if (maybeDraggedItem.id == id) {
+    if (maybeDraggedItem != null && maybeDraggedItem.id == id) {
       dropItem();
     }
   }
