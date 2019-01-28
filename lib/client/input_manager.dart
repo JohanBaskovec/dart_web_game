@@ -33,6 +33,7 @@ class InputManager {
   final Session session;
   final ClientUiController uiController;
   bool shift = false;
+  bool mouseDown = false;
   CanvasPosition mousePosition = CanvasPosition(0, 0);
 
   InputManager(this._body, this._canvas, this._world, this.renderer,
@@ -102,13 +103,14 @@ class InputManager {
       e.preventDefault();
     });
     _canvas.onMouseDown.listen((MouseEvent e) {
+      mouseDown = true;
       final CanvasPosition canvasPosition =
           renderer.getCursorPositionInCanvas(e);
       final int draggedItemId =
           uiController.inventory.dragClick(canvasPosition);
       if (draggedItemId != null) {
-        uiController.draggedItem = _world.getSoftObject(draggedItemId);
-        print(uiController.draggedItem);
+        uiController.maybeDraggedItem = _world.getSoftObject(draggedItemId);
+        print(uiController.maybeDraggedItem);
       }
 
       final WorldPosition mousePosition =
@@ -137,7 +139,7 @@ class InputManager {
                   image, relativeX, relativeY, item.box)) {
                 print('clicked on item ${item.type}!');
                 print('$relativeX:$relativeY');
-                uiController.draggedItem = item;
+                uiController.maybeDraggedItem = item;
                 break;
               }
             }
@@ -149,8 +151,17 @@ class InputManager {
     _canvas.onMouseMove.listen((MouseEvent e) {
       mousePosition.x = e.client.x.toDouble();
       mousePosition.y = e.client.y.toDouble();
+
+      if ((e.movement.x != 0 || e.movement.y != 0) &&
+          uiController.maybeDraggedItem != null) {
+        uiController.dragging = true;
+      }
     });
     _canvas.onMouseUp.listen((MouseEvent e) {
+      mouseDown = false;
+      if (!uiController.dragging) {
+        uiController.dropItem();
+      }
       if (session.loggedIn == false) {
         return;
       }
@@ -212,7 +223,10 @@ class InputManager {
             inventory.active = true;
             uiController.activeInventoryWindow = inventory;
 
-            if (isRightClick) {
+            if (uiController.dragging) {
+              // TODO: drop item into inventory
+              uiController.dropItem();
+            } else if (isRightClick) {
               if (inventory.rightClick(canvasPosition)) {
                 uiController.inventoryMenus.remove(inventory);
                 i--;
@@ -232,19 +246,19 @@ class InputManager {
         if (tilePosition.isInWorldBound) {
           final object = _world.getObjectAt(tilePosition);
           if (object == null) {
-            if (uiController.draggedItem == null) {
+            if (!uiController.dragging) {
               clickOnGround(tilePosition);
             } else {
               final Tile tile = _world.getTileAt(tilePosition);
-              if (uiController.draggedItem.ownerId == null) {
+              if (uiController.maybeDraggedItem.ownerId == null) {
                 print('Dropping item from the ground to the ground\n');
-                final command =
-                    MoveItemCommand(mousePosition, uiController.draggedItem.id);
+                final command = MoveItemCommand(
+                    mousePosition, uiController.maybeDraggedItem.id);
                 webSocketClient.sendCommand(command);
               } else {
                 print('Dropping item from inventory\n');
-                final command =
-                    DropItemCommand(mousePosition, uiController.draggedItem.id);
+                final command = DropItemCommand(
+                    mousePosition, uiController.maybeDraggedItem.id);
                 webSocketClient.sendCommand(command);
               }
               print('Items on this tile: ${tile.itemsOnGround}\n');
@@ -256,9 +270,9 @@ class InputManager {
               clickOnSolidObject(object);
             }
           }
+        } else {
+          uiController.dropItem();
         }
-        print('Released dragged item!\n');
-        uiController.draggedItem = null;
       }
     });
     _canvas.onMouseWheel.listen((WheelEvent e) {

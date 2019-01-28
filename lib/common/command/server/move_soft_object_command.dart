@@ -33,6 +33,10 @@ class MoveSoftObjectCommand extends ServerCommand {
 
     targetTile.itemsOnGround.add(item.id);
     item.position = worldPosition;
+
+    if (uiController != null) {
+      uiController.dropItemIfDragging(item.id);
+    }
   }
 
   /// Creates a new [MoveSoftObjectCommand] from a JSON object.

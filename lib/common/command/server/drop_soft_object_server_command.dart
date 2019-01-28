@@ -35,6 +35,10 @@ class DropSoftObjectServerCommand extends ServerCommand {
     item.indexInInventory = null;
     targetTile.itemsOnGround.add(item.id);
     item.position = worldPosition;
+
+    if (uiController != null) {
+      uiController.dropItemIfDragging(item.id);
+    }
   }
 
   /// Creates a new [DropSoftObjectServerCommand] from a JSON object.

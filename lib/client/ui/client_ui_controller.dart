@@ -29,7 +29,8 @@ class ClientUiController extends UiController {
   Button cookButton;
   World world;
   WebSocketClient _webSocketClient;
-  SoftObject draggedItem;
+  SoftObject maybeDraggedItem;
+  bool dragging = false;
 
   WebSocketClient get webSocketClient => _webSocketClient;
 
@@ -69,7 +70,8 @@ class ClientUiController extends UiController {
 
   @override
   void displayInventory(SolidObject target) {
-    final inventoryMenu = EntityInventoryMenu(target, session.player, webSocketClient);
+    final inventoryMenu =
+        EntityInventoryMenu(target, session.player, webSocketClient);
     inventoryMenu.box = Box(target.box.right, target.box.bottom, 120, 120);
     inventoryMenus.add(inventoryMenu);
     activeInventoryWindow = inventoryMenu;
@@ -91,22 +93,23 @@ class ClientUiController extends UiController {
   void initialize(int screenWidth, int screenHeight) {
     inventory.reinitialize(screenWidth, screenHeight);
     buildButton.box = Box(inventory.box.left, inventory.box.top - 33, 90, 30);
-    cookButton.box =
-        Box(inventory.box.left + buildButton.box.width + 3, inventory.box.top - 33, 90, 30);
+    cookButton.box = Box(inventory.box.left + buildButton.box.width + 3,
+        inventory.box.top - 33, 90, 30);
     final int chatWidth = max(100, screenWidth - inventory.box.width - 60);
-    chat.moveAndResize(Box(
-        inventory.box.right + 20, inventory.box.top - 100, chatWidth, 100 + inventory.box.height));
+    chat.moveAndResize(Box(inventory.box.right + 20, inventory.box.top - 100,
+        chatWidth, 100 + inventory.box.height));
     hunger.reinitialize(screenWidth, screenHeight);
 
     final int craftingMenuTop = hunger.box.bottom + 5;
-    final int craftingMenuWidth = buildButton.box.width + cookButton.box.width + 3;
+    final int craftingMenuWidth =
+        buildButton.box.width + cookButton.box.width + 3;
     buildMenu.box = Box(inventory.box.left, craftingMenuTop, craftingMenuWidth,
         buildButton.box.top - craftingMenuTop - 160);
-    cookingMenu.box = Box(inventory.box.left, craftingMenuTop, craftingMenuWidth,
-        buildMenu.box.height);
+    cookingMenu.box = Box(inventory.box.left, craftingMenuTop,
+        craftingMenuWidth, buildMenu.box.height);
 
-    craftingInventory.box =
-        Box(buildMenu.box.left, buildMenu.box.bottom + 3, buildMenu.box.width, 120);
+    craftingInventory.box = Box(
+        buildMenu.box.left, buildMenu.box.bottom + 3, buildMenu.box.width, 120);
   }
 
   @override
@@ -114,5 +117,17 @@ class ClientUiController extends UiController {
     inventory.update();
     cookingMenu.update();
     craftingInventory.removeItemsNotInInventory();
+  }
+
+  @override
+  void dropItemIfDragging(int id) {
+    if (maybeDraggedItem.id == id) {
+      dropItem();
+    }
+  }
+
+  void dropItem() {
+    dragging = false;
+    maybeDraggedItem = null;
   }
 }

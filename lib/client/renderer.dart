@@ -84,8 +84,8 @@ class Renderer {
     renderInventoryMenus(world);
     renderChat(world);
     renderHungerMeter();
-    if (uiController.draggedItem != null) {
-      _ctx.drawImageScaled(softImages[uiController.draggedItem.type],
+    if (uiController.maybeDraggedItem != null && uiController.dragging) {
+      _ctx.drawImageScaled(softImages[uiController.maybeDraggedItem.type],
           inputManager.mousePosition.x, inputManager.mousePosition.y, 40, 40);
     }
   }

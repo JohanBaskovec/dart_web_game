@@ -3,7 +3,6 @@ import 'package:dart_game/client/ui/button.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
 import 'package:dart_game/client/ui/ui_element.dart';
 import 'package:dart_game/common/box.dart';
-import 'package:dart_game/common/ui_controller.dart';
 
 abstract class InventoryMenu extends UiElement {
   List<InventoryButton> buttons = [];
@@ -44,12 +43,13 @@ abstract class InventoryMenu extends UiElement {
     return false;
   }
 
+  /// Returns true when clicking on the window, but outside the buttons
   bool rightClick(CanvasPosition canvasPosition) {
     for (Button button in buttons) {
       if (button.tryRightClick(canvasPosition)) {
-        return true;
+        return false;
       }
     }
-    return false;
+    return true;
   }
 }

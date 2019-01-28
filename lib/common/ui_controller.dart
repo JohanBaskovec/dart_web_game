@@ -5,4 +5,6 @@ abstract class UiController {
   void displayInventory(SolidObject target);
 
   void updateCraftingMenu() {}
+
+  void dropItemIfDragging(int id) {}
 }
