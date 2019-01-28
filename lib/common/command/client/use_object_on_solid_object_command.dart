@@ -1,9 +1,13 @@
+import 'dart:math';
+
 import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/command/client/client_command_type.dart';
 import 'package:dart_game/common/command/server/add_message_command.dart';
 import 'package:dart_game/common/command/server/add_soft_object_command.dart';
 import 'package:dart_game/common/command/server/add_to_inventory_command.dart';
+import 'package:dart_game/common/command/server/drop_soft_object_server_command.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
+import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
@@ -12,6 +16,8 @@ import 'package:dart_game/common/health/body_part.dart';
 import 'package:dart_game/common/health/body_part_status.dart';
 import 'package:dart_game/common/message.dart';
 import 'package:dart_game/common/player_skills.dart';
+import 'package:dart_game/common/session.dart';
+import 'package:dart_game/common/world_position.dart';
 import 'package:dart_game/server/client.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -79,6 +85,28 @@ class UseObjectOnSolidObjectCommand extends ClientCommand {
 
       gatherResources(client, target, world);
     }
+
+    if (!target.alive && target.inventory != null) {
+      dropInventory(
+          client.session, world, target, client.gameServer.randomGenerator);
+    }
+  }
+
+  void dropInventory(
+      Session session, World world, SolidObject object, Random random) {
+    for (int itemId in object.inventory.items) {
+      final SoftObject item = world.getSoftObject(itemId);
+      final double randX = random.nextDouble() * tileSize;
+      final double randY = random.nextDouble() * tileSize;
+      // we have to do this because the item is moved from inventory to
+      // the ground, and items in player's inventory aren't in the client's
+      // list of items
+      world.sendCommandToAllClients(AddSoftObjectCommand(item));
+      final command = DropSoftObjectServerCommand(itemId,
+          WorldPosition(object.box.left + randX, object.box.top + randY));
+      command.execute(session, world);
+      world.sendCommandToAllClients(command);
+    }
   }
 
   void attackPlayer(GameClient client, SolidObject target, World world) {
@@ -136,6 +164,7 @@ class UseObjectOnSolidObjectCommand extends ClientCommand {
 
     if (target.nGatherableItems == 0) {
       world.removeSolidObjectAndSynchronizeAllClients(target);
+      target.alive = false;
     }
   }
 
