@@ -1,3 +1,4 @@
+import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
@@ -56,6 +57,18 @@ class World {
 
   Tile getTileAt(TilePosition position) {
     return tilesColumn[position.x][position.y];
+  }
+
+  List<Tile> getTileAround(TilePosition position) {
+    final List<Tile> tiles = [];
+    final Box box = Box(position.x - 1, position.y - 1, 2, 2);
+    box.clamp(worldBox);
+    for (int x = box.left; x <= box.right; x++) {
+      for (int y = box.top; y <= box.bottom; y++) {
+        tiles.add(tilesColumn[x][y]);
+      }
+    }
+    return tiles;
   }
 
   List<SoftObject> getSoftObjects(Iterable<int> ids) {

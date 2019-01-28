@@ -8,7 +8,13 @@ class Inventory {
   bool private = false;
   int currentlyEquiped;
   List<int> items = [];
-  int ownerId;
+  int _ownerId;
+
+  int get ownerId => _ownerId;
+
+  set ownerId(int value) {
+    _ownerId = value;
+  }
 
   bool get full => items.length == 9;
 

@@ -1,4 +1,5 @@
 import 'package:dart_game/common/age_component.dart';
+import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/command/food_component.dart';
 import 'package:dart_game/common/command/server/add_solid_object_command.dart';
 
@@ -125,6 +126,8 @@ class ServerWorld extends World {
   Tile addTileOfType(TileType type, int x, int y) {
     final tile = Tile(type);
     tilesColumn[x][y] = tile;
+    tile.box = Box(x * tileSize, y * tileSize, tileSize, tileSize);
+    tile.position = TilePosition(x, y);
     print('addTileOfType $tile');
     return tile;
   }

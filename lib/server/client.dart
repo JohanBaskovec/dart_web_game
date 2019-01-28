@@ -123,6 +123,7 @@ class GameClient {
       for (int y = 0; y < worldSize.y; y++) {
         if (world.solidObjectColumns[x][y] == null) {
           newPlayer = makePlayer(x, y);
+          world.addSolidObject(newPlayer);
           break;
         }
       }
@@ -158,7 +159,6 @@ class GameClient {
       newPlayer.inventory.addItem(world.addSoftObjectOfType(
           gameServer.randomGenerator.nextDouble(), SoftObjectType.snake));
       newPlayer.healthComponent = HealthComponent.normalHumanBody(newPlayer.id);
-      world.addSolidObject(newPlayer);
     }
     return newPlayer;
   }

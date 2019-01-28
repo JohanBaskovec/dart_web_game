@@ -15,5 +15,6 @@ enum ServerCommandType {
   sendInventory,
   setHunger,
   setAge,
+  dropSoftObject,
   unknown
 }

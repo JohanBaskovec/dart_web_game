@@ -1,6 +1,7 @@
 import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/command/client/client_command_type.dart';
 import 'package:dart_game/common/command/server/add_soft_object_command.dart';
+import 'package:dart_game/common/command/server/drop_soft_object_server_command.dart';
 import 'package:dart_game/common/command/server/move_soft_object_command.dart';
 import 'package:dart_game/common/command/server/remove_from_inventory_command.dart';
 import 'package:dart_game/common/constants.dart';
@@ -54,9 +55,9 @@ class DropItemCommand extends ClientCommand {
     // the ground, and items in player's inventory aren't in the client's
     // list of items
     world.sendCommandToAllClients(AddSoftObjectCommand(item));
-    final moveCommand = MoveSoftObjectCommand(itemId, position);
-    moveCommand.execute(client.session, world);
-    world.sendCommandToAllClients(moveCommand);
+    final dropCommand = DropSoftObjectServerCommand(itemId, position);
+    dropCommand.execute(client.session, world);
+    world.sendCommandToAllClients(dropCommand);
   }
 
   /// Creates a new [DropItemCommand] from a JSON object.

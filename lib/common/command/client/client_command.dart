@@ -4,6 +4,7 @@ import 'package:dart_game/common/command/client/craft_command.dart';
 import 'package:dart_game/common/command/client/drop_item_command.dart';
 import 'package:dart_game/common/command/client/login_command.dart';
 import 'package:dart_game/common/command/client/move_command.dart';
+import 'package:dart_game/common/command/client/move_item_command.dart';
 import 'package:dart_game/common/command/client/move_to_inventory_command.dart';
 import 'package:dart_game/common/command/client/open_inventory_command.dart';
 import 'package:dart_game/common/command/client/send_message_command.dart';
@@ -54,6 +55,8 @@ class ClientCommand {
         return CraftCommand.fromJson(json);
       case ClientCommandType.dropItem:
         return DropItemCommand.fromJson(json);
+      case ClientCommandType.moveItem:
+        return MoveItemCommand.fromJson(json);
       case ClientCommandType.unknown:
         break;
     }

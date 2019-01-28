@@ -17,7 +17,7 @@ class Tile {
   @JsonKey(ignore: true)
   TilePosition position;
 
-  Tile(this.tileType);
+  Tile(this.tileType, [this.box, this.position]);
 
   /// Creates a new [Tile] from a JSON object.
   static Tile fromJson(Map<dynamic, dynamic> json) => _$TileFromJson(json);

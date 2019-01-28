@@ -9,6 +9,7 @@ import 'package:dart_game/common/building.dart';
 import 'package:dart_game/common/command/client/build_solid_object_command.dart';
 import 'package:dart_game/common/command/client/drop_item_command.dart';
 import 'package:dart_game/common/command/client/move_command.dart';
+import 'package:dart_game/common/command/client/move_item_command.dart';
 import 'package:dart_game/common/command/client/open_inventory_command.dart';
 import 'package:dart_game/common/command/client/use_object_on_solid_object_command.dart';
 import 'package:dart_game/common/constants.dart';
@@ -118,12 +119,13 @@ class InputManager {
         if (object != null) {
           final int relativeX = mousePosition.x.toInt() - object.box.left;
           final int relativeY = mousePosition.y.toInt() - object.box.top;
-          if (!renderer.imageIsTransparent(renderer.solidImages[object.type], relativeX, relativeY, object.box)) {
+          if (!renderer.imageIsTransparent(renderer.solidImages[object.type],
+              relativeX, relativeY, object.box)) {
             return;
           }
         }
-        final Tile tile = _world.getTileAt(tilePosition);
-        if (tile.itemsOnGround.isNotEmpty) {
+        final List<Tile> tiles = _world.getTileAround(tilePosition);
+        for (Tile tile in tiles) {
           for (int i = tile.itemsOnGround.length - 1; i > -1; i--) {
             final int itemId = tile.itemsOnGround[i];
             final SoftObject item = _world.getSoftObject(itemId);
@@ -131,7 +133,8 @@ class InputManager {
               final int relativeX = mousePosition.x.toInt() - item.box.left;
               final int relativeY = mousePosition.y.toInt() - item.box.top;
               final image = renderer.softImages[item.type];
-              if (!renderer.imageIsTransparent(image, relativeX, relativeY, item.box)) {
+              if (!renderer.imageIsTransparent(
+                  image, relativeX, relativeY, item.box)) {
                 print('clicked on item ${item.type}!');
                 print('$relativeX:$relativeY');
                 uiController.draggedItem = item;
@@ -233,10 +236,17 @@ class InputManager {
               clickOnGround(tilePosition);
             } else {
               final Tile tile = _world.getTileAt(tilePosition);
-              final command =
-                  DropItemCommand(mousePosition, uiController.draggedItem.id);
-              webSocketClient.sendCommand(command);
-              print('Dropping item ${uiController.draggedItem}\n');
+              if (uiController.draggedItem.ownerId == null) {
+                print('Dropping item from the ground to the ground\n');
+                final command =
+                    MoveItemCommand(mousePosition, uiController.draggedItem.id);
+                webSocketClient.sendCommand(command);
+              } else {
+                print('Dropping item from inventory\n');
+                final command =
+                    DropItemCommand(mousePosition, uiController.draggedItem.id);
+                webSocketClient.sendCommand(command);
+              }
               print('Items on this tile: ${tile.itemsOnGround}\n');
             }
           } else {

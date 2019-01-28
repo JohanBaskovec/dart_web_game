@@ -2,6 +2,7 @@ import 'package:dart_game/common/command/server/add_message_command.dart';
 import 'package:dart_game/common/command/server/add_soft_object_command.dart';
 import 'package:dart_game/common/command/server/add_solid_object_command.dart';
 import 'package:dart_game/common/command/server/add_to_inventory_command.dart';
+import 'package:dart_game/common/command/server/drop_soft_object_server_command.dart';
 import 'package:dart_game/common/command/server/logged_in_command.dart';
 import 'package:dart_game/common/command/server/move_soft_object_command.dart';
 import 'package:dart_game/common/command/server/move_solid_object_command.dart';
@@ -58,6 +59,8 @@ class ServerCommand {
         return SetHungerCommand.fromJson(json);
       case ServerCommandType.moveSoftObject:
         return MoveSoftObjectCommand.fromJson(json);
+      case ServerCommandType.dropSoftObject:
+        return DropSoftObjectServerCommand.fromJson(json);
       case ServerCommandType.setAge:
       case ServerCommandType.addTile:
       case ServerCommandType.removeSoftObject:

@@ -58,9 +58,6 @@ class ClientWorld extends World {
       softObjects.length = (object.id + 1) * 2;
     }
     softObjects[object.id] = object;
-    if (object.position != null) {
-      object.initializeBox();
-    }
   }
 
   @override

@@ -49,21 +49,29 @@ class SoftObject {
   int id;
   int ownerId;
   SoftObjectType type;
-  WorldPosition position;
+  WorldPosition _position;
+
+  WorldPosition get position => _position;
+
+  set position(WorldPosition value) {
+    if (value == null) {
+      return;
+    }
+    _position = value;
+    box = Box(_position.x.toInt(), _position.y.toInt(), 20, 20);
+  }
+
   /// index in inventory if it's in one
   int indexInInventory;
   bool alive = true;
   double quality;
   @JsonKey(ignore: true)
   Box box;
-  void initializeBox() {
-    box = Box(position.x.toInt(), position.y.toInt(), 20, 20);
-  }
 
   AgeComponent _ageComponent;
   FoodComponent foodComponent;
 
-  SoftObject(this.quality, this.type, [this.position]);
+  SoftObject(this.quality, this.type, [this._position]);
 
   /// Creates a new [SoftObject] from a JSON object.
   static SoftObject fromJson(Map<dynamic, dynamic> json) => _$SoftObjectFromJson(json);
