@@ -54,6 +54,9 @@ class ClientWorld extends World {
 
   @override
   void addSoftObject(SoftObject object) {
+    if (object == null) {
+      return;
+    }
     if (softObjects.length < object.id) {
       softObjects.length = (object.id + 1) * 2;
     }

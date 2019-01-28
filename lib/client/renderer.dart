@@ -310,6 +310,9 @@ class Renderer {
   }
 
   WorldPosition getWorldPositionFromCanvasPosition(CanvasPosition position) {
+    if (cameraPosition == null) {
+      return WorldPosition(0, 0);
+    }
     return WorldPosition((position.x * (1 / scale)) - cameraPosition.x,
         (position.y * (1 / scale)) - cameraPosition.y);
   }

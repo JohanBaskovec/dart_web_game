@@ -116,6 +116,9 @@ class InputManager {
       final WorldPosition mousePosition =
           renderer.getWorldPositionFromCanvasPosition(canvasPosition);
       final TilePosition tilePosition = mousePosition.toTilePosition();
+      if (!session.player.isAdjacentToPosition(tilePosition)) {
+        return;
+      }
       if (tilePosition.isInWorldBound) {
         final object = _world.getObjectAt(tilePosition);
         if (object != null) {
