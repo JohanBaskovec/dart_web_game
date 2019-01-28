@@ -1,8 +1,5 @@
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/client/ui/button.dart';
-import 'package:dart_game/client/ui/crafting_inventory.dart';
-import 'package:dart_game/client/ui/inventory_menu.dart';
-import 'package:dart_game/client/ui/player_inventory_menu.dart';
 import 'package:dart_game/client/ui/ui_element.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/building.dart';
@@ -21,14 +18,13 @@ class BuildIngredientsButton extends Button {
   BuildIngredientsButton(this.itemId);
 }
 
-
 class BuildMenu extends UiElement {
   List<BuildMenuButton> buttons = [];
   Session session;
 
   SolidObjectType selectedType;
 
-  BuildMenu(this.session): super() {
+  BuildMenu(this.session) : super() {
     for (SolidObjectType type in buildingRecipes.keys) {
       buttons.add(BuildMenuButton(type));
     }

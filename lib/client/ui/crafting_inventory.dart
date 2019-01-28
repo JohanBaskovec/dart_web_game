@@ -40,7 +40,6 @@ class CraftingInventory extends InventoryMenu {
     for (InventoryButton button in buttons) {
       button.onShiftLeftClick = () {
         items.remove(button.itemId);
-        session.player.inventory.items.add(button.itemId);
         update();
       };
     }

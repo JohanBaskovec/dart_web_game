@@ -32,7 +32,7 @@ class CraftingConfiguration {
 
 bool playerCanBuild(Iterable<SoftObject> items, World world, SolidObjectType type, SolidObject player,
     TilePosition position) {
-  if (position.distanceFrom(player.tilePosition) >= 2) {
+  if (!player.isAdjacentToPosition(position)) {
     return false;
   }
 
