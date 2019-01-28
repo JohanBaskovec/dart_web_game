@@ -364,15 +364,19 @@ class Renderer {
 
   void renderSoftObjects(ClientWorld world, Box renderingBox) {
     for (SoftObject object in world.softObjects) {
-      if (object != null && object.position != null) {
-        _ctx.drawImageScaled(softImages[object.type], object.position.x,
-            object.position.y, 20, 20);
+      if (object != null &&
+          object.position != null &&
+          object.box.left < renderingBox.right &&
+          object.box.right > renderingBox.left &&
+          object.box.bottom > renderingBox.top &&
+          object.box.top < renderingBox.bottom) {
+        _ctx.drawImageScaled(softImages[object.type], object.box.left,
+            object.box.top, object.box.width, object.box.height);
       }
     }
   }
 
-  bool imageIsTransparent(
-      ImageElement image, int x, int y, Box box) {
+  bool imageIsTransparent(ImageElement image, int x, int y, Box box) {
     final CanvasElement imgCanvas = document.getElementById('fake-canvas');
     final CanvasRenderingContext2D ctx = imgCanvas.getContext('2d');
     imgCanvas.width = image.width;
