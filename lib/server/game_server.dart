@@ -8,6 +8,7 @@ import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/tile.dart';
+import 'package:dart_game/common/world_position.dart';
 import 'package:dart_game/server/client.dart';
 import 'package:dart_game/server/server_world.dart';
 
@@ -24,16 +25,18 @@ class GameServer {
 
   Future<void> listen() async {
     final File worldFile = File('./data/world.json');
+    /*
     if (worldFile.existsSync()) {
       final String worldJson = worldFile.readAsStringSync();
       world = ServerWorld.fromJson(jsonDecode(worldJson) as Map);
       world.gameServer = this;
     } else {
-      world = ServerWorld.fromConstants();
       world.gameServer = this;
-      fillWorldWithStuff();
       worldFile.writeAsStringSync(jsonEncode(world));
     }
+    */
+    world = ServerWorld.fromConstants();
+    fillWorldWithStuff();
     final File uuidFile = File('./data/uuid.txt');
     uuidFile.writeAsStringSync(random256BitsHex());
     startObjectsUpdate();
@@ -78,12 +81,14 @@ class GameServer {
     final WebSocket webSocket = await WebSocketTransformer.upgrade(request);
     final newClient = GameClient(null, webSocket, this);
     newClient.onLeave = () async {
+      /*
       if (newClient.session != null) {
         newClient.session?.player?.client = null;
       }
       clients.remove(newClient);
       newClient.webSocket.close();
       print('Client disconnected.\n');
+      */
     };
     newClient.listen();
     clients.add(newClient);
@@ -96,6 +101,7 @@ class GameServer {
   }
 
   void fillWorldWithStuff() {
+    /*
     for (int x = 0; x < world.solidObjectColumns.length; x++) {
       for (int y = 0; y < world.solidObjectColumns[x].length; y++) {
         final int rand = randomGenerator.nextInt(100);
@@ -139,6 +145,16 @@ class GameServer {
         world.addTileOfType(type, x, y);
       }
     }
+
+    for (int i = 0; i < 100000; i++) {
+      final SoftObject apple = world.addApple(randomGenerator.nextDouble());
+      apple.position = WorldPosition(
+          randomGenerator.nextDouble() * worldSize.x * tileSize,
+          randomGenerator.nextDouble() * worldSize.y * tileSize);
+      final Tile tile = world.getTileAt(apple.position.toTilePosition());
+      tile.itemsOnGround.add(apple.id);
+    }
+      */
   }
 
   Future<void> shutdown() async {

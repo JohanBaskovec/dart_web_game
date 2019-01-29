@@ -70,16 +70,19 @@ class ClientUiController extends UiController {
 
   @override
   void displayInventory(SolidObject target) {
+    /*
     final inventoryMenu =
         EntityInventoryMenu(target, session.player, webSocketClient);
     inventoryMenu.box = Box(target.box.right, target.box.bottom, 120, 120);
     inventoryMenus.add(inventoryMenu);
     activeInventoryWindow = inventoryMenu;
+    */
     return;
   }
 
   @override
   void onPlayerMove() {
+    /*
     for (int i = 0; i < inventoryMenus.length; i++) {
       final inventory = inventoryMenus[i];
       if (!inventory.owner.isAdjacentTo(session.player)) {
@@ -87,6 +90,7 @@ class ClientUiController extends UiController {
         i--;
       }
     }
+    */
     updateCraftingMenu();
   }
 

@@ -1,9 +1,7 @@
 import 'package:dart_game/common/health/body_part_status.dart';
 import 'package:dart_game/common/health/body_part_type.dart';
 import 'package:json_annotation/json_annotation.dart';
-part 'body_part.g.dart';
 
-@JsonSerializable(anyMap: true)
 class BodyPart {
   int health;
   List<BodyPart> parts;
@@ -25,13 +23,6 @@ class BodyPart {
       status = BodyPartStatus.severed;
     }
   }
-
-  /// Creates a new [BodyPart] from a JSON object.
-  static BodyPart fromJson(Map<dynamic, dynamic> json) =>
-      _$BodyPartFromJson(json);
-
-  /// Convert this object to a JSON object.
-  Map<String, dynamic> toJson() => _$BodyPartToJson(this);
 
   @override
   String toString() {

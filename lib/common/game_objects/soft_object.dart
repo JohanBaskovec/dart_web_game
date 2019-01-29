@@ -5,8 +5,6 @@ import 'package:dart_game/common/player_skills.dart';
 import 'package:dart_game/common/world_position.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'soft_object.g.dart';
-
 enum SoftObjectType {
   stone,
   axe,
@@ -43,8 +41,6 @@ enum SoftObjectType {
   cookedSnake
 }
 
-/// Objects that can be traversed
-@JsonSerializable(anyMap: true)
 class SoftObject {
   int id;
   int ownerId;
@@ -68,16 +64,12 @@ class SoftObject {
 
   bool alive = true;
   double quality;
-  @JsonKey(ignore: true)
   Box box;
 
   AgeComponent _ageComponent;
   FoodComponent foodComponent;
 
   SoftObject(this.quality, this.type, [this._position]);
-
-  /// Creates a new [SoftObject] from a JSON object.
-  static SoftObject fromJson(Map<dynamic, dynamic> json) => _$SoftObjectFromJson(json);
 
   AgeComponent get ageComponent => _ageComponent;
 
@@ -92,8 +84,6 @@ class SoftObject {
   bool get isWeapon {
     return weaponTypeToSkillMap[type] != null;
   }
-  /// Convert this object to a JSON object.
-  Map<String, dynamic> toJson() => _$SoftObjectToJson(this);
 
   @override
   String toString() {

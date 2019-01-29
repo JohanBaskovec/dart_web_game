@@ -5,9 +5,6 @@ import 'package:dart_game/client/client_world.dart';
 import 'package:dart_game/client/input_manager.dart';
 import 'package:dart_game/client/ui/client_ui_controller.dart';
 import 'package:dart_game/client/ui/cooking_menu.dart';
-import 'package:dart_game/client/ui/entity_inventory_menu.dart';
-import 'package:dart_game/client/ui/hunger_ui.dart';
-import 'package:dart_game/client/ui/player_inventory_menu.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/building.dart';
 import 'package:dart_game/common/constants.dart';
@@ -16,7 +13,6 @@ import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/i18n.dart';
 import 'package:dart_game/common/session.dart';
-import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/world_position.dart';
 
@@ -27,13 +23,14 @@ class Renderer {
   CanvasPosition cameraPosition;
   Map<SoftObjectType, ImageElement> softImages = {};
   Map<SolidObjectType, ImageElement> solidImages = {};
-  Map<TileType, ImageElement> tileImages = {};
   final Session session;
   final ClientUiController uiController;
   InputManager inputManager;
 
   Renderer(this._canvas, this.uiController, this.session)
       : _ctx = _canvas.getContext('2d') as CanvasRenderingContext2D {
+
+    /*
     for (SoftObjectType type in SoftObjectType.values) {
       softImages[type] = ImageElement();
       softImages[type].src = '/$type.png';
@@ -46,6 +43,7 @@ class Renderer {
       tileImages[type] = ImageElement();
       tileImages[type].src = '/$type.png';
     }
+    */
 
     initializeUi();
   }
@@ -57,6 +55,7 @@ class Renderer {
       return;
     }
 
+    /*
     moveCameraToPlayerPosition(session.player.tilePosition);
     _ctx.scale(scale, scale);
     if (cameraPosition != null) {
@@ -88,15 +87,18 @@ class Renderer {
       _ctx.drawImageScaled(softImages[uiController.maybeDraggedItem.type],
           inputManager.mousePosition.x, inputManager.mousePosition.y, 40, 40);
     }
+    */
   }
 
   void renderHungerMeter() {
+    /*
     final HungerUi hunger = uiController.hunger;
     _ctx.fillStyle = 'black';
     fillBox(hunger.box);
     _ctx.fillStyle = 'white';
     _ctx.fillText('Hunger: ${hunger.session.player.hungerComponent.hunger}',
         hunger.box.left + 6, hunger.box.top + 19);
+        */
   }
 
   void renderChat(ClientWorld world) {
@@ -148,6 +150,7 @@ class Renderer {
   }
 
   void renderInventoryMenus(ClientWorld world) {
+    /*
     for (EntityInventoryMenu inventory in uiController.inventoryMenus) {
       inventory.update();
       _ctx.fillStyle = 'black';
@@ -162,6 +165,7 @@ class Renderer {
             button.box.width, button.box.height);
       }
     }
+    */
   }
 
   void renderCookingMenu() {
@@ -221,6 +225,7 @@ class Renderer {
   }
 
   void renderCraftingInventory(World world) {
+    /*
     final inventory = uiController.craftingInventory;
     if (inventory.visible) {
       _ctx.fillStyle = 'black';
@@ -242,9 +247,11 @@ class Renderer {
       _ctx.fillText('OK', inventory.okButton.box.left + 28,
           inventory.okButton.box.top + 19);
     }
+    */
   }
 
   void renderPlayerInventory(ClientWorld world) {
+    /*
     if (session.player != null) {
       uiController.inventory.update();
       _ctx.fillStyle = 'black';
@@ -261,6 +268,7 @@ class Renderer {
             button.box.top, button.box.width, button.box.height);
       }
     }
+    */
   }
 
   void renderCookButton() {
@@ -282,6 +290,7 @@ class Renderer {
   }
 
   void renderSolidObjects(ClientWorld world, Box renderingBox) {
+    /*
     for (SolidObject object in world.solidObjects) {
       if (object != null &&
           object.box.left < renderingBox.right &&
@@ -292,14 +301,17 @@ class Renderer {
             object.box.top, object.box.width, object.box.height);
       }
     }
+    */
   }
 
   void increaseScale(double increase) {
+    /*
     scale += increase;
     if (scale < 0.05) {
       scale = 0.05;
     }
     moveCameraToPlayerPosition(session.player.tilePosition);
+    */
   }
 
   CanvasPosition getCursorPositionInCanvas(MouseEvent event) {
@@ -348,6 +360,7 @@ class Renderer {
   }
 
   void renderGround(ClientWorld world, Box renderingBox) {
+    /*
     for (int x = 0; x < worldSize.x; x++) {
       for (int y = 0; y < worldSize.y; y++) {
         final tile = world.tilesColumn[x][y];
@@ -360,9 +373,11 @@ class Renderer {
         }
       }
     }
+    */
   }
 
   void renderSoftObjects(ClientWorld world, Box renderingBox) {
+    /*
     for (SoftObject object in world.softObjects) {
       if (object != null &&
           object.position != null &&
@@ -374,6 +389,7 @@ class Renderer {
             object.box.top, object.box.width, object.box.height);
       }
     }
+    */
   }
 
   bool imageIsTransparent(ImageElement image, int x, int y, Box box) {

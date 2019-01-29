@@ -4,10 +4,6 @@ import 'package:dart_game/client/ui/client_ui_controller.dart';
 import 'package:dart_game/client/ui/ui_element.dart';
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/common/box.dart';
-import 'package:dart_game/common/command/client/move_to_inventory_command.dart';
-import 'package:dart_game/common/command/client/set_equipped_item_client_command.dart';
-import 'package:dart_game/common/command/client/take_from_ground_command.dart';
-import 'package:dart_game/common/command/client/use_item_command.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/session.dart';
 
@@ -55,8 +51,10 @@ class PlayerInventoryMenu extends UiElement {
         for (int i = 0; i < buttons.length; i++) {
           if (buttons[i].box.pointIsInBox(position.x, position.y)) {
             print('Shift-left-click on item n°$i in player inventory');
+            /*
             webSocketClient.sendCommand(MoveToInventoryCommand(
                 activeInventoryWindow.owner.id, buttons[i].itemId));
+                */
             return true;
           }
         }
@@ -78,20 +76,22 @@ class PlayerInventoryMenu extends UiElement {
   void leftClick(CanvasPosition canvasPosition) {
     if (uiController.dragging) {
       final SoftObject item = uiController.maybeDraggedItem;
+      /*
       if (session.player.inventory.contains(item.id)) {
         // TODO: move items inside the inventory
       } else {
         if (item.inInventory) {
           // TODO: move item from inventory to player's inventory
         } else {
-          webSocketClient.sendCommand(TakeFromGroundCommand(item.id));
+          //webSocketClient.sendCommand(TakeFromGroundCommand(item.id));
         }
       }
+      */
     }
     for (int i = 0; i < buttons.length; i++) {
       if (buttons[i].box.pointIsInBox(canvasPosition.x, canvasPosition.y)) {
         print('Left-click on item n°$i in player inventory');
-        webSocketClient.sendCommand(SetEquippedItemClientCommand(i));
+        //webSocketClient.sendCommand(SetEquippedItemClientCommand(i));
         break;
       }
     }
@@ -101,13 +101,14 @@ class PlayerInventoryMenu extends UiElement {
     for (int i = 0; i < buttons.length; i++) {
       if (buttons[i].box.pointIsInBox(position.x, position.y)) {
         print('Right-click on item n°$i in player inventory');
-        webSocketClient.sendCommand(UseItemCommand(buttons[i].itemId));
+        //webSocketClient.sendCommand(UseItemCommand(buttons[i].itemId));
         break;
       }
     }
   }
 
   void update() {
+    /*
     if (session == null) {
       return;
     }
@@ -119,5 +120,6 @@ class PlayerInventoryMenu extends UiElement {
           Box(left, box.top + paddingTop, widthPerItem, buttonHeight);
       buttons.add(newButton);
     }
+    */
   }
 }

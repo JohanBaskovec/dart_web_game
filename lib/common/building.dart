@@ -62,12 +62,14 @@ bool playerCanCraft(Iterable<SoftObject> items, World world, SoftObjectType type
     box.clamp(worldBox);
     for (int x = box.left; x <= box.right; x++) {
       for (int y = box.top; y <= box.bottom; y++) {
+        /*
         final SolidObject objectAtPosition =
             world.getObjectAt(TilePosition(x, y));
         if (objectAtPosition != null &&
             objectAtPosition.type == config.workbench) {
           workBench = objectAtPosition;
         }
+        */
       }
     }
     if (workBench == null) {
@@ -84,7 +86,6 @@ bool playerCanCraft(Iterable<SoftObject> items, World world, SoftObjectType type
 /// type, and synchronize the client
 List<SoftObject> consumeItemsForCrafting(GameClient client,
     Map<SoftObjectType, int> recipe, Iterable<SoftObject> items, World world) {
-  final player = client.session.player;
   final List<SoftObject> itemsToConsume = [];
   for (var type in recipe.keys) {
     final int quantityNeeded = recipe[type];

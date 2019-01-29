@@ -3,8 +3,6 @@ import 'package:dart_game/client/ui/button.dart';
 import 'package:dart_game/client/ui/input.dart';
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/common/box.dart';
-import 'package:dart_game/common/command/client/send_message_command.dart';
-import 'package:dart_game/common/message.dart';
 
 class Chat {
   bool enabled = true;
@@ -35,7 +33,7 @@ class Chat {
   void type(String key) {
     if (key == 'Enter') {
       if (client != null) {
-        client.sendCommand(SendMessageCommand(input.content));
+        //client.sendCommand(SendMessageCommand(input.content));
         input.content = '';
       }
     } else if (key == 'Backspace') {

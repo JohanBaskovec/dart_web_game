@@ -1,62 +1,54 @@
-import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
-import 'package:dart_game/common/constants.dart';
-import 'package:dart_game/common/game_objects/soft_object.dart';
-import 'package:dart_game/common/game_objects/solid_object.dart';
+import 'package:dart_game/common/entity.dart';
+import 'package:dart_game/common/identifiable.dart';
 import 'package:dart_game/common/message.dart';
-import 'package:dart_game/common/tile.dart';
+import 'package:dart_game/common/rendering_component.dart';
 import 'package:dart_game/common/tile_position.dart';
-import 'package:json_annotation/json_annotation.dart';
 
-part 'world.g.dart';
+class ObjectHolder<T extends Identifiable> {
+  List<T> objects = [];
+  List<int> freeObjectsId = [];
 
-@JsonSerializable(anyMap: true)
+  void add(T object) {
+    if (freeObjectsId.isEmpty) {
+      object.id = objects.length;
+      objects.add(object);
+    } else {
+      final int id = freeObjectsId.removeLast();
+      object.id = id;
+      objects[id] = object;
+    }
+  }
+
+  void removeAt(int index) {
+    freeObjectsId.add(index);
+    objects[index] = null;
+  }
+
+  void put(int index, T object) {
+    objects[index] = object;
+  }
+
+  T operator [](int index) => objects[index];
+}
+
 class World {
-  List<List<Tile>> tilesColumn = [];
+  //List<List<int>> tileColumns = [];
   List<List<int>> solidObjectColumns = [];
-  List<SolidObject> solidObjects = List(worldSize.x * worldSize.y);
-  List<SoftObject> softObjects = [];
-  List<int> freeSolidObjectIds = [];
-  List<int> freeSoftObjectIds = [];
+  ObjectHolder<Entity> entities = ObjectHolder();
+  ObjectHolder<RenderingComponent> renderingComponents = ObjectHolder();
   List<Message> messages = [Message('wow', 'ça marche éé à@ç£汉字;')];
 
-  void addSolidObject(SolidObject object) {}
-
-  void removeSolidObjectAndSynchronizeAllClients(SolidObject object) {}
-
-  SoftObject addSoftObjectOfType(double quality, SoftObjectType type) {
-    return null;
-  }
-
-  Tile addTileOfType(TileType type, int x, int y) {
-    return null;
-  }
-
-  void addSoftObject(SoftObject object) {}
-
-  void moveSolidObject(SolidObject object, TilePosition position) {}
-
-  void removeSoftObject(SoftObject object) {}
-
-  void removeSolidObject(SolidObject object) {}
-
-  SolidObject getObjectAt(TilePosition position) {
+  Entity getObjectAt(TilePosition position) {
     if (solidObjectColumns[position.x][position.y] == null) {
       return null;
     }
-    return solidObjects[solidObjectColumns[position.x][position.y]];
+    return entities[solidObjectColumns[position.x][position.y]];
   }
 
-  SolidObject getSolidObject(int id) {
-    return solidObjects[id];
-  }
-
-  SoftObject getSoftObject(int id) {
-    return softObjects[id];
-  }
-
-  Tile getTileAt(TilePosition position) {
-    return tilesColumn[position.x][position.y];
+  /*
+  Entity getTileAt(TilePosition position) {
+    return entities[tilesColumn[position.x][position.y]];
   }
 
   List<Tile> getTileAround(TilePosition position) {
@@ -70,22 +62,11 @@ class World {
     }
     return tiles;
   }
+  */
 
-  List<SoftObject> getSoftObjects(Iterable<int> ids) {
-    return ids.map((itemId) => softObjects[itemId]).toList();
-  }
-
-  void removeSoftObjectId(int id) {
-
-  }
+  void removeSoftObjectId(int id) {}
 
   void sendCommandToAllClients(ServerCommand command) {}
-
-  /// Creates a new [World] from a JSON object.
-  static World fromJson(Map<dynamic, dynamic> json) => _$WorldFromJson(json);
-
-  /// Convert this object to a JSON object.
-  Map<String, dynamic> toJson() => _$WorldToJson(this);
 
   void update() {}
 }

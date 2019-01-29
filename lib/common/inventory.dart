@@ -1,9 +1,6 @@
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'inventory.g.dart';
-
-@JsonSerializable(anyMap: true)
 class Inventory {
   bool private = false;
   int currentlyEquiped;
@@ -43,14 +40,6 @@ class Inventory {
   int operator[](int i) => items[i];
 
   int get size => items.length;
-
-  /// Creates a new [Inventory] from a JSON object.
-  static Inventory fromJson(Map<dynamic, dynamic> json) =>
-      _$InventoryFromJson(json);
-
-  /// Convert this object to a JSON object.
-  @override
-  Map<String, dynamic> toJson() => _$InventoryToJson(this);
 
   @override
   String toString() {

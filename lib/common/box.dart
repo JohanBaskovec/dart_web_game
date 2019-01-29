@@ -1,9 +1,6 @@
 import 'package:dart_game/common/world_position.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'box.g.dart';
-
-@JsonSerializable(anyMap: true)
 class Box {
   int left;
   int right;
@@ -58,11 +55,4 @@ class Box {
   String toString() {
     return 'Box{left: $left, right: $right, top: $top, bottom: $bottom, width: $width, height: $height}';
   }
-
-  /// Creates a new [Box] from a JSON object.
-  static Box fromJson(Map<dynamic, dynamic> json) => _$BoxFromJson(json);
-
-  /// Convert this object to a JSON object.
-  @override
-  Map<String, dynamic> toJson() => _$BoxToJson(this);
 }

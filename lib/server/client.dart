@@ -1,20 +1,11 @@
-import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dart_game/common/command/client/client_command.dart';
-import 'package:dart_game/common/command/server/logged_in_command.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
-import 'package:dart_game/common/command/server/solid_object_summary.dart';
-import 'package:dart_game/common/constants.dart';
-import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
-import 'package:dart_game/common/health/health_component.dart';
-import 'package:dart_game/common/hunger_component.dart';
-import 'package:dart_game/common/player_skills.dart';
 import 'package:dart_game/common/session.dart';
-import 'package:dart_game/common/tile.dart';
-import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/server/game_server.dart';
 
 class GameClient {
@@ -29,7 +20,7 @@ class GameClient {
         assert(gameServer != null);
 
   void sendCommand(ServerCommand command) {
-    webSocket.add(jsonEncode(command.toJson()));
+    //webSocket.add(jsonEncode(command.toJson()));
   }
 
   void sendCommands(Iterable<ServerCommand> commands) {
@@ -40,9 +31,8 @@ class GameClient {
     webSocket.listen((dynamic data) {
       try {
         final start = DateTime.now();
-        final ClientCommand command =
-            ClientCommand.fromJson(jsonDecode(data as String) as Map);
-        command.execute(this, gameServer.world);
+        final Uint8List bytes = data;
+        processData(ByteData.view(bytes.buffer));
         final end = DateTime.now();
         final timeForRequest = end.difference(start);
         print('Time for request: $timeForRequest\n');
@@ -55,7 +45,13 @@ class GameClient {
     });
   }
 
+  void processData(ByteData bytes) {
+    final command = ClientCommand.fromBuffer(bytes);
+    command.execute(this, gameServer.world);
+  }
+
   Future<void> login(String username, String password, World world) async {
+    /*
     assert(world != null);
     if (username == null || username.isEmpty) {
       print('Client tried to login with empty username!');
@@ -115,9 +111,12 @@ class GameClient {
         world.tilesColumn);
     print('Client connected! $session.player\n');
     sendCommand(loggedInCommand);
+    */
   }
 
   SolidObject addNewPlayerAtRandomPosition(World world) {
+    return null;
+    /*
     SolidObject newPlayer;
     for (int x = 0; x < worldSize.x; x++) {
       for (int y = 0; y < worldSize.y; y++) {
@@ -161,6 +160,7 @@ class GameClient {
       newPlayer.healthComponent = HealthComponent.normalHumanBody(newPlayer.id);
     }
     return newPlayer;
+    */
   }
 
   Future<void> close() async {

@@ -11,8 +11,6 @@ import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/server/client.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'solid_object.g.dart';
-
 enum SolidObjectType {
   tree,
   appleTree,
@@ -36,7 +34,6 @@ enum SolidObjectType {
   box
 }
 
-@JsonSerializable(anyMap: true)
 class SolidObject {
   SolidObjectType type;
   int _id;
@@ -150,13 +147,6 @@ class SolidObject {
     _ageComponent = value;
     _ageComponent.ownerId = id;
   }
-
-  /// Creates a new [SolidObject] from a JSON object.
-  static SolidObject fromJson(Map<dynamic, dynamic> json) =>
-      _$SolidObjectFromJson(json);
-
-  /// Convert this object to a JSON object.
-  Map<String, dynamic> toJson() => _$SolidObjectToJson(this);
 
   @override
   String toString() {

@@ -1,0 +1,60 @@
+import 'dart:typed_data';
+
+class ByteDataReader {
+  ByteData byteData;
+  int i = 0;
+
+  ByteDataReader(this.byteData);
+
+  int readUint8() {
+    return byteData.getUint8(i++);
+  }
+
+  int readInt8() {
+    return byteData.getInt8(i++);
+  }
+
+  int readUint16() {
+    final int data = byteData.getUint16(i);
+    i += 2;
+    return data;
+  }
+
+  int readInt16() {
+    final int data = byteData.getInt16(i);
+    i += 2;
+    return data;
+  }
+
+  int readUint32() {
+    final int data = byteData.getUint32(i);
+    i += 4;
+    return data;
+  }
+
+  int readInt32() {
+    final int data = byteData.getInt32(i);
+    i += 4;
+    return data;
+  }
+
+  int readUint64() {
+    final int data = byteData.getUint64(i);
+    i += 8;
+    return data;
+  }
+
+  int readInt64() {
+    final int data = byteData.getInt64(i);
+    i += 8;
+    return data;
+  }
+
+  String readUtf16String(int length) {
+    final StringBuffer sb = StringBuffer();
+    for (int k = 0; k < length; k++) {
+      sb.writeCharCode(readInt16());
+    }
+    return sb.toString();
+  }
+}

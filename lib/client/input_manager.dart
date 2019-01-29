@@ -1,23 +1,12 @@
-import 'dart:convert';
 import 'dart:html';
 
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/client/renderer.dart';
 import 'package:dart_game/client/ui/client_ui_controller.dart';
 import 'package:dart_game/client/web_socket_client.dart';
-import 'package:dart_game/common/building.dart';
-import 'package:dart_game/common/command/client/build_solid_object_command.dart';
-import 'package:dart_game/common/command/client/drop_item_command.dart';
-import 'package:dart_game/common/command/client/move_command.dart';
-import 'package:dart_game/common/command/client/move_item_command.dart';
-import 'package:dart_game/common/command/client/open_inventory_command.dart';
-import 'package:dart_game/common/command/client/use_object_on_solid_object_command.dart';
-import 'package:dart_game/common/constants.dart';
-import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/session.dart';
-import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/world_position.dart';
 
@@ -109,17 +98,20 @@ class InputManager {
       final int draggedItemId =
           uiController.inventory.dragClick(canvasPosition);
       if (draggedItemId != null) {
-        uiController.maybeDraggedItem = _world.getSoftObject(draggedItemId);
+        //uiController.maybeDraggedItem = _world.getSoftObject(draggedItemId);
         print(uiController.maybeDraggedItem);
       }
 
       final WorldPosition mousePosition =
           renderer.getWorldPositionFromCanvasPosition(canvasPosition);
       final TilePosition tilePosition = mousePosition.toTilePosition();
+      /*
       if (!session.player.isAdjacentToPosition(tilePosition)) {
         return;
       }
+      */
       if (tilePosition.isInWorldBound) {
+        /*
         final object = _world.getObjectAt(tilePosition);
         if (object != null) {
           final int relativeX = mousePosition.x.toInt() - object.box.left;
@@ -129,11 +121,11 @@ class InputManager {
             return;
           }
         }
-        final List<Tile> tiles = _world.getTileAround(tilePosition);
+        //final List<Tile> tiles = _world.getTileAround(tilePosition);
         for (Tile tile in tiles) {
           for (int i = tile.itemsOnGround.length - 1; i > -1; i--) {
             final int itemId = tile.itemsOnGround[i];
-            final SoftObject item = _world.getSoftObject(itemId);
+            //final SoftObject item = _world.getSoftObject(itemId);
             if (item.box.pointIsInBox(mousePosition.x, mousePosition.y)) {
               final int relativeX = mousePosition.x.toInt() - item.box.left;
               final int relativeY = mousePosition.y.toInt() - item.box.top;
@@ -148,6 +140,7 @@ class InputManager {
             }
           }
         }
+          */
       }
     });
 
@@ -248,6 +241,7 @@ class InputManager {
         final TilePosition tilePosition = mousePosition.toTilePosition();
         if (tilePosition.isInWorldBound) {
           final object = _world.getObjectAt(tilePosition);
+          /*
           if (object == null) {
             if (!uiController.dragging) {
               clickOnGround(tilePosition);
@@ -273,6 +267,7 @@ class InputManager {
               clickOnSolidObject(object);
             }
           }
+                */
         } else {
           uiController.dropItem();
         }
@@ -284,6 +279,7 @@ class InputManager {
   }
 
   void move(int x, int y) {
+    /*
     final target = TilePosition(
         session.player.tilePosition.x + x, session.player.tilePosition.y + y);
     if (target.x < worldSize.x &&
@@ -297,6 +293,7 @@ class InputManager {
       print("Can't move to $target.\n");
       return;
     }
+    */
   }
 
   void rightClickOnSolidObject(SolidObject object) {
@@ -305,12 +302,13 @@ class InputManager {
         object.type == SolidObjectType.box ||
         object.type == SolidObjectType.tree ||
         object.type == SolidObjectType.appleTree) {
-      webSocketClient.sendCommand(OpenInventoryCommand(object.id));
+      //webSocketClient.sendCommand(OpenInventoryCommand(object.id));
     }
   }
 
   void clickOnSolidObject(SolidObject object) {
     print('Clicking on object: $object\n');
+    /*
     if (object == session.player) {
       print('Clicked on self.\n');
       return;
@@ -327,6 +325,7 @@ class InputManager {
     }
     final command = UseObjectOnSolidObjectCommand(object.id);
     webSocketClient.webSocket.send(jsonEncode(command));
+    */
   }
 
   bool get canClick {
@@ -337,6 +336,7 @@ class InputManager {
 
   void clickOnGround(TilePosition tilePosition) {
     print('clickOnGround $tilePosition\n');
+    /*
     if (uiController.buildMenu.visible &&
         uiController.buildMenu.selectedType != null) {
       final Iterable<SoftObject> items =
@@ -349,5 +349,6 @@ class InputManager {
             uiController.craftingInventory.items)));
       }
     }
+            */
   }
 }

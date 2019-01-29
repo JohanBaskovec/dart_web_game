@@ -1,8 +1,6 @@
 import 'package:dart_game/client/ui/inventory_menu.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
 import 'package:dart_game/client/web_socket_client.dart';
-import 'package:dart_game/common/command/client/take_from_inventory_command.dart';
-import 'package:dart_game/common/command/client/use_item_command.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 
 class EntityInventoryMenu extends InventoryMenu {
@@ -18,10 +16,10 @@ class EntityInventoryMenu extends InventoryMenu {
     for (InventoryButton button in buttons) {
       final int itemId = button.itemId;
       button.onRightClick = () {
-        webSocketClient.sendCommand(UseItemCommand(itemId));
+        //webSocketClient.sendCommand(UseItemCommand(itemId));
       };
       button.onShiftLeftClick = () {
-        webSocketClient.sendCommand(TakeFromInventoryCommand(owner.id, itemId));
+        //webSocketClient.sendCommand(TakeFromInventoryCommand(owner.id, itemId));
       };
     }
   }
