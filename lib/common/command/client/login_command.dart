@@ -29,20 +29,26 @@ class LoginCommand extends ClientCommand {
     return loginCommand;
   }
 
+  int get bufferSize => uint8Bytes + // type byte
+            uint8Bytes + // username length byte
+            (username.length * uint16Bytes) + // username bytes
+            uint8Bytes + // password length byte
+            (password.length * uint16Bytes); // password bytes
+
   @override
-  ByteData toBuffer() {
-    final ByteDataWriter bytes = ByteDataWriter(1 + // type byte
-            1 + // username length byte
-            (username.length * 2) + // username bytes
-            1 + // password length byte
-            (password.length * 2) // password bytes
-        );
-    bytes.writeUint8(ClientCommandType.login.index);
-    bytes.writeUint8(username.length);
-    bytes.writeUtf16String(username);
-    bytes.writeUint8(password.length);
-    bytes.writeUtf16String(password);
-    return bytes.byteData;
+  ByteData toByteData() {
+    final ByteDataWriter writer = ByteDataWriter(bufferSize);
+    writeToByteDataWriter(writer);
+    return writer.byteData;
+  }
+
+  @override
+  void writeToByteDataWriter(ByteDataWriter writer) {
+    writer.writeUint8(ClientCommandType.login.index);
+    writer.writeUint8(username.length);
+    writer.writeUtf16String(username);
+    writer.writeUint8(password.length);
+    writer.writeUtf16String(password);
   }
 
   @override

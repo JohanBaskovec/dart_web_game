@@ -1,5 +1,5 @@
 enum ServerCommandType {
-  loggedIn,
+  sendWorld,
   removeSolidObject,
   addSolidObject,
   moveSolidObject,

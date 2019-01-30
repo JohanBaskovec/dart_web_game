@@ -1,8 +1,10 @@
 import 'dart:html';
+import 'dart:typed_data';
 
 import 'package:dart_game/client/renderer.dart';
 import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/command/client/login_command.dart';
+import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/ui_controller.dart';
@@ -21,11 +23,9 @@ class WebSocketClient {
 
   void connect() {
     webSocket.onMessage.listen((MessageEvent e) {
-      /*
       final ServerCommand command =
-          ServerCommand.fromJson(jsonDecode(e.data as String) as Map);
+          ServerCommand.fromBuffer(e.data as Uint8List);
       command.execute(session, _world, uiController);
-      */
     });
     webSocket.onOpen.listen((Event e) {
       // temporary until we make a login form
@@ -42,6 +42,6 @@ class WebSocketClient {
   }
 
   void sendCommand(ClientCommand command) {
-    webSocket.sendTypedData(command.toBuffer());
+    webSocket.sendTypedData(command.toByteData());
   }
 }

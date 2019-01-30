@@ -1,5 +1,14 @@
 import 'dart:typed_data';
 
+const int uint64Bytes = 8;
+const int int64Bytes = 8;
+const int uint32Bytes = 4;
+const int int32Bytes = 4;
+const int uint16Bytes = 2;
+const int int16Bytes = 2;
+const int uint8Bytes = 1;
+const int int8Bytes = 1;
+
 class ByteDataWriter {
   ByteData byteData;
   int i = 0;

@@ -30,7 +30,7 @@ class MoveCommand extends ClientCommand {
   }
 
   @override
-  ByteData toBuffer() {
+  ByteData toByteData() {
     // TODO: implement toBuffer
     return null;
   }

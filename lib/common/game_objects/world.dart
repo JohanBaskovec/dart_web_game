@@ -1,3 +1,6 @@
+import 'dart:core';
+import 'dart:core';
+
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/identifiable.dart';
@@ -5,7 +8,7 @@ import 'package:dart_game/common/message.dart';
 import 'package:dart_game/common/rendering_component.dart';
 import 'package:dart_game/common/tile_position.dart';
 
-class ObjectHolder<T extends Identifiable> {
+class ObjectHolder<T extends Identifiable> implements Iterable<T> {
   List<T> objects = [];
   List<int> freeObjectsId = [];
 
@@ -30,6 +33,143 @@ class ObjectHolder<T extends Identifiable> {
   }
 
   T operator [](int index) => objects[index];
+
+  @override
+  int get length => objects.length;
+
+  @override
+  bool any(bool Function(T element) test) {
+    return objects.any(test);
+  }
+
+  @override
+  Iterable<R> cast<R>() {
+    return objects.cast();
+  }
+
+  @override
+  bool contains(Object element) {
+    return objects.contains(element);
+  }
+
+  @override
+  T elementAt(int index) {
+    return objects.elementAt(index);
+  }
+
+  @override
+  bool every(bool Function(T element) test) {
+    return objects.every(test);
+  }
+
+  @override
+  // TODO: implement first
+  T get first => objects.first;
+
+  @override
+  T firstWhere(bool Function(T element) test, {T Function() orElse}) {
+    return objects.firstWhere(test, orElse: orElse);
+  }
+
+  @override
+  U fold<U>(U initialValue, U Function(U previousValue, T element) combine) {
+    return objects.fold(initialValue, combine);
+  }
+
+  @override
+  Iterable<T> followedBy(Iterable<T> other) {
+    return objects.followedBy(other);
+  }
+
+  @override
+  void forEach(void Function(T element) f) {
+    return objects.forEach(f);
+  }
+
+  @override
+  bool get isEmpty => objects.isEmpty;
+
+  @override
+  bool get isNotEmpty => objects.isNotEmpty;
+
+  @override
+  Iterator<T> get iterator => objects.iterator;
+
+  @override
+  String join([String separator = '']) {
+    return objects.join(separator);
+  }
+
+  @override
+  T get last => objects.last;
+
+  @override
+  T lastWhere(bool Function(T element) test, {T Function() orElse}) {
+    return objects.lastWhere(test, orElse: orElse);
+  }
+
+  @override
+  Iterable<U> map<U>(U Function(T e) f) {
+    return objects.map(f);
+  }
+
+  @override
+  T reduce(T Function(T value, T element) combine) {
+    return objects.reduce(combine);
+  }
+
+  @override
+  T get single => objects.single;
+
+  @override
+  T singleWhere(bool Function(T element) test, {T Function() orElse}) {
+    return objects.singleWhere(test, orElse: orElse);
+  }
+
+  @override
+  Iterable<T> skip(int count) {
+    return objects.skip(count);
+  }
+
+  @override
+  Iterable<T> skipWhile(bool Function(T value) test) {
+    return objects.skipWhile(test);
+  }
+
+  @override
+  Iterable<T> take(int count) {
+    return objects.take(count);
+  }
+
+  @override
+  Iterable<T> takeWhile(bool Function(T value) test) {
+    return objects.takeWhile(test);
+  }
+
+  @override
+  List<T> toList({bool growable = true}) {
+    return objects.toList(growable: growable);
+  }
+
+  @override
+  Set<T> toSet() {
+    return objects.toSet();
+  }
+
+  @override
+  Iterable<T> where(bool Function(T element) test) {
+    return objects.where(test);
+  }
+
+  @override
+  Iterable<T> whereType<T>() {
+    return objects.whereType<T>();
+  }
+
+  @override
+  Iterable<U> expand<U>(Iterable<U> Function(T element) f) {
+    return objects.expand(f);
+  }
 }
 
 class World {

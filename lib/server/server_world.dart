@@ -13,12 +13,12 @@ class ServerWorld extends World {
   ServerWorld.fromConstants() {
     /*
     tilesColumn = List(worldSize.x);
-    solidObjectColumns = List(worldSize.x);
     for (int x = 0; x < worldSize.x; x++) {
       tilesColumn[x] = List(worldSize.y);
     }
     */
 
+    solidObjectColumns = List(worldSize.x);
     for (int x = 0; x < worldSize.x; x++) {
       solidObjectColumns[x] = List(worldSize.y);
     }

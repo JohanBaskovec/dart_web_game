@@ -1,10 +1,14 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/command/client/client_command.dart';
+import 'package:dart_game/common/command/server/send_world_command.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
-import 'package:dart_game/common/game_objects/solid_object.dart';
+import 'package:dart_game/common/constants.dart';
+import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/rendering_component.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/server/game_server.dart';
 
@@ -51,27 +55,42 @@ class GameClient {
   }
 
   Future<void> login(String username, String password, World world) async {
-    /*
-    assert(world != null);
     if (username == null || username.isEmpty) {
       print('Client tried to login with empty username!');
     }
     int playerId = gameServer.world.usernameToIdMap[username];
+    Entity player;
     if (playerId == null) {
-      final SolidObject player = addNewPlayerAtRandomPosition(world);
+      player = addNewPlayerAtRandomPosition(world);
+      playerId = player.id;
+      gameServer.world.usernameToIdMap[username] = playerId;
+    } else {
+      player = world.entities[playerId];
+    }
+    // player is dead
+    if (player == null) {
+      player = addNewPlayerAtRandomPosition(world);
       playerId = player.id;
       gameServer.world.usernameToIdMap[username] = playerId;
     }
-    session = Session(playerId, username, world);
-    // player is dead
-    if (session.player == null) {
-      final SolidObject player = addNewPlayerAtRandomPosition(world);
-      session.playerId = player.id;
-      gameServer.world.usernameToIdMap[username] = player.id;
-    }
+    session = Session(player, username);
     assert(session != null);
     assert(session.player != null);
     assert(session.username != null);
+    final List<Entity> entities = List(world.entities.length);
+    final List<List<int>> columns = List(worldSize.x);
+    for (var x = 0; x < world.solidObjectColumns.length; x++) {
+      columns[x] = List(worldSize.y);
+      final List<int> rows = world.solidObjectColumns[x];
+      for (var y = 0; y < rows.length; y++) {
+        final Entity solidObject = world.entities[rows[y]];
+        entities[rows[y]] = solidObject;
+        if (solidObject != null) {
+          columns[x][y] = rows[y];
+        }
+      }
+    }
+    /*
     session.player.client = this;
 
     final List<SoftObject> softObjects = [];
@@ -102,27 +121,24 @@ class GameClient {
     }
     solidObjectSummariesColumns[session.player.tilePosition.x]
         [session.player.tilePosition.y] = null;
-    final LoggedInCommand loggedInCommand = LoggedInCommand(
-        session,
-        softObjects,
-        solidObjectSummariesColumns,
-        session.player,
-        world.messages,
-        world.tilesColumn);
-    print('Client connected! $session.player\n');
-    sendCommand(loggedInCommand);
     */
+    final SendWorldServerCommand sendWorldCommand =
+        SendWorldServerCommand(session.player, entities, columns);
+    print('Client connected! $session.player\n');
+    sendCommand(sendWorldCommand);
   }
 
-  SolidObject addNewPlayerAtRandomPosition(World world) {
-    return null;
-    /*
-    SolidObject newPlayer;
+  Entity addNewPlayerAtRandomPosition(World world) {
+    Entity newPlayer;
     for (int x = 0; x < worldSize.x; x++) {
       for (int y = 0; y < worldSize.y; y++) {
         if (world.solidObjectColumns[x][y] == null) {
-          newPlayer = makePlayer(x, y);
-          world.addSolidObject(newPlayer);
+          newPlayer = Entity();
+          world.entities.add(newPlayer);
+          final rendering = RenderingComponent(
+              Box(x * tileSize, y * tileSize, tileSize, tileSize),
+              newPlayer.id);
+          world.renderingComponents.add(rendering);
           break;
         }
       }
@@ -130,37 +146,8 @@ class GameClient {
         break;
       }
     }
-    if (newPlayer != null) {
-      newPlayer.hungerComponent = HungerComponent(0, 1);
-      final Map<SkillType, double> skills = {};
-      for (var skillType in SkillType.values) {
-        skills[skillType] = gameServer.randomGenerator.nextDouble();
-      }
-
-      newPlayer.playerSkills = PlayerSkills(skills);
-
-      newPlayer.inventory.addItem(world.addSoftObjectOfType(
-          gameServer.randomGenerator.nextDouble(), SoftObjectType.hand));
-      newPlayer.inventory.addItem(world.addSoftObjectOfType(
-          gameServer.randomGenerator.nextDouble(), SoftObjectType.axe));
-      newPlayer.inventory.addItem(world.addSoftObjectOfType(
-          gameServer.randomGenerator.nextDouble(), SoftObjectType.log));
-      newPlayer.inventory.addItem(world.addSoftObjectOfType(
-          gameServer.randomGenerator.nextDouble(), SoftObjectType.log));
-      newPlayer.inventory.addItem(world.addSoftObjectOfType(
-          gameServer.randomGenerator.nextDouble(), SoftObjectType.log));
-      newPlayer.inventory.addItem(world.addSoftObjectOfType(
-          gameServer.randomGenerator.nextDouble(), SoftObjectType.log));
-      newPlayer.inventory.addItem(world.addSoftObjectOfType(
-          gameServer.randomGenerator.nextDouble(), SoftObjectType.leaves));
-      newPlayer.inventory.addItem(world.addSoftObjectOfType(
-          gameServer.randomGenerator.nextDouble(), SoftObjectType.leaves));
-      newPlayer.inventory.addItem(world.addSoftObjectOfType(
-          gameServer.randomGenerator.nextDouble(), SoftObjectType.snake));
-      newPlayer.healthComponent = HealthComponent.normalHumanBody(newPlayer.id);
-    }
+    if (newPlayer != null) {}
     return newPlayer;
-    */
   }
 
   Future<void> close() async {

@@ -185,11 +185,3 @@ SolidObject makeAppleTree(double quality, int x, int y) {
   tree.nGatherableItems = 1;
   return tree;
 }
-
-SolidObject makePlayer(int x, int y) {
-  final player = SolidObject(1, SolidObjectType.player, TilePosition(x, y));
-  player.ageComponent = AgeComponent(100 * minutesPerYear);
-  player.inventory = Inventory();
-  player.inventory.private = true;
-  return player;
-}

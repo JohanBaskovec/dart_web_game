@@ -1,7 +1,11 @@
-import 'package:dart_game/common/world_position.dart';
-import 'package:json_annotation/json_annotation.dart';
+import 'dart:typed_data';
 
-class Box {
+import 'package:dart_game/common/byte_data_reader.dart';
+import 'package:dart_game/common/byte_data_writer.dart';
+import 'package:dart_game/common/entity.dart';
+import 'package:dart_game/common/serializable.dart';
+
+class Box implements Serializable {
   int left;
   int right;
   int top;
@@ -9,15 +13,12 @@ class Box {
   int width;
   int height;
 
-  Box(this.left, this.top, this.width, this.height)
+  Box({this.left, this.top, this.width, this.height})
       : right = left + width,
         bottom = top + height;
 
   bool pointIsInBox(double x, double y) {
-    return x >= left &&
-        x <= right &&
-        y >= top &&
-        y <= bottom;
+    return x >= left && x <= right && y >= top && y <= bottom;
   }
 
   void move(int x, int y) {
@@ -49,6 +50,40 @@ class Box {
     }
     width = right - left;
     height = bottom - top;
+  }
+
+  static const int bufferSize = int32Bytes + // left
+      int32Bytes + // top
+      uint16Bytes + // width
+      uint16Bytes; // height
+
+  @override
+  ByteData toByteData() {
+    final writer = ByteDataWriter(bufferSize);
+    writeToByteDataWriter(writer);
+    return writer.byteData;
+  }
+
+  @override
+  void writeToByteDataWriter(ByteDataWriter writer) {
+    writer.writeInt32(left);
+    writer.writeInt32(top);
+    writer.writeUint16(width);
+    writer.writeUint16(height);
+  }
+
+  static Box fromByteData(ByteData data) {
+    final reader = ByteDataReader(data);
+    return fromByteDataReader(reader);
+  }
+
+  static Box fromByteDataReader(ByteDataReader reader) {
+    final box = Box(
+        left: reader.readInt32(),
+        top: reader.readInt32(),
+        width: reader.readUint16(),
+        height: reader.readUint16());
+    return box;
   }
 
   @override

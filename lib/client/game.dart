@@ -15,7 +15,7 @@ class Game {
   <canvas id="canvas"></canvas>
   </div>''';
 
-    final world = ClientWorld.fromConstants();
+    final world = ClientWorld();
     final CanvasElement canvas = document.getElementById('canvas');
     final session = Session(null, null);
     final uiController = ClientUiController(session, world);

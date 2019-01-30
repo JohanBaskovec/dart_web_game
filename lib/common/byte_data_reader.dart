@@ -51,10 +51,20 @@ class ByteDataReader {
   }
 
   String readUtf16String(int length) {
+    final Uint16List charCodes = Uint16List(length);
+    for (int k = 0; k < length; k++) {
+      charCodes[k] = byteData.getInt16(i + k * 2);
+    }
+    i += length * 2;
+    return String.fromCharCodes(charCodes);
+
+    /*
+    This is twice as fast as:
     final StringBuffer sb = StringBuffer();
     for (int k = 0; k < length; k++) {
       sb.writeCharCode(readInt16());
     }
     return sb.toString();
+    */
   }
 }
