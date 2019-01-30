@@ -24,7 +24,7 @@ abstract class InventoryMenu extends UiElement {
       final int left = box.left + column * widthPerButton;
       final int top = box.top + row * heightPerButton;
       final newButton = InventoryButton(items[i]);
-      newButton.box = Box(left, top, widthPerButton, heightPerButton);
+      newButton.box = Box(left: left, top:  top, width:  widthPerButton, height:  heightPerButton);
       buttons.add(newButton);
       column++;
       if (column == columns) {

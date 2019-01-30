@@ -6,7 +6,7 @@ import 'package:dart_game/common/box.dart';
 
 class Chat {
   bool enabled = true;
-  Box box = Box(0, 0, 0, 0);
+  Box box = Box(left: 0, top: 0, width: 0, height: 0);
   Button sendButton = Button();
   Input input = Input();
   WebSocketClient client;
@@ -15,10 +15,16 @@ class Chat {
 
   void moveAndResize(Box box) {
     final int sendButtonWidth = box.width ~/ 10;
-    sendButton.box =
-        Box(box.right - sendButtonWidth, box.bottom - 40, sendButtonWidth, 40);
-    input.box = Box(box.left, (box.bottom - box.height / 10).toInt(), box.width,
-        box.height ~/ 10);
+    sendButton.box = Box(
+        left: box.right - sendButtonWidth,
+        top: box.bottom - 40,
+        width: sendButtonWidth,
+        height: 40);
+    input.box = Box(
+        left: box.left,
+        top: (box.bottom - box.height / 10).toInt(),
+        width: box.width,
+        height: box.height ~/ 10);
     this.box = box;
   }
 

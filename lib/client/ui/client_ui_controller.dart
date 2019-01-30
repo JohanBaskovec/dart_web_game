@@ -73,7 +73,7 @@ class ClientUiController extends UiController {
     /*
     final inventoryMenu =
         EntityInventoryMenu(target, session.player, webSocketClient);
-    inventoryMenu.box = Box(target.box.right, target.box.bottom, 120, 120);
+    inventoryMenu.box = Box(left: target.box.right, top:  target.box.bottom, width:  120, height:  120);
     inventoryMenus.add(inventoryMenu);
     activeInventoryWindow = inventoryMenu;
     */
@@ -96,24 +96,43 @@ class ClientUiController extends UiController {
 
   void initialize(int screenWidth, int screenHeight) {
     inventory.reinitialize(screenWidth, screenHeight);
-    buildButton.box = Box(inventory.box.left, inventory.box.top - 33, 90, 30);
-    cookButton.box = Box(inventory.box.left + buildButton.box.width + 3,
-        inventory.box.top - 33, 90, 30);
+    buildButton.box = Box(
+        left: inventory.box.left,
+        top: inventory.box.top - 33,
+        width: 90,
+        height: 30);
+    cookButton.box = Box(
+        left: inventory.box.left + buildButton.box.width + 3,
+        top: inventory.box.top - 33,
+        width: 90,
+        height: 30);
     final int chatWidth = max(100, screenWidth - inventory.box.width - 60);
-    chat.moveAndResize(Box(inventory.box.right + 20, inventory.box.top - 100,
-        chatWidth, 100 + inventory.box.height));
+    chat.moveAndResize(Box(
+        left: inventory.box.right + 20,
+        top: inventory.box.top - 100,
+        width: chatWidth,
+        height: 100 + inventory.box.height));
     hunger.reinitialize(screenWidth, screenHeight);
 
     final int craftingMenuTop = hunger.box.bottom + 5;
     final int craftingMenuWidth =
         buildButton.box.width + cookButton.box.width + 3;
-    buildMenu.box = Box(inventory.box.left, craftingMenuTop, craftingMenuWidth,
-        buildButton.box.top - craftingMenuTop - 160);
-    cookingMenu.box = Box(inventory.box.left, craftingMenuTop,
-        craftingMenuWidth, buildMenu.box.height);
+    buildMenu.box = Box(
+        left: inventory.box.left,
+        top: craftingMenuTop,
+        width: craftingMenuWidth,
+        height: buildButton.box.top - craftingMenuTop - 160);
+    cookingMenu.box = Box(
+        left: inventory.box.left,
+        top: craftingMenuTop,
+        width: craftingMenuWidth,
+        height: buildMenu.box.height);
 
     craftingInventory.box = Box(
-        buildMenu.box.left, buildMenu.box.bottom + 3, buildMenu.box.width, 120);
+        left: buildMenu.box.left,
+        top: buildMenu.box.bottom + 3,
+        width: buildMenu.box.width,
+        height: 120);
   }
 
   @override

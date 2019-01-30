@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:dart_game/common/byte_data_writer.dart';
 import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/server/client.dart';
@@ -31,7 +32,10 @@ class MoveCommand extends ClientCommand {
 
   @override
   ByteData toByteData() {
-    // TODO: implement toBuffer
     return null;
+  }
+
+  @override
+  void writeToByteDataWriter(ByteDataWriter writer) {
   }
 }

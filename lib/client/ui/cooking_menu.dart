@@ -24,7 +24,7 @@ class CookingMenu extends UiElement {
   }
 
   void update() {
-    if (session == null || session.playerId == null) {
+    if (session == null || session.player == null) {
       return;
     }
     buttons = [];

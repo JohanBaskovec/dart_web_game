@@ -2,8 +2,9 @@ import 'dart:typed_data';
 
 import 'package:dart_game/common/byte_data_reader.dart';
 import 'package:dart_game/common/byte_data_writer.dart';
-import 'package:dart_game/common/entity.dart';
+import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/serializable.dart';
+import 'package:dart_game/common/tile_position.dart';
 
 class Box implements Serializable {
   int left;
@@ -16,6 +17,13 @@ class Box implements Serializable {
   Box({this.left, this.top, this.width, this.height})
       : right = left + width,
         bottom = top + height;
+
+  Box.tileBox(int x, int y)
+      : this(
+            left: x * tileSize,
+            top: y * tileSize,
+            width: tileSize,
+            height: tileSize);
 
   bool pointIsInBox(double x, double y) {
     return x >= left && x <= right && y >= top && y <= bottom;
@@ -50,6 +58,10 @@ class Box implements Serializable {
     }
     width = right - left;
     height = bottom - top;
+  }
+
+  TilePosition toTilePosition() {
+    return TilePosition(left ~/ tileSize, top ~/ tileSize);
   }
 
   static const int bufferSize = int32Bytes + // left
@@ -90,4 +102,25 @@ class Box implements Serializable {
   String toString() {
     return 'Box{left: $left, right: $right, top: $top, bottom: $bottom, width: $width, height: $height}';
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is Box &&
+              runtimeType == other.runtimeType &&
+              left == other.left &&
+              right == other.right &&
+              top == other.top &&
+              bottom == other.bottom &&
+              width == other.width &&
+              height == other.height;
+
+  @override
+  int get hashCode =>
+      left.hashCode ^
+      right.hashCode ^
+      top.hashCode ^
+      bottom.hashCode ^
+      width.hashCode ^
+      height.hashCode;
 }

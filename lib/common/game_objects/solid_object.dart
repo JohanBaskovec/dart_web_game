@@ -76,11 +76,11 @@ class SolidObject {
 
   /// Inventory that can be accessed by using your hand on an object
   /// Example: fruits from trees, items from chests
-  Inventory _inventory;
+  InventoryComponent _inventory;
 
-  Inventory get inventory => _inventory;
+  InventoryComponent get inventory => _inventory;
 
-  set inventory(Inventory value) {
+  set inventory(InventoryComponent value) {
     if (value == null) {
       return;
     }
@@ -100,7 +100,7 @@ class SolidObject {
     this.tilePosition = tilePosition;
     switch (type) {
       case SolidObjectType.box:
-        inventory = Inventory();
+        inventory = InventoryComponent();
         break;
       default:
         break;
@@ -123,8 +123,11 @@ class SolidObject {
   set tilePosition(TilePosition value) {
     _tilePosition = value;
     if (value != null) {
-      box = Box(tilePosition.x * tileSize, tilePosition.y * tileSize, tileSize,
-          tileSize);
+      box = Box(
+          left: tilePosition.x * tileSize,
+          top: tilePosition.y * tileSize,
+          width: tileSize,
+          height: tileSize);
     }
   }
 
@@ -172,7 +175,7 @@ const int minutesPerYear = 525600;
 SolidObject makeTree(double quality, int x, int y) {
   final tree = SolidObject(quality, SolidObjectType.tree, TilePosition(x, y));
   tree.ageComponent = AgeComponent(1000 * minutesPerYear);
-  tree.inventory = Inventory();
+  tree.inventory = InventoryComponent();
   tree.nGatherableItems = 1;
   return tree;
 }
@@ -181,7 +184,7 @@ SolidObject makeAppleTree(double quality, int x, int y) {
   final tree =
       SolidObject(quality, SolidObjectType.appleTree, TilePosition(x, y));
   tree.ageComponent = AgeComponent(1000 * minutesPerYear);
-  tree.inventory = Inventory();
+  tree.inventory = InventoryComponent();
   tree.nGatherableItems = 1;
   return tree;
 }

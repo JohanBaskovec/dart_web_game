@@ -67,4 +67,34 @@ class ByteDataReader {
     return sb.toString();
     */
   }
+
+  List<T> readFixedSizeList<T>(
+      T Function(ByteDataReader r) fromByteDataReader) {
+    final int listSize = readUint32();
+    final List<T> list = List(listSize);
+    for (int i = 0; i < listSize; i++) {
+      final bool isNull = readUint8() == 1;
+      if (isNull) {
+        list[i] = null;
+      } else {
+        list[i] = fromByteDataReader(this);
+      }
+    }
+    return list;
+  }
+
+  List<T> readList<T>(
+      T Function(ByteDataReader r) fromByteDataReader) {
+    final int listSize = readUint32();
+    final List<T> list = [];
+    for (int i = 0; i < listSize; i++) {
+      final bool isNull = readUint8() == 1;
+      if (isNull) {
+        list.add(null);
+      } else {
+        list.add(fromByteDataReader(this));
+      }
+    }
+    return list;
+  }
 }

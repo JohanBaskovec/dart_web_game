@@ -9,11 +9,11 @@ import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/building.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
-import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/i18n.dart';
+import 'package:dart_game/common/image_type.dart';
+import 'package:dart_game/common/rendering_component.dart';
 import 'package:dart_game/common/session.dart';
-import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/world_position.dart';
 
 class Renderer {
@@ -21,29 +21,17 @@ class Renderer {
   final CanvasRenderingContext2D _ctx;
   double scale = 1;
   CanvasPosition cameraPosition;
-  Map<SoftObjectType, ImageElement> softImages = {};
-  Map<SolidObjectType, ImageElement> solidImages = {};
+  Map<ImageType, ImageElement> images = {};
   final Session session;
   final ClientUiController uiController;
   InputManager inputManager;
 
   Renderer(this._canvas, this.uiController, this.session)
       : _ctx = _canvas.getContext('2d') as CanvasRenderingContext2D {
-
-    /*
-    for (SoftObjectType type in SoftObjectType.values) {
-      softImages[type] = ImageElement();
-      softImages[type].src = '/$type.png';
+    for (ImageType type in ImageType.values) {
+      images[type] = ImageElement();
+      images[type].src = '/$type.png';
     }
-    for (SolidObjectType type in SolidObjectType.values) {
-      solidImages[type] = ImageElement();
-      solidImages[type].src = '/$type.png';
-    }
-    for (TileType type in TileType.values) {
-      tileImages[type] = ImageElement();
-      tileImages[type].src = '/$type.png';
-    }
-    */
 
     initializeUi();
   }
@@ -55,23 +43,23 @@ class Renderer {
       return;
     }
 
-    /*
-    moveCameraToPlayerPosition(session.player.tilePosition);
+    moveCameraToPlayerPosition(session.player.renderingComponent.box);
     _ctx.scale(scale, scale);
     if (cameraPosition != null) {
       _ctx.translate(cameraPosition.x, cameraPosition.y);
     }
 
     final Box renderingBox = Box(
-      session.player.box.left - ((_canvas.width / 2) * (1 / scale)).toInt(),
-      session.player.box.top - ((_canvas.height / 2) * (1 / scale)).toInt(),
-      ((_canvas.width) * (1 / scale)).toInt(),
-      ((_canvas.height) * (1 / scale)).toInt(),
+      left: session.player.renderingComponent.box.left -
+          ((_canvas.width / 2) * (1 / scale)).toInt(),
+      top: session.player.renderingComponent.box.top -
+          ((_canvas.height / 2) * (1 / scale)).toInt(),
+      width: ((_canvas.width) * (1 / scale)).toInt(),
+      height: ((_canvas.height) * (1 / scale)).toInt(),
     );
 
-    renderGround(world, renderingBox);
-    renderSoftObjects(world, renderingBox);
-    renderSolidObjects(world, renderingBox);
+    renderEntities(world, renderingBox);
+    /*
 
     _ctx.setTransform(1, 0, 0, 1, 0, 0);
     renderBuildButton();
@@ -177,7 +165,7 @@ class Renderer {
 
       for (int i = 0; i < cookingMenu.buttons.length; i++) {
         final button = cookingMenu.buttons[i];
-        _ctx.drawImageScaled(softImages[button.objectType], button.box.left,
+        _ctx.drawImageScaled(images[button.objectType], button.box.left,
             button.box.top, button.box.width, button.box.height);
         _ctx.fillStyle = 'white';
         var k = 0;
@@ -205,7 +193,7 @@ class Renderer {
 
       for (int i = 0; i < buildMenu.buttons.length; i++) {
         final button = buildMenu.buttons[i];
-        _ctx.drawImageScaled(solidImages[button.type], button.box.left,
+        _ctx.drawImageScaled(images[button.type], button.box.left,
             button.box.top, button.box.width, button.box.height);
         _ctx.fillStyle = 'white';
         var k = 0;
@@ -289,21 +277,6 @@ class Renderer {
         uiController.buildButton.box.top + 19);
   }
 
-  void renderSolidObjects(ClientWorld world, Box renderingBox) {
-    /*
-    for (SolidObject object in world.solidObjects) {
-      if (object != null &&
-          object.box.left < renderingBox.right &&
-          object.box.right > renderingBox.left &&
-          object.box.bottom > renderingBox.top &&
-          object.box.top < renderingBox.bottom) {
-        _ctx.drawImageScaled(solidImages[object.type], object.box.left,
-            object.box.top, object.box.width, object.box.height);
-      }
-    }
-    */
-  }
-
   void increaseScale(double increase) {
     /*
     scale += increase;
@@ -334,10 +307,10 @@ class Renderer {
     return getWorldPositionFromCanvasPosition(canvasPosition);
   }
 
-  void moveCameraToPlayerPosition(TilePosition tilePosition) {
+  void moveCameraToPlayerPosition(Box box) {
     final double inverseScale = 1 / scale;
-    final double x = -tilePosition.x * tileSize * 1.0 - tileSize / 2;
-    final double y = -tilePosition.y * tileSize * 1.0 - tileSize / 2;
+    final double x = -box.left * 1.0 - tileSize / 2;
+    final double y = -box.top * 1.0 - tileSize / 2;
     final double canvasMiddleWidth = _canvas.width / 2.0;
     final double canvasMiddleHeight = _canvas.height / 2.0;
 
@@ -359,37 +332,18 @@ class Renderer {
     _ctx.fillRect(box.left, box.top, box.width, box.height);
   }
 
-  void renderGround(ClientWorld world, Box renderingBox) {
-    /*
-    for (int x = 0; x < worldSize.x; x++) {
-      for (int y = 0; y < worldSize.y; y++) {
-        final tile = world.tilesColumn[x][y];
-        if (tile.box.left < renderingBox.right &&
-            tile.box.right > renderingBox.left &&
-            tile.box.bottom > renderingBox.top &&
-            tile.box.top < renderingBox.bottom) {
-          _ctx.drawImageScaled(tileImages[tile.tileType], tile.box.left,
-              tile.box.top, tile.box.width, tile.box.height);
-        }
+  void renderEntities(ClientWorld world, Box renderingBox) {
+    for (RenderingComponent rendering in world.renderingComponents) {
+      if (rendering != null &&
+          rendering.box != null &&
+          rendering.box.left < renderingBox.right &&
+          rendering.box.right > renderingBox.left &&
+          rendering.box.bottom > renderingBox.top &&
+          rendering.box.top < renderingBox.bottom) {
+        _ctx.drawImageScaled(images[rendering.imageType], rendering.box.left,
+            rendering.box.top, rendering.box.width, rendering.box.height);
       }
     }
-    */
-  }
-
-  void renderSoftObjects(ClientWorld world, Box renderingBox) {
-    /*
-    for (SoftObject object in world.softObjects) {
-      if (object != null &&
-          object.position != null &&
-          object.box.left < renderingBox.right &&
-          object.box.right > renderingBox.left &&
-          object.box.bottom > renderingBox.top &&
-          object.box.top < renderingBox.bottom) {
-        _ctx.drawImageScaled(softImages[object.type], object.box.left,
-            object.box.top, object.box.width, object.box.height);
-      }
-    }
-    */
   }
 
   bool imageIsTransparent(ImageElement image, int x, int y, Box box) {

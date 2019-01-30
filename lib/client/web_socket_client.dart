@@ -23,8 +23,10 @@ class WebSocketClient {
 
   void connect() {
     webSocket.onMessage.listen((MessageEvent e) {
+      final ByteBuffer data = e.data;
+
       final ServerCommand command =
-          ServerCommand.fromBuffer(e.data as Uint8List);
+          ServerCommand.fromByteData(data.asByteData());
       command.execute(session, _world, uiController);
     });
     webSocket.onOpen.listen((Event e) {

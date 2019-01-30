@@ -1,7 +1,6 @@
 import 'package:dart_game/common/game_objects/soft_object.dart';
-import 'package:json_annotation/json_annotation.dart';
 
-class Inventory {
+class InventoryComponent {
   bool private = false;
   int currentlyEquiped;
   List<int> items = [];
@@ -37,7 +36,7 @@ class Inventory {
     return items.contains(id);
   }
 
-  int operator[](int i) => items[i];
+  int operator [](int i) => items[i];
 
   int get size => items.length;
 
@@ -45,6 +44,4 @@ class Inventory {
   String toString() {
     return 'Inventory{currentlyEquiped: $currentlyEquiped, items: $items}';
   }
-
-
 }

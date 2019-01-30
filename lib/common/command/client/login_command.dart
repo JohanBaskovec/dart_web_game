@@ -19,7 +19,7 @@ class LoginCommand extends ClientCommand {
     print('Executed $this');
   }
 
-  static LoginCommand fromBuffer(ByteData bytes) {
+  static LoginCommand fromByteData(ByteData bytes) {
     final LoginCommand loginCommand = LoginCommand();
     final ByteDataReader reader = ByteDataReader(bytes);
     final int usernameLength = reader.readInt8();

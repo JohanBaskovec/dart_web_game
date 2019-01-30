@@ -49,7 +49,7 @@ class CraftingInventory extends InventoryMenu {
   @override
   set box(Box value) {
     super.box = value;
-    okButton.box = Box(box.left, box.bottom + 3, 90, 30);
+    okButton.box = Box(left: box.left, top:  box.bottom + 3, width:  90, height:  30);
   }
 
   void removeItemsNotInInventory() {

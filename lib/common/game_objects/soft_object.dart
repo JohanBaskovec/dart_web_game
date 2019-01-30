@@ -3,7 +3,6 @@ import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/command/food_component.dart';
 import 'package:dart_game/common/player_skills.dart';
 import 'package:dart_game/common/world_position.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 enum SoftObjectType {
   stone,
@@ -55,11 +54,16 @@ class SoftObject {
       box = null;
       return;
     }
-    box = Box(_position.x.toInt(), _position.y.toInt(), 20, 20);
+    box = Box(
+        left: _position.x.toInt(),
+        top: _position.y.toInt(),
+        width: 20,
+        height: 20);
   }
 
   /// index in inventory if it's in one
   int indexInInventory;
+
   bool get inInventory => indexInInventory != null;
 
   bool alive = true;
@@ -89,7 +93,4 @@ class SoftObject {
   String toString() {
     return 'SoftObject{id: $id, type: $type, position: $position, indexInInventory: $indexInInventory, alive: $alive, _ageComponent: $_ageComponent, foodComponent: $foodComponent}';
   }
-
-
-
 }

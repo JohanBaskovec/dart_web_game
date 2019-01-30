@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:dart_game/common/serializable.dart';
+
 const int uint64Bytes = 8;
 const int int64Bytes = 8;
 const int uint32Bytes = 4;
@@ -13,7 +15,7 @@ class ByteDataWriter {
   ByteData byteData;
   int i = 0;
 
-  ByteDataWriter(int size): byteData = ByteData(size);
+  ByteDataWriter(int size) : byteData = ByteData(size);
 
   void writeUint8(int data) {
     byteData.setUint8(i, data);
@@ -44,7 +46,7 @@ class ByteDataWriter {
     byteData.setInt32(i, data);
     i += 4;
   }
-  
+
   void writeUint64(int data) {
     byteData.setUint64(i, data);
     i += 8;
@@ -53,6 +55,22 @@ class ByteDataWriter {
   void writeInt64(int data) {
     byteData.setInt64(i, data);
     i += 8;
+  }
+
+  void writeObject<T extends Serializable>(T data) {
+    data.writeToByteDataWriter(this);
+  }
+
+  void writeList<T extends Serializable>(List<T> data) {
+    writeUint32(data.length);
+    for (T t in data) {
+      if (t == null) {
+        writeUint8(1);
+      } else {
+        writeUint8(0);
+        t.writeToByteDataWriter(this);
+      }
+    }
   }
 
   void writeUtf16String(String data) {

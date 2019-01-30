@@ -34,7 +34,8 @@ class BuildMenu extends UiElement {
   set box(Box value) {
     super.box = value;
     for (var i = 0; i < buttons.length; i++) {
-      buttons[i].box = Box(box.left, box.top + 40 * i, 40, 40);
+      buttons[i].box =
+          Box(left: box.left, top: box.top + 40 * i, width: 40, height: 40);
     }
   }
 

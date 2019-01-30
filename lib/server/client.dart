@@ -3,11 +3,12 @@ import 'dart:typed_data';
 
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/command/client/client_command.dart';
-import 'package:dart_game/common/command/server/send_world_command.dart';
+import 'package:dart_game/common/command/server/send_world_server_command.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/image_type.dart';
 import 'package:dart_game/common/rendering_component.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/server/game_server.dart';
@@ -24,7 +25,7 @@ class GameClient {
         assert(gameServer != null);
 
   void sendCommand(ServerCommand command) {
-    //webSocket.add(jsonEncode(command.toJson()));
+    webSocket.add(command.toByteData().buffer.asUint8List());
   }
 
   void sendCommands(Iterable<ServerCommand> commands) {
@@ -50,7 +51,7 @@ class GameClient {
   }
 
   void processData(ByteData bytes) {
-    final command = ClientCommand.fromBuffer(bytes);
+    final command = ClientCommand.fromByteData(bytes);
     command.execute(this, gameServer.world);
   }
 
@@ -77,7 +78,19 @@ class GameClient {
     assert(session != null);
     assert(session.player != null);
     assert(session.username != null);
-    final List<Entity> entities = List(world.entities.length);
+
+    // we only send the visible items to the player:
+    final entities = List<Entity>(world.entities.length);
+    final renderingComponents =
+        List<RenderingComponent>(world.renderingComponents.length);
+    for (RenderingComponent renderingComponent in world.renderingComponents) {
+      if (renderingComponent != null) {
+        final Entity entity = renderingComponent.entity;
+        entities[entity.id] = entity;
+        renderingComponents[renderingComponent.id] = renderingComponent;
+      }
+    }
+    /*
     final List<List<int>> columns = List(worldSize.x);
     for (var x = 0; x < world.solidObjectColumns.length; x++) {
       columns[x] = List(worldSize.y);
@@ -90,7 +103,6 @@ class GameClient {
         }
       }
     }
-    /*
     session.player.client = this;
 
     final List<SoftObject> softObjects = [];
@@ -106,7 +118,7 @@ class GameClient {
       }
     }
     final List<List<SolidObjectSummary>> solidObjectSummariesColumns =
-        List(worldSize.x);
+    List(worldSize.x);
     for (int x = 0; x < worldSize.x; x++) {
       solidObjectSummariesColumns[x] = List(worldSize.y);
     }
@@ -120,11 +132,13 @@ class GameClient {
       }
     }
     solidObjectSummariesColumns[session.player.tilePosition.x]
-        [session.player.tilePosition.y] = null;
+    [session.player.tilePosition.y] = null;
     */
-    final SendWorldServerCommand sendWorldCommand =
-        SendWorldServerCommand(session.player, entities, columns);
-    print('Client connected! $session.player\n');
+    final sendWorldCommand = SendWorldServerCommand(
+        playerId: playerId,
+        entities: entities,
+        renderingComponents: renderingComponents);
+    print('Client connected!\n');
     sendCommand(sendWorldCommand);
   }
 
@@ -136,9 +150,16 @@ class GameClient {
           newPlayer = Entity();
           world.entities.add(newPlayer);
           final rendering = RenderingComponent(
-              Box(x * tileSize, y * tileSize, tileSize, tileSize),
-              newPlayer.id);
+              box: Box(
+                  left: x * tileSize,
+                  top: y * tileSize,
+                  width: tileSize,
+                  height: tileSize),
+              entityId: newPlayer.id,
+              gridAligned: true,
+              imageType: ImageType.player);
           world.renderingComponents.add(rendering);
+          newPlayer.renderingComponentId = rendering.id;
           break;
         }
       }

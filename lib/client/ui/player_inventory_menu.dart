@@ -31,7 +31,11 @@ class PlayerInventoryMenu extends UiElement {
   PlayerInventoryMenu(this.session, this.webSocketClient, [this.uiController]);
 
   void reinitialize(int screenWidth, int screenHeight) {
-    box = Box(20, screenHeight - height - marginBottom, width, height);
+    box = Box(
+        left: 20,
+        top: screenHeight - height - marginBottom,
+        width: width,
+        height: height);
   }
 
   bool shiftLeftClick(CanvasPosition position) {
@@ -117,7 +121,7 @@ class PlayerInventoryMenu extends UiElement {
       final int left = i * widthPerItem + box.left + paddingLeft;
       final newButton = InventoryButton(session.player.inventory.items[i]);
       newButton.box =
-          Box(left, box.top + paddingTop, widthPerItem, buttonHeight);
+          Box(left: left, top:  box.top + paddingTop, width:  widthPerItem, height:  buttonHeight);
       buttons.add(newButton);
     }
     */

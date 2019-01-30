@@ -30,8 +30,8 @@ class CraftingConfiguration {
   CraftingConfiguration(this.workbench, this.requiredItems);
 }
 
-bool playerCanBuild(Iterable<SoftObject> items, World world, SolidObjectType type, SolidObject player,
-    TilePosition position) {
+bool playerCanBuild(Iterable<SoftObject> items, World world,
+    SolidObjectType type, SolidObject player, TilePosition position) {
   if (!player.isAdjacentToPosition(position)) {
     return false;
   }
@@ -48,7 +48,8 @@ final Map<SoftObjectType, CraftingConfiguration> craftingRecipes = {
       CraftingConfiguration(SolidObjectType.campFire, {SoftObjectType.snake: 1})
 };
 
-bool playerCanCraft(Iterable<SoftObject> items, World world, SoftObjectType type, SolidObject player) {
+bool playerCanCraft(Iterable<SoftObject> items, World world,
+    SoftObjectType type, SolidObject player) {
   final CraftingConfiguration config = craftingRecipes[type];
   if (config == null) {
     print("Can't craft item $type because it has no config.\n");
@@ -57,8 +58,11 @@ bool playerCanCraft(Iterable<SoftObject> items, World world, SoftObjectType type
 
   if (config.workbench != null) {
     SolidObject workBench;
-    final Box box =
-        Box(player.tilePosition.x - 1, player.tilePosition.y - 1, 2, 2);
+    final Box box = Box(
+        left: player.tilePosition.x - 1,
+        top: player.tilePosition.y - 1,
+        width: 2,
+        height: 2);
     box.clamp(worldBox);
     for (int x = box.left; x <= box.right; x++) {
       for (int y = box.top; y <= box.bottom; y++) {

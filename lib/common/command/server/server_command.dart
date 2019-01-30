@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:dart_game/common/command/server/send_world_command.dart';
+import 'package:dart_game/common/byte_data_reader.dart';
+import 'package:dart_game/common/command/server/send_world_server_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/serializable.dart';
@@ -12,12 +13,12 @@ abstract class ServerCommand extends Serializable {
 
   void execute(Session session, World world, [UiController uiController]);
 
-  static ServerCommand fromBuffer(ByteData data) {
-    final ServerCommandType type = ServerCommandType.values[data.getUint8(0)];
-    final ByteData bytesOffsetBy1 = ByteData.view(data.buffer, 1);
+  static ServerCommand fromByteData(ByteData data) {
+    final reader = ByteDataReader(data);
+    final ServerCommandType type = ServerCommandType.values[reader.readUint8()];
     switch (type) {
       case ServerCommandType.sendWorld:
-        return SendWorldServerCommand.fromBuffer(bytesOffsetBy1);
+        return SendWorldServerCommand.fromByteDataReader(reader);
         break;
       default:
         throw Exception('Not implemented!');

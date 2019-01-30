@@ -3,17 +3,35 @@ import 'dart:typed_data';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/byte_data_reader.dart';
 import 'package:dart_game/common/byte_data_writer.dart';
+import 'package:dart_game/common/entity.dart';
+import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/identifiable.dart';
+import 'package:dart_game/common/image_type.dart';
 import 'package:dart_game/common/serializable.dart';
 
-class RenderingComponent extends Identifiable implements Serializable {
+class RenderingComponent extends GameObject implements Serializable {
   Box box;
   int entityId;
+  bool gridAligned;
+  ImageType imageType;
 
-  RenderingComponent(this.box, this.entityId);
+  Entity get entity => world.entities[entityId];
 
-  static const int bufferSize = Box.bufferSize + // box
-      uint32Bytes; // entityId
+  RenderingComponent(
+      {this.box,
+      this.entityId,
+      this.gridAligned,
+      this.imageType,
+      World world,
+      int id})
+      : super(world: world, id: id);
+
+  static const int bufferSize = uint32Bytes + // id
+          Box.bufferSize + // box
+          uint32Bytes + // entityId
+          uint8Bytes + // gridAligned
+          uint16Bytes // imageType
+      ;
 
   @override
   ByteData toByteData() {
@@ -24,8 +42,11 @@ class RenderingComponent extends Identifiable implements Serializable {
 
   @override
   void writeToByteDataWriter(ByteDataWriter writer) {
+    super.writeToByteDataWriter(writer);
     box.writeToByteDataWriter(writer);
-    writer.writeInt32(entityId);
+    writer.writeUint32(entityId);
+    writer.writeUint8(gridAligned ? 1 : 0);
+    writer.writeUint16(imageType.index);
   }
 
   static RenderingComponent fromByteData(ByteData data) {
@@ -34,9 +55,30 @@ class RenderingComponent extends Identifiable implements Serializable {
   }
 
   static RenderingComponent fromByteDataReader(ByteDataReader reader) {
-    final renderingComponent =
-        RenderingComponent(Box.fromByteDataReader(reader), reader.readUint32());
+    final renderingComponent = RenderingComponent(
+        id: reader.readUint32(),
+        box: Box.fromByteDataReader(reader),
+        entityId: reader.readUint32(),
+        gridAligned: reader.readUint8() == 1,
+        imageType: ImageType.values[reader.readUint16()]);
 
     return renderingComponent;
   }
+
+  @override
+  String toString() {
+    return 'RenderingComponent{box: $box, entityId: $entityId, gridAligned: $gridAligned}';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RenderingComponent &&
+          runtimeType == other.runtimeType &&
+          box == other.box &&
+          entityId == other.entityId &&
+          gridAligned == other.gridAligned;
+
+  @override
+  int get hashCode => box.hashCode ^ entityId.hashCode ^ gridAligned.hashCode;
 }

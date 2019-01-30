@@ -1,16 +1,19 @@
 import 'dart:core';
-import 'dart:core';
 
 import 'package:dart_game/common/command/server/server_command.dart';
+import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/identifiable.dart';
 import 'package:dart_game/common/message.dart';
 import 'package:dart_game/common/rendering_component.dart';
 import 'package:dart_game/common/tile_position.dart';
 
-class ObjectHolder<T extends Identifiable> implements Iterable<T> {
-  List<T> objects = [];
+class ObjectHolder<T extends GameObject> implements Iterable<T> {
+  List<T> objects = [null];
   List<int> freeObjectsId = [];
+  World world;
+
+  ObjectHolder(this.world);
 
   void add(T object) {
     if (freeObjectsId.isEmpty) {
@@ -21,6 +24,7 @@ class ObjectHolder<T extends Identifiable> implements Iterable<T> {
       object.id = id;
       objects[id] = object;
     }
+    object.world = world;
   }
 
   void removeAt(int index) {
@@ -30,6 +34,15 @@ class ObjectHolder<T extends Identifiable> implements Iterable<T> {
 
   void put(int index, T object) {
     objects[index] = object;
+  }
+
+  void replaceWith(List<T> objects) {
+    this.objects = objects;
+    for (T t in this.objects) {
+      if (t != null) {
+        t.world = world;
+      }
+    }
   }
 
   T operator [](int index) => objects[index];
@@ -174,16 +187,25 @@ class ObjectHolder<T extends Identifiable> implements Iterable<T> {
 
 class World {
   //List<List<int>> tileColumns = [];
-  List<List<int>> solidObjectColumns = [];
-  ObjectHolder<Entity> entities = ObjectHolder();
-  ObjectHolder<RenderingComponent> renderingComponents = ObjectHolder();
+  List<List<Entity>> solidObjectColumns = [];
+  ObjectHolder<Entity> entities;
+  ObjectHolder<RenderingComponent> renderingComponents;
   List<Message> messages = [Message('wow', 'ça marche éé à@ç£汉字;')];
+
+  World.fromConstants() {
+    entities = ObjectHolder(this);
+    renderingComponents = ObjectHolder(this);
+    solidObjectColumns = List(worldSize.x);
+    for (int x = 0; x < worldSize.x; x++) {
+      solidObjectColumns[x] = List(worldSize.y);
+    }
+  }
 
   Entity getObjectAt(TilePosition position) {
     if (solidObjectColumns[position.x][position.y] == null) {
       return null;
     }
-    return entities[solidObjectColumns[position.x][position.y]];
+    return solidObjectColumns[position.x][position.y];
   }
 
   /*

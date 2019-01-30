@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 void main() {
   group('Serialization', () {
     test('should work', () {
-      final component = RenderingComponent(Box(left: 2, top: 3, width: 4, height: 5), 11);
+      final component = RenderingComponent(box: Box(left: 2, top: 3, width: 4, height: 5), entityId: 11, gridAligned: true);
       final byteData = component.toByteData();
       final component2 = RenderingComponent.fromByteData(byteData);
       expect(component2.box.left, equals(2));
@@ -15,6 +15,7 @@ void main() {
       expect(component2.box.right, equals(6));
       expect(component2.box.bottom, equals(8));
       expect(component2.entityId, equals(11));
+      expect(component2.gridAligned, equals(true));
     });
   });
 }

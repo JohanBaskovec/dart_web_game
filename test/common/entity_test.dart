@@ -5,12 +5,12 @@ void main() {
   group('Serialization', () {
     test('should work', () {
       final entity = Entity(
-          renderingComponent: 1, healthComponent: 2, inventoryComponent: 3);
+          renderingComponentId: 1, healthComponentId: 2, inventoryComponentId: 3);
       final byteData = entity.toByteData();
       final entity2 = Entity.fromByteData(byteData);
-      expect(entity2.renderingComponent, equals(1));
-      expect(entity2.healthComponent, equals(2));
-      expect(entity2.inventoryComponent, equals(3));
+      expect(entity2.renderingComponentId, equals(1));
+      expect(entity2.healthComponentId, equals(2));
+      expect(entity2.inventoryComponentId, equals(3));
     });
   });
 }

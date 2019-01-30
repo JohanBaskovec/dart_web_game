@@ -11,12 +11,12 @@ abstract class ClientCommand<T> extends Serializable {
 
   void execute(GameClient client, World world);
 
-  static ClientCommand fromBuffer(ByteData bytes) {
+  static ClientCommand fromByteData(ByteData bytes) {
     final ClientCommandType type = ClientCommandType.values[bytes.getUint8(0)];
     final ByteData bytesOffsetBy1 = ByteData.view(bytes.buffer, 1);
     switch (type) {
       case ClientCommandType.login:
-        return LoginCommand.fromBuffer(bytesOffsetBy1);
+        return LoginCommand.fromByteData(bytesOffsetBy1);
         break;
       default:
         throw Exception('Not implemented!');
