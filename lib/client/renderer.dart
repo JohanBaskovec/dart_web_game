@@ -58,7 +58,7 @@ class Renderer {
       height: ((_canvas.height) * (1 / scale)).toInt(),
     );
 
-    renderEntities(world, renderingBox);
+    renderAllEntities(world, renderingBox);
     /*
 
     _ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -332,17 +332,24 @@ class Renderer {
     _ctx.fillRect(box.left, box.top, box.width, box.height);
   }
 
-  void renderEntities(ClientWorld world, Box renderingBox) {
-    for (RenderingComponent rendering in world.renderingComponents) {
-      if (rendering != null &&
-          rendering.box != null &&
-          rendering.box.left < renderingBox.right &&
-          rendering.box.right > renderingBox.left &&
-          rendering.box.bottom > renderingBox.top &&
-          rendering.box.top < renderingBox.bottom) {
-        _ctx.drawImageScaled(images[rendering.imageType], rendering.box.left,
-            rendering.box.top, rendering.box.width, rendering.box.height);
+  void renderAllEntities(ClientWorld world, Box renderingBox) {
+    for (int z = 0 ; z < 2 ; z++) {
+      for (RenderingComponent rendering in world.renderingComponents) {
+        if (rendering != null && rendering.zIndex == z) {
+          renderRenderingComponent(rendering, renderingBox);
+        }
       }
+    }
+  }
+
+  void renderRenderingComponent(RenderingComponent rendering, Box renderingBox) {
+    if (rendering.box != null &&
+        rendering.box.left < renderingBox.right &&
+        rendering.box.right > renderingBox.left &&
+        rendering.box.bottom > renderingBox.top &&
+        rendering.box.top < renderingBox.bottom) {
+      _ctx.drawImageScaled(images[rendering.imageType], rendering.box.left,
+          rendering.box.top, rendering.box.width, rendering.box.height);
     }
   }
 

@@ -77,13 +77,22 @@ class ServerWorld extends World {
   }
 
   Entity addTree(double nextDouble, int x, int y) {
+    return addGridAlignedEntity(ImageType.tree, x, y, 1);
+  }
+
+  Entity addTile(ImageType image, int x, int y) {
+    return addGridAlignedEntity(image, x, y, 0);
+  }
+
+  Entity addGridAlignedEntity(ImageType image, int x, int y, int zIndex) {
     final entity = Entity();
     entities.add(entity);
     final rendering = RenderingComponent(
         box: Box.tileBox(x, y),
         entityId: entity.id,
         gridAligned: true,
-        imageType: ImageType.tree);
+        imageType: image,
+        zIndex: zIndex);
     renderingComponents.add(rendering);
     entity.renderingComponent = rendering;
     print('Added $entity');

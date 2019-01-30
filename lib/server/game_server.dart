@@ -4,6 +4,8 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:dart_game/common/command/server/server_command.dart';
+import 'package:dart_game/common/constants.dart';
+import 'package:dart_game/common/image_type.dart';
 import 'package:dart_game/server/client.dart';
 import 'package:dart_game/server/server_world.dart';
 
@@ -100,29 +102,16 @@ class GameServer {
         }
       }
     }
-    /*
     for (int x = 0; x < worldSize.x; x++) {
       for (int y = 0; y < worldSize.y; y++) {
         final int rand = randomGenerator.nextInt(2);
-        TileType type;
         if (rand == 0) {
-          type = TileType.grass;
+          world.addTile(ImageType.grass, x, y);
         } else {
-          type = TileType.dirt;
+          world.addTile(ImageType.dirt, x, y);
         }
-        world.addTileOfType(type, x, y);
       }
     }
-
-    for (int i = 0; i < 100000; i++) {
-      final SoftObject apple = world.addApple(randomGenerator.nextDouble());
-      apple.position = WorldPosition(
-          randomGenerator.nextDouble() * worldSize.x * tileSize,
-          randomGenerator.nextDouble() * worldSize.y * tileSize);
-      final Tile tile = world.getTileAt(apple.position.toTilePosition());
-      tile.itemsOnGround.add(apple.id);
-    }
-      */
   }
 
   Future<void> shutdown() async {

@@ -26,7 +26,9 @@ class SendWorldServerCommand extends ServerCommand {
     world.entities.replaceWith(entities);
     world.renderingComponents.replaceWith(renderingComponents);
     for (RenderingComponent renderingComponent in renderingComponents) {
-      if (renderingComponent != null && renderingComponent.gridAligned) {
+      if (renderingComponent != null &&
+          renderingComponent.gridAligned &&
+          renderingComponent.zIndex == 1) {
         final TilePosition position = renderingComponent.box.toTilePosition();
         world.solidObjectColumns[position.x][position.y] =
             renderingComponent.entity;

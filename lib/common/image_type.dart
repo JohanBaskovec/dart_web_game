@@ -51,5 +51,7 @@ enum ImageType {
   bread,
   rice,
   fish,
-  cookedSnake
+  cookedSnake,
+  grass,
+  dirt
 }

@@ -14,6 +14,7 @@ class RenderingComponent extends GameObject implements Serializable {
   int entityId;
   bool gridAligned;
   ImageType imageType;
+  int zIndex;
 
   Entity get entity => world.entities[entityId];
 
@@ -23,14 +24,16 @@ class RenderingComponent extends GameObject implements Serializable {
       this.gridAligned,
       this.imageType,
       World world,
-      int id})
+      int id,
+      this.zIndex})
       : super(world: world, id: id);
 
   static const int bufferSize = uint32Bytes + // id
           Box.bufferSize + // box
           uint32Bytes + // entityId
           uint8Bytes + // gridAligned
-          uint16Bytes // imageType
+          uint16Bytes + // imageType
+          uint8Bytes // zIndex
       ;
 
   @override
@@ -47,6 +50,7 @@ class RenderingComponent extends GameObject implements Serializable {
     writer.writeUint32(entityId);
     writer.writeUint8(gridAligned ? 1 : 0);
     writer.writeUint16(imageType.index);
+    writer.writeUint8(zIndex);
   }
 
   static RenderingComponent fromByteData(ByteData data) {
@@ -60,7 +64,8 @@ class RenderingComponent extends GameObject implements Serializable {
         box: Box.fromByteDataReader(reader),
         entityId: reader.readUint32(),
         gridAligned: reader.readUint8() == 1,
-        imageType: ImageType.values[reader.readUint16()]);
+        imageType: ImageType.values[reader.readUint16()],
+        zIndex: reader.readUint8());
 
     return renderingComponent;
   }

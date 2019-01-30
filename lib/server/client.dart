@@ -79,7 +79,9 @@ class GameClient {
     assert(session.player != null);
     assert(session.username != null);
 
-    // we only send the visible items to the player:
+    // we only send the visible entities to the player on first login
+    // (we then send other entities only when required,
+    // such as items in inventories)
     final entities = List<Entity>(world.entities.length);
     final renderingComponents =
         List<RenderingComponent>(world.renderingComponents.length);
@@ -90,50 +92,6 @@ class GameClient {
         renderingComponents[renderingComponent.id] = renderingComponent;
       }
     }
-    /*
-    final List<List<int>> columns = List(worldSize.x);
-    for (var x = 0; x < world.solidObjectColumns.length; x++) {
-      columns[x] = List(worldSize.y);
-      final List<int> rows = world.solidObjectColumns[x];
-      for (var y = 0; y < rows.length; y++) {
-        final Entity solidObject = world.entities[rows[y]];
-        entities[rows[y]] = solidObject;
-        if (solidObject != null) {
-          columns[x][y] = rows[y];
-        }
-      }
-    }
-    session.player.client = this;
-
-    final List<SoftObject> softObjects = [];
-    for (int i = 0; i < session.player.inventory.size; i++) {
-      softObjects.add(world.getSoftObject(session.player.inventory[i]));
-    }
-    for (int x = 0; x < worldSize.x; x++) {
-      for (int y = 0; y < worldSize.y; y++) {
-        final Tile tile = world.tilesColumn[x][y];
-        for (int objectId in tile.itemsOnGround) {
-          softObjects.add(world.getSoftObject(objectId));
-        }
-      }
-    }
-    final List<List<SolidObjectSummary>> solidObjectSummariesColumns =
-    List(worldSize.x);
-    for (int x = 0; x < worldSize.x; x++) {
-      solidObjectSummariesColumns[x] = List(worldSize.y);
-    }
-    for (var x = 0; x < solidObjectSummariesColumns.length; x++) {
-      final List<SolidObjectSummary> rows = solidObjectSummariesColumns[x];
-      for (var y = 0; y < rows.length; y++) {
-        final SolidObject solidObject = world.getObjectAt(TilePosition(x, y));
-        if (solidObject != null) {
-          rows[y] = SolidObjectSummary(solidObject.id, solidObject.type);
-        }
-      }
-    }
-    solidObjectSummariesColumns[session.player.tilePosition.x]
-    [session.player.tilePosition.y] = null;
-    */
     final sendWorldCommand = SendWorldServerCommand(
         playerId: playerId,
         entities: entities,
@@ -157,7 +115,8 @@ class GameClient {
                   height: tileSize),
               entityId: newPlayer.id,
               gridAligned: true,
-              imageType: ImageType.player);
+              imageType: ImageType.player,
+          zIndex: 1);
           world.renderingComponents.add(rendering);
           newPlayer.renderingComponentId = rendering.id;
           break;
