@@ -1,4 +1,5 @@
 import 'package:dart_game/common/box.dart';
+import 'package:dart_game/common/byte_data_reader.dart';
 import 'package:dart_game/common/command/server/send_world_server_command.dart';
 import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/rendering_component.dart';
@@ -42,7 +43,8 @@ void main() {
           entities: world.entities.objects,
           renderingComponents: world.renderingComponents.objects);
       final byteData = command.toByteData();
-      final command2 = SendWorldServerCommand.fromByteData(byteData);
+      final reader = ByteDataReader(byteData);
+      final command2 = SendWorldServerCommand.fromByteDataReader(reader);
     });
   });
 }
