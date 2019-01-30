@@ -31,6 +31,7 @@ class GameServer {
     }
     */
     world = ServerWorld.fromConstants();
+    world.gameServer = this;
     fillWorldWithStuff();
     final File uuidFile = File('./data/uuid.txt');
     uuidFile.writeAsStringSync(random256BitsHex());
@@ -76,14 +77,9 @@ class GameServer {
     final WebSocket webSocket = await WebSocketTransformer.upgrade(request);
     final newClient = GameClient(null, webSocket, this);
     newClient.onLeave = () async {
-      /*
-      if (newClient.session != null) {
-        newClient.session?.player?.client = null;
-      }
       clients.remove(newClient);
       newClient.webSocket.close();
       print('Client disconnected.\n');
-      */
     };
     newClient.listen();
     clients.add(newClient);

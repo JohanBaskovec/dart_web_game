@@ -83,8 +83,4 @@ class SendWorldServerCommand extends ServerCommand {
   String toString() {
     return 'SendWorldServerCommand{playerId: $playerId, entities: $entities, renderingComponents: $renderingComponents}';
   }
-
-  static SendWorldServerCommand fromByteData(ByteData byteData) {
-    return fromByteDataReader(ByteDataReader(byteData));
-  }
 }

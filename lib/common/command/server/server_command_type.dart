@@ -1,13 +1,8 @@
 enum ServerCommandType {
   sendWorld,
-  removeSolidObject,
-  addSolidObject,
-  moveSolidObject,
   addToInventory,
   removeFromInventory,
-  addSoftObject,
-  removeSoftObject,
-  moveSoftObject,
+  moveRenderingComponent,
   addTile,
   removeTile,
   setEquippedItem,
@@ -15,7 +10,5 @@ enum ServerCommandType {
   sendInventory,
   setHunger,
   setAge,
-  dropSoftObject,
-  removeSoftObjectFromGround,
   unknown
 }

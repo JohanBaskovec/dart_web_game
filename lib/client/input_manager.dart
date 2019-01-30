@@ -4,6 +4,7 @@ import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/client/renderer.dart';
 import 'package:dart_game/client/ui/client_ui_controller.dart';
 import 'package:dart_game/client/web_socket_client.dart';
+import 'package:dart_game/common/command/client/move_client_command.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/session.dart';
@@ -279,21 +280,10 @@ class InputManager {
   }
 
   void move(int x, int y) {
-    /*
-    final target = TilePosition(
-        session.player.tilePosition.x + x, session.player.tilePosition.y + y);
-    if (target.x < worldSize.x &&
-        target.x >= 0 &&
-        target.y < worldSize.y &&
-        target.y >= 0 &&
-        _world.getObjectAt(target) == null) {
-      final command = MoveCommand(x, y);
-      webSocketClient.webSocket.send(jsonEncode(command));
-    } else {
-      print("Can't move to $target.\n");
-      return;
+    final command = MoveClientCommand(x: x, y: y);
+    if (command.canExecute(session.player, _world)) {
+        webSocketClient.sendCommand(command);
     }
-    */
   }
 
   void rightClickOnSolidObject(SolidObject object) {

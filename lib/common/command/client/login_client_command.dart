@@ -7,11 +7,11 @@ import 'package:dart_game/common/command/client/client_command_type.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/server/client.dart';
 
-class LoginCommand extends ClientCommand {
+class LoginClientCommand extends ClientCommand {
   String username;
   String password;
 
-  LoginCommand([this.username, this.password]);
+  LoginClientCommand([this.username, this.password]);
 
   @override
   void execute(GameClient client, World world) {
@@ -19,9 +19,8 @@ class LoginCommand extends ClientCommand {
     print('Executed $this');
   }
 
-  static LoginCommand fromByteData(ByteData bytes) {
-    final LoginCommand loginCommand = LoginCommand();
-    final ByteDataReader reader = ByteDataReader(bytes);
+  static LoginClientCommand fromByteDataReader(ByteDataReader reader) {
+    final LoginClientCommand loginCommand = LoginClientCommand();
     final int usernameLength = reader.readInt8();
     loginCommand.username = reader.readUtf16String(usernameLength);
     final int passwordLength = reader.readInt8();
