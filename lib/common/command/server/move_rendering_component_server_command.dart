@@ -4,6 +4,7 @@ import 'package:dart_game/common/byte_data_reader.dart';
 import 'package:dart_game/common/byte_data_writer.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
+import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/ui_controller.dart';
@@ -19,7 +20,14 @@ class MoveRenderingComponentServerCommand extends ServerCommand {
   @override
   void execute(Session session, World world, [UiController uiController]) {
     print('Executed $this\n');
-    world.renderingComponents[renderingComponentId].box.moveTo(x, y);
+    final renderingComponent = world.renderingComponents[renderingComponentId];
+    if (renderingComponent.gridAligned) {
+      final int currentGridX = renderingComponent.box.left ~/ tileSize;
+      final int currentGridY = renderingComponent.box.top ~/ tileSize;
+      world.solidObjectColumns[currentGridX][currentGridY] = null;
+      world.solidObjectColumns[x ~/ tileSize][y ~/ tileSize] = renderingComponent.entity;
+    }
+    renderingComponent.box.moveTo(x, y);
   }
 
   static const int bufferSize = uint8Bytes + // type
