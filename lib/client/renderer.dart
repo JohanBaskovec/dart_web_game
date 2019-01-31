@@ -333,7 +333,7 @@ class Renderer {
   }
 
   void renderAllEntities(ClientWorld world, Box renderingBox) {
-    for (int z = 0 ; z < 2 ; z++) {
+    for (int z = 0 ; z < 3 ; z++) {
       for (RenderingComponent rendering in world.renderingComponents) {
         if (rendering != null && rendering.zIndex == z) {
           renderRenderingComponent(rendering, renderingBox);

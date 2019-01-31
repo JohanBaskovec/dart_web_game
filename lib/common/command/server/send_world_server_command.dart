@@ -28,10 +28,10 @@ class SendWorldServerCommand extends ServerCommand {
     for (RenderingComponent renderingComponent in renderingComponents) {
       if (renderingComponent != null &&
           renderingComponent.gridAligned &&
-          renderingComponent.zIndex == 1) {
+          renderingComponent.zIndex == 2) {
         final TilePosition position = renderingComponent.box.toTilePosition();
-        world.solidObjectColumns[position.x][position.y] =
-            renderingComponent.entity;
+        final Entity entity = renderingComponent.entity;
+        world.setSolidEntityAt(position.x, position.y, entity);
       }
     }
     session.player = world.entities[playerId];

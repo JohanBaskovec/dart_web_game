@@ -5,6 +5,7 @@ import 'package:dart_game/common/byte_data_writer.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
 import 'package:dart_game/common/constants.dart';
+import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/ui_controller.dart';
@@ -24,8 +25,11 @@ class MoveRenderingComponentServerCommand extends ServerCommand {
     if (renderingComponent.gridAligned) {
       final int currentGridX = renderingComponent.box.left ~/ tileSize;
       final int currentGridY = renderingComponent.box.top ~/ tileSize;
-      world.solidObjectColumns[currentGridX][currentGridY] = null;
-      world.solidObjectColumns[x ~/ tileSize][y ~/ tileSize] = renderingComponent.entity;
+      final Entity entity = renderingComponent.entity;
+      final int newX = x ~/ tileSize;
+      final int newY = y ~/ tileSize;
+      world.setSolidEntityAt(currentGridX, currentGridY, null);
+      world.setSolidEntityAt(newX, newY, entity);
     }
     renderingComponent.box.moveTo(x, y);
   }

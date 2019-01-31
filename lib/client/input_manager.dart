@@ -241,7 +241,7 @@ class InputManager {
             renderer.getWorldPositionFromCanvasPosition(canvasPosition);
         final TilePosition tilePosition = mousePosition.toTilePosition();
         if (tilePosition.isInWorldBound) {
-          final object = _world.getObjectAt(tilePosition);
+          final object = _world.getSolidEntityAt(tilePosition);
           /*
           if (object == null) {
             if (!uiController.dragging) {

@@ -40,7 +40,7 @@ class MoveClientCommand extends ClientCommand {
       return false;
     }
 
-    if (world.getObjectAt(target) != null) {
+    if (world.getSolidEntityAt(target) != null) {
       print('Tried to move to tile already occupied.\n');
       return false;
     }

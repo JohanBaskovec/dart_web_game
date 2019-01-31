@@ -6,6 +6,7 @@ import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/identifiable.dart';
 import 'package:dart_game/common/message.dart';
 import 'package:dart_game/common/rendering_component.dart';
+import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/common/tile_position.dart';
 
 class ObjectHolder<T extends GameObject> implements Iterable<T> {
@@ -186,8 +187,7 @@ class ObjectHolder<T extends GameObject> implements Iterable<T> {
 }
 
 class World {
-  //List<List<int>> tileColumns = [];
-  List<List<Entity>> solidObjectColumns = [];
+  List<List<Tile>> tiles = [];
   ObjectHolder<Entity> entities;
   ObjectHolder<RenderingComponent> renderingComponents;
   List<Message> messages = [Message('wow', 'ça marche éé à@ç£汉字;')];
@@ -195,17 +195,21 @@ class World {
   World.fromConstants() {
     entities = ObjectHolder(this);
     renderingComponents = ObjectHolder(this);
-    solidObjectColumns = List(worldSize.x);
+    tiles = List(worldSize.x);
     for (int x = 0; x < worldSize.x; x++) {
-      solidObjectColumns[x] = List(worldSize.y);
+      tiles[x] = List(worldSize.y);
+      for (int y = 0 ; y < worldSize.y ; y++) {
+        tiles[x][y] = Tile();
+      }
     }
   }
 
-  Entity getObjectAt(TilePosition position) {
-    if (solidObjectColumns[position.x][position.y] == null) {
-      return null;
-    }
-    return solidObjectColumns[position.x][position.y];
+  void setSolidEntityAt(int x, int y, Entity entity) {
+    tiles[x][y].solidEntity = entity;
+  }
+
+  Entity getSolidEntityAt(TilePosition position) {
+    return tiles[position.x][position.y].solidEntity;
   }
 
   /*
