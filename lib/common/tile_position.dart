@@ -21,4 +21,8 @@ class TilePosition {
   double distanceFrom(TilePosition other) {
     return sqrt(pow(other.x - x, 2) + pow(other.y - y, 2));
   }
+
+  bool isAdjacentTo(TilePosition other) {
+    return (other.x - x).abs() <= 1 && (other.y - y).abs() <= 1;
+  }
 }

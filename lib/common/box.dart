@@ -25,7 +25,7 @@ class Box implements Serializable {
             width: tileSize,
             height: tileSize);
 
-  bool pointIsInBox(double x, double y) {
+  bool pointIsInBox(int x, int y) {
     return x >= left && x <= right && y >= top && y <= bottom;
   }
 
@@ -77,7 +77,7 @@ class Box implements Serializable {
   }
 
   @override
-  void writeToByteDataWriter(ByteDataWriter writer) {
+  void writeToByteDataWriter(ByteDataWriter writer, {bool withId}) {
     writer.writeInt32(left);
     writer.writeInt32(top);
     writer.writeUint16(width);

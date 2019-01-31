@@ -1,6 +1,7 @@
 enum ClientCommandType {
   login,
   move,
+  moveEntity,
   useObjectOnSolidObject,
   buildSolidObject,
   setEquippedItem,

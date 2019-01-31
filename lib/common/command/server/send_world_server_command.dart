@@ -28,8 +28,7 @@ class SendWorldServerCommand extends ServerCommand {
     world.renderingComponents.replaceWith(renderingComponents);
     for (RenderingComponent renderingComponent in renderingComponents) {
       if (renderingComponent != null &&
-          renderingComponent.gridAligned &&
-          renderingComponent.zIndex == 2) {
+          renderingComponent.config.type == RenderingComponentType.solid) {
         final Tile tile = world.getTileAt(renderingComponent.tilePosition);
         final Entity entity = renderingComponent.entity;
         tile.solidEntity = entity;
@@ -67,7 +66,7 @@ class SendWorldServerCommand extends ServerCommand {
     }
     for (RenderingComponent e in renderingComponents) {
       if (e != null) {
-        size += RenderingComponent.bufferSize;
+        size += e.bufferSize;
       }
     }
     return size;

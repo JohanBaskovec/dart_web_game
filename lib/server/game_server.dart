@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/constants.dart';
+import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/image_type.dart';
 import 'package:dart_game/server/client.dart';
 import 'package:dart_game/server/server_world.dart';
@@ -95,8 +96,8 @@ class GameServer {
   }
 
   void fillWorldWithStuff() {
-    for (int x = 0; x < world.tiles.length; x++) {
-      for (int y = 0; y < world.tiles[x].length; y++) {
+    for (int x = 0; x < worldSize.x; x++) {
+      for (int y = 0; y < worldSize.y; y++) {
         final int rand = randomGenerator.nextInt(100);
         if (rand < 10) {
           world.addTree(randomGenerator.nextDouble(), x, y);
@@ -113,12 +114,11 @@ class GameServer {
         }
       }
     }
-    for (int i = 0 ; i < 20 ; i++) {
+    for (int i = 0; i < 20; i++) {
       final int x = randomGenerator.nextInt(worldSizePx.x);
       final int y = randomGenerator.nextInt(worldSizePx.y);
 
-      world.addEntityWithRendering(
-          ImageType.apple, Box(left: x, top: y, width: 20, height: 20));
+      world.addEntityWithRendering(EntityType.food, ImageType.apple, x, y);
     }
   }
 

@@ -7,6 +7,7 @@ import 'package:dart_game/common/command/server/server_command_type.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/rendering_component.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/common/tile_position.dart';
@@ -24,7 +25,7 @@ class MoveRenderingComponentServerCommand extends ServerCommand {
   void execute(Session session, World world, [UiController uiController]) {
     print('Executed $this\n');
     final renderingComponent = world.renderingComponents[renderingComponentId];
-    if (renderingComponent.gridAligned) {
+    if (renderingComponent.config.type == RenderingComponentType.solid) {
       final Entity entity = renderingComponent.entity;
       final Tile originTile = world.getTileAt(renderingComponent.tilePosition);
       final int newX = x ~/ tileSize;

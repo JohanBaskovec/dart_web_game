@@ -108,18 +108,13 @@ class GameClient {
       for (int y = 0; y < worldSize.y; y++) {
         final Tile tile = world.getTileAt(TilePosition(x, y));
         if (tile.solidEntity == null) {
-          newPlayer = Entity();
+          newPlayer = Entity(type: EntityType.player);
           world.entities.add(newPlayer);
-          final rendering = RenderingComponent(
-              box: Box(
-                  left: x * tileSize,
-                  top: y * tileSize,
-                  width: tileSize,
-                  height: tileSize),
+          final rendering = RenderingComponent.fromType(
+              x: x,
+              y: y,
               entityId: newPlayer.id,
-              gridAligned: true,
-              imageType: ImageType.player,
-          zIndex: 1);
+              imageType: ImageType.player);
           world.renderingComponents.add(rendering);
           newPlayer.renderingComponentId = rendering.id;
           break;
@@ -129,7 +124,9 @@ class GameClient {
         break;
       }
     }
-    if (newPlayer != null) {}
+    if (newPlayer == null) {
+      print("Couldn't find an empty space for new player!");
+    }
     return newPlayer;
   }
 

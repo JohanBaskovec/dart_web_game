@@ -1,11 +1,10 @@
-import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
+import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/image_type.dart';
 import 'package:dart_game/common/rendering_component.dart';
 import 'package:dart_game/common/tile.dart';
-import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/server/game_server.dart';
 
 class ServerWorld extends World {
@@ -13,19 +12,7 @@ class ServerWorld extends World {
 
   Map<String, int> usernameToIdMap = {};
 
-  ServerWorld.fromConstants() : super.fromConstants() {
-    /*
-    tilesColumn = List(worldSize.x);
-    for (int x = 0; x < worldSize.x; x++) {
-      tilesColumn[x] = List(worldSize.y);
-    }
-    */
-    /*
-    for (int i = 0; i < worldSize.x * worldSize.y; i++) {
-      freeSolidObjectIds.add(i);
-    }
-    */
-  }
+  ServerWorld.fromConstants() : super.fromConstants();
 
   @override
   void sendCommandToAllClients(ServerCommand command) {
@@ -78,28 +65,33 @@ class ServerWorld extends World {
     */
   }
 
-  Entity addEntity() {
-    final entity = Entity();
+  Entity addEntity(EntityType type) {
+    final entity = Entity(type: type);
     entities.add(entity);
     return entity;
   }
 
   Entity addTree(double nextDouble, int x, int y) {
-    return addGridAlignedEntity(ImageType.tree, x, y, 2);
+    print('Adding tree.');
+    return addGridAlignedEntity(
+        EntityType.gatherable, ImageType.tree, x * tileSize, y * tileSize, 2);
   }
 
-  Entity addEntityWithRendering(ImageType image, Box box) {
-    final Entity entity = addEntity();
-    addRenderingComponent(box, entity, false, image, 1);
+  Entity addEntityWithRendering(
+      EntityType type, ImageType image, int x, int y) {
+    final Entity entity = addEntity(type);
+    addRenderingComponent(x, y, entity, false, image, 1);
     return entity;
   }
 
   Entity addTile(ImageType image, int x, int y) {
-    return addGridAlignedEntity(image, x, y, 0);
+    return addGridAlignedEntity(
+        EntityType.ground, image, x * tileSize, y * tileSize, 0);
   }
 
-  Entity addGridAlignedEntity(ImageType image, int x, int y, int zIndex) {
-    final Entity entity = addEntity();
+  Entity addGridAlignedEntity(
+      EntityType type, ImageType image, int x, int y, int zIndex) {
+    final Entity entity = addEntity(type);
     addGridAlignedRenderingComponent(x, y, entity, image, zIndex);
     print('Added $entity');
     return entity;
@@ -107,23 +99,18 @@ class ServerWorld extends World {
 
   RenderingComponent addGridAlignedRenderingComponent(
       int x, int y, Entity entity, ImageType image, int zIndex) {
-    return addRenderingComponent(
-        Box.tileBox(x, y), entity, true, image, zIndex);
+    return addRenderingComponent(x, y, entity, true, image, zIndex);
   }
 
-  RenderingComponent addRenderingComponent(
-      Box box, Entity entity, bool gridAligned, ImageType image, int zIndex) {
-    final rendering = RenderingComponent(
-        box: box,
-        entityId: entity.id,
-        gridAligned: true,
-        imageType: image,
-        zIndex: zIndex);
+  RenderingComponent addRenderingComponent(int x, int y, Entity entity,
+      bool gridAligned, ImageType image, int zIndex) {
+    final rendering = RenderingComponent.fromType(
+        x: x, y: y, entityId: entity.id, imageType: image);
     renderingComponents.add(rendering);
     entity.renderingComponent = rendering;
     final Tile tile = getTileAt(rendering.tilePosition);
 
-    if (gridAligned) {
+    if (gridAligned && zIndex == 2) {
       tile.solidEntity = entity;
     } else {
       tile.entitiesOnGround.add(entity);

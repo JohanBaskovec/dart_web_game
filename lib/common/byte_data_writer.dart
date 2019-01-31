@@ -11,6 +11,11 @@ const int int16Bytes = 2;
 const int uint8Bytes = 1;
 const int int8Bytes = 1;
 
+const int maxUint32 = 4294967295;
+const int maxInt32 = 2147483647;
+const int uint32Marker = 2147483648;
+const int maxUint16 = 65535;
+
 class ByteDataWriter {
   ByteData byteData;
   int i = 0;
@@ -55,6 +60,13 @@ class ByteDataWriter {
   void writeInt64(int data) {
     byteData.setInt64(i, data);
     i += 8;
+  }
+
+  void writeByteData(ByteData data) {
+    final Uint8List bytes = data.buffer.asUint8List();
+    for (int byte in bytes) {
+      writeUint8(byte);
+    }
   }
 
   void writeObject<T extends Serializable>(T data) {

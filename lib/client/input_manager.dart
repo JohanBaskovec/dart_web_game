@@ -146,8 +146,8 @@ class InputManager {
     });
 
     _canvas.onMouseMove.listen((MouseEvent e) {
-      mousePosition.x = e.client.x.toDouble();
-      mousePosition.y = e.client.y.toDouble();
+      mousePosition.x = e.client.x.toInt();
+      mousePosition.y = e.client.y.toInt();
 
       if ((e.movement.x != 0 || e.movement.y != 0) &&
           uiController.maybeDraggedItem != null) {

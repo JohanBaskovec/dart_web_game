@@ -289,8 +289,8 @@ class Renderer {
 
   CanvasPosition getCursorPositionInCanvas(MouseEvent event) {
     final rect = _canvas.getBoundingClientRect();
-    final double x = event.client.x - rect.left;
-    final double y = event.client.y - rect.top;
+    final int x = event.client.x - rect.left;
+    final int y = event.client.y - rect.top;
     return CanvasPosition(x, y);
   }
 
@@ -298,8 +298,9 @@ class Renderer {
     if (cameraPosition == null) {
       return WorldPosition(0, 0);
     }
-    return WorldPosition((position.x * (1 / scale)) - cameraPosition.x,
-        (position.y * (1 / scale)) - cameraPosition.y);
+    return WorldPosition(
+        ((position.x * (1 / scale)) - cameraPosition.x).toInt(),
+        ((position.y * (1 / scale)) - cameraPosition.y).toInt());
   }
 
   WorldPosition getCursorPositionInWorld(MouseEvent event) {
@@ -314,8 +315,8 @@ class Renderer {
     final double canvasMiddleWidth = _canvas.width / 2.0;
     final double canvasMiddleHeight = _canvas.height / 2.0;
 
-    final double translateX = x + canvasMiddleWidth * inverseScale;
-    final double translateY = y + canvasMiddleHeight * inverseScale;
+    final int translateX = (x + canvasMiddleWidth * inverseScale).toInt();
+    final int translateY = (y + canvasMiddleHeight * inverseScale).toInt();
     cameraPosition = CanvasPosition(translateX, translateY);
   }
 
@@ -333,16 +334,18 @@ class Renderer {
   }
 
   void renderAllEntities(ClientWorld world, Box renderingBox) {
-    for (int z = 0 ; z < 3 ; z++) {
+    for (int z = 0; z < 3; z++) {
       for (RenderingComponent rendering in world.renderingComponents) {
-        if (rendering != null && rendering.zIndex == z) {
+        if (rendering != null &&
+            rendering.config.type == RenderingComponentType.values[z]) {
           renderRenderingComponent(rendering, renderingBox);
         }
       }
     }
   }
 
-  void renderRenderingComponent(RenderingComponent rendering, Box renderingBox) {
+  void renderRenderingComponent(
+      RenderingComponent rendering, Box renderingBox) {
     if (rendering.box != null &&
         rendering.box.left < renderingBox.right &&
         rendering.box.right > renderingBox.left &&
