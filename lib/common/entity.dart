@@ -17,22 +17,31 @@ class Entity extends GameObject {
   void set renderingComponent(RenderingComponent value) =>
       renderingComponentId = value.id;
 
-  Entity(
-      {this.renderingComponentId,
-      this.inventoryComponentId,
-      this.healthComponentId,
-      int id,
-      World world})
-      : super(world: world, id: id) {
-    renderingComponentId ??= 0;
-    inventoryComponentId ??= 0;
-    healthComponentId ??= 0;
+  Entity({int renderingComponentId,
+    int inventoryComponentId,
+    int healthComponentId,
+    int id,
+    World world})
+      : super(world: world, id: id){
+    this.renderingComponentId = renderingComponentId ?? 0;
+    this.inventoryComponentId = inventoryComponentId ?? 0;
+    this.healthComponentId = healthComponentId ?? 0;
   }
 
-  static const int bufferSize = uint32Bytes + // id
-      uint32Bytes + // renderingComponentId
-      uint32Bytes + // inventoryComponentId
-      uint32Bytes; // healthComponentId
+  int get bufferSize {
+    int size = uint32Bytes; // id
+    size += uint16Bytes; // component bit map
+    if (renderingComponentId != 0) {
+      size += uint32Bytes; // renderingComponentId
+    }
+    if (inventoryComponentId != 0) {
+      size += uint32Bytes; // inventoryComponentId
+    }
+    if (healthComponentId != 0) {
+      size += uint32Bytes; // healthComponentId
+    }
+    return size;
+  }
 
   @override
   ByteData toByteData() {
@@ -46,9 +55,27 @@ class Entity extends GameObject {
     // TODO: bytemap that tells which components exist on the entity,
     // that would save a lot of bandwidth
     super.writeToByteDataWriter(writer);
-    writer.writeUint32(renderingComponentId);
-    writer.writeUint32(inventoryComponentId);
-    writer.writeUint32(healthComponentId);
+    int componentBitMap = 0;
+    if (renderingComponentId != 0) {
+      componentBitMap |= 0x8000;
+    }
+    if (inventoryComponentId != 0) {
+      componentBitMap |= 0x4000;
+    }
+    if (healthComponentId != 0) {
+      componentBitMap |= 0x2000;
+    }
+    writer.writeUint16(componentBitMap);
+
+    if (renderingComponentId != 0) {
+      writer.writeUint32(renderingComponentId);
+    }
+    if (inventoryComponentId != 0) {
+      writer.writeUint32(inventoryComponentId);
+    }
+    if (healthComponentId != 0) {
+      writer.writeUint32(healthComponentId);
+    }
   }
 
   static Entity fromByteData(ByteData data) {
@@ -57,28 +84,36 @@ class Entity extends GameObject {
   }
 
   static Entity fromByteDataReader(ByteDataReader reader) {
-    final Entity entity = Entity(
-      id: reader.readUint32(),
-      renderingComponentId: reader.readUint32(),
-      inventoryComponentId: reader.readUint32(),
-      healthComponentId: reader.readUint32(),
-    );
+    final Entity entity = Entity(id: reader.readUint32());
+    final int componentBitMap = reader.readUint16();
+    if (componentBitMap & 0x8000 != 0) {
+      entity.renderingComponentId = reader.readUint32();
+    }
+    if (componentBitMap & 0x4000 != 0) {
+      entity.inventoryComponentId = reader.readUint32();
+    }
+    if (componentBitMap & 0x2000 != 0) {
+      entity.healthComponentId = reader.readUint32();
+    }
     return entity;
   }
 
   @override
   String toString() {
-    return 'Entity{renderingComponentId: $renderingComponentId, ${renderingComponentId != null && world != null ? 'renderingComponent: $renderingComponent' : ''}, inventoryComponentId: $inventoryComponentId, healthComponentId: $healthComponentId}';
+    return 'Entity{renderingComponentId: $renderingComponentId, ${renderingComponentId !=
+        null && world != null
+        ? 'renderingComponent: $renderingComponent'
+        : ''}, inventoryComponentId: $inventoryComponentId, healthComponentId: $healthComponentId}';
   }
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Entity &&
-          runtimeType == other.runtimeType &&
-          renderingComponentId == other.renderingComponentId &&
-          inventoryComponentId == other.inventoryComponentId &&
-          healthComponentId == other.healthComponentId;
+          other is Entity &&
+              runtimeType == other.runtimeType &&
+              renderingComponentId == other.renderingComponentId &&
+              inventoryComponentId == other.inventoryComponentId &&
+              healthComponentId == other.healthComponentId;
 
   @override
   int get hashCode =>

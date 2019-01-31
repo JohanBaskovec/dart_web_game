@@ -61,7 +61,7 @@ class SendWorldServerCommand extends ServerCommand {
         renderingComponents.length; // at least 1 byte for nullity
     for (Entity e in entities) {
       if (e != null) {
-        size += Entity.bufferSize;
+        size += e.bufferSize;
       }
     }
     for (RenderingComponent e in renderingComponents) {
