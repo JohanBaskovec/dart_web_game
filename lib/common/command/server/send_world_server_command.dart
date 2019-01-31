@@ -8,6 +8,7 @@ import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/rendering_component.dart';
 import 'package:dart_game/common/session.dart';
+import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/ui_controller.dart';
 
@@ -29,9 +30,9 @@ class SendWorldServerCommand extends ServerCommand {
       if (renderingComponent != null &&
           renderingComponent.gridAligned &&
           renderingComponent.zIndex == 2) {
-        final TilePosition position = renderingComponent.box.toTilePosition();
+        final Tile tile = world.getTileAt(renderingComponent.tilePosition);
         final Entity entity = renderingComponent.entity;
-        world.setSolidEntityAt(position.x, position.y, entity);
+        tile.solidEntity = entity;
       }
     }
     session.player = world.entities[playerId];

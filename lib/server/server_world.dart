@@ -4,6 +4,8 @@ import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/image_type.dart';
 import 'package:dart_game/common/rendering_component.dart';
+import 'package:dart_game/common/tile.dart';
+import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/server/game_server.dart';
 
 class ServerWorld extends World {
@@ -119,6 +121,13 @@ class ServerWorld extends World {
         zIndex: zIndex);
     renderingComponents.add(rendering);
     entity.renderingComponent = rendering;
+    final Tile tile = getTileAt(rendering.tilePosition);
+
+    if (gridAligned) {
+      tile.solidEntity = entity;
+    } else {
+      tile.entitiesOnGround.add(entity);
+    }
     return rendering;
   }
 }

@@ -3,11 +3,13 @@ import 'dart:typed_data';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/byte_data_reader.dart';
 import 'package:dart_game/common/byte_data_writer.dart';
+import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/identifiable.dart';
 import 'package:dart_game/common/image_type.dart';
 import 'package:dart_game/common/serializable.dart';
+import 'package:dart_game/common/tile_position.dart';
 
 class RenderingComponent extends GameObject implements Serializable {
   Box box;
@@ -27,6 +29,10 @@ class RenderingComponent extends GameObject implements Serializable {
       int id,
       this.zIndex})
       : super(world: world, id: id);
+
+  TilePosition get tilePosition {
+    return TilePosition(box.left ~/ tileSize, box.top ~/ tileSize);
+  }
 
   static const int bufferSize = uint32Bytes + // id
           Box.bufferSize + // box

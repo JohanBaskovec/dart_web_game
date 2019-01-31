@@ -8,6 +8,8 @@ import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/session.dart';
+import 'package:dart_game/common/tile.dart';
+import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/ui_controller.dart';
 
 class MoveRenderingComponentServerCommand extends ServerCommand {
@@ -23,13 +25,13 @@ class MoveRenderingComponentServerCommand extends ServerCommand {
     print('Executed $this\n');
     final renderingComponent = world.renderingComponents[renderingComponentId];
     if (renderingComponent.gridAligned) {
-      final int currentGridX = renderingComponent.box.left ~/ tileSize;
-      final int currentGridY = renderingComponent.box.top ~/ tileSize;
       final Entity entity = renderingComponent.entity;
+      final Tile originTile = world.getTileAt(renderingComponent.tilePosition);
       final int newX = x ~/ tileSize;
       final int newY = y ~/ tileSize;
-      world.setSolidEntityAt(currentGridX, currentGridY, null);
-      world.setSolidEntityAt(newX, newY, entity);
+      final Tile targetTile = world.getTileAt(TilePosition(newX, newY));
+      originTile.solidEntity = null;
+      targetTile.solidEntity = entity;
     }
     renderingComponent.box.moveTo(x, y);
   }

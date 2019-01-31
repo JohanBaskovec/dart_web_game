@@ -11,6 +11,7 @@ import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/image_type.dart';
 import 'package:dart_game/common/rendering_component.dart';
 import 'package:dart_game/common/session.dart';
+import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/server/game_server.dart';
 
@@ -105,7 +106,8 @@ class GameClient {
     Entity newPlayer;
     for (int x = 0; x < worldSize.x; x++) {
       for (int y = 0; y < worldSize.y; y++) {
-        if (world.getSolidEntityAt(TilePosition(x, y)) == null) {
+        final Tile tile = world.getTileAt(TilePosition(x, y));
+        if (tile.solidEntity == null) {
           newPlayer = Entity();
           world.entities.add(newPlayer);
           final rendering = RenderingComponent(

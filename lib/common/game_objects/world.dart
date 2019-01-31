@@ -204,12 +204,8 @@ class World {
     }
   }
 
-  void setSolidEntityAt(int x, int y, Entity entity) {
-    tiles[x][y].solidEntity = entity;
-  }
-
-  Entity getSolidEntityAt(TilePosition position) {
-    return tiles[position.x][position.y].solidEntity;
+  Tile getTileAt(TilePosition position) {
+    return tiles[position.x][position.y];
   }
 
   /*

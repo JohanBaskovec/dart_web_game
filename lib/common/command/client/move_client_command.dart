@@ -8,6 +8,7 @@ import 'package:dart_game/common/command/server/move_rendering_component_server_
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/server/client.dart';
 
@@ -40,7 +41,8 @@ class MoveClientCommand extends ClientCommand {
       return false;
     }
 
-    if (world.getSolidEntityAt(target) != null) {
+    final Tile tile = world.getTileAt(target);
+    if (tile.solidEntity != null) {
       print('Tried to move to tile already occupied.\n');
       return false;
     }
