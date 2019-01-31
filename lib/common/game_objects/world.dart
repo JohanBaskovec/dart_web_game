@@ -10,7 +10,7 @@ import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/common/tile_position.dart';
 
 class ObjectHolder<T extends GameObject> implements Iterable<T> {
-  List<T> objects = [null];
+  List<T> objects = [];
   List<int> freeObjectsId = [];
   World world;
 

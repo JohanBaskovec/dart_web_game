@@ -17,16 +17,13 @@ class Entity extends GameObject {
   void set renderingComponent(RenderingComponent value) =>
       renderingComponentId = value.id;
 
-  Entity({int renderingComponentId,
-    int inventoryComponentId,
-    int healthComponentId,
-    int id,
-    World world})
-      : super(world: world, id: id){
-    this.renderingComponentId = renderingComponentId ?? 0;
-    this.inventoryComponentId = inventoryComponentId ?? 0;
-    this.healthComponentId = healthComponentId ?? 0;
-  }
+  Entity(
+      {this.renderingComponentId,
+      this.inventoryComponentId,
+      this.healthComponentId,
+      int id,
+      World world})
+      : super(world: world, id: id);
 
   int get bufferSize {
     int size = uint32Bytes; // id
@@ -56,24 +53,24 @@ class Entity extends GameObject {
     // that would save a lot of bandwidth
     super.writeToByteDataWriter(writer);
     int componentBitMap = 0;
-    if (renderingComponentId != 0) {
+    if (renderingComponentId != null) {
       componentBitMap |= 0x8000;
     }
-    if (inventoryComponentId != 0) {
+    if (inventoryComponentId != null) {
       componentBitMap |= 0x4000;
     }
-    if (healthComponentId != 0) {
+    if (healthComponentId != null) {
       componentBitMap |= 0x2000;
     }
     writer.writeUint16(componentBitMap);
 
-    if (renderingComponentId != 0) {
+    if (renderingComponentId != null) {
       writer.writeUint32(renderingComponentId);
     }
-    if (inventoryComponentId != 0) {
+    if (inventoryComponentId != null) {
       writer.writeUint32(inventoryComponentId);
     }
-    if (healthComponentId != 0) {
+    if (healthComponentId != null) {
       writer.writeUint32(healthComponentId);
     }
   }
@@ -100,20 +97,17 @@ class Entity extends GameObject {
 
   @override
   String toString() {
-    return 'Entity{renderingComponentId: $renderingComponentId, ${renderingComponentId !=
-        null && world != null
-        ? 'renderingComponent: $renderingComponent'
-        : ''}, inventoryComponentId: $inventoryComponentId, healthComponentId: $healthComponentId}';
+    return 'Entity{renderingComponentId: $renderingComponentId, ${renderingComponentId != null && world != null ? 'renderingComponent: $renderingComponent' : ''}, inventoryComponentId: $inventoryComponentId, healthComponentId: $healthComponentId}';
   }
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is Entity &&
-              runtimeType == other.runtimeType &&
-              renderingComponentId == other.renderingComponentId &&
-              inventoryComponentId == other.inventoryComponentId &&
-              healthComponentId == other.healthComponentId;
+      other is Entity &&
+          runtimeType == other.runtimeType &&
+          renderingComponentId == other.renderingComponentId &&
+          inventoryComponentId == other.inventoryComponentId &&
+          healthComponentId == other.healthComponentId;
 
   @override
   int get hashCode =>
