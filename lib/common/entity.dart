@@ -120,7 +120,9 @@ class Entity extends GameObject {
   static Entity fromByteDataReader(ByteDataReader reader) {
     final int typeAndId = reader.readUint32();
     final int typeId = typeAndId >> 28;
-    final int id = typeAndId ^ 0xF0000000;
+    final int id = (typeAndId << 28) >> 28;
+    assert(typeId < 16);
+    assert(id < maxId);
     final Entity entity = Entity(
         id: id, type: EntityType.values[typeId]);
     switch (entity.type) {
