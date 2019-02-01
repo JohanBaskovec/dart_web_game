@@ -73,15 +73,11 @@ class ByteDataWriter {
     data.writeToByteDataWriter(this);
   }
 
-  void writeList<T extends Serializable>(List<T> data) {
+  /// Write a list that doesn't contain any null
+  void writeListWithoutNull<T extends Serializable>(List<T> data) {
     writeUint32(data.length);
     for (T t in data) {
-      if (t == null) {
-        writeUint8(1);
-      } else {
-        writeUint8(0);
-        t.writeToByteDataWriter(this);
-      }
+      t.writeToByteDataWriter(this);
     }
   }
 

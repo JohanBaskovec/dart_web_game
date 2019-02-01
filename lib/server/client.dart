@@ -84,20 +84,20 @@ class GameClient {
     // we only send the visible entities to the player on first login
     // (we then send other entities only when required,
     // such as items in inventories)
-    final entities = List<Entity>(world.entities.length);
-    final renderingComponents =
-        List<RenderingComponent>(world.renderingComponents.length);
+    final List<Entity> entities = [];
+    final List<RenderingComponent> renderingComponents = [];
     for (RenderingComponent renderingComponent in world.renderingComponents) {
       if (renderingComponent != null) {
         final Entity entity = renderingComponent.entity;
-        entities[entity.id] = entity;
-        renderingComponents[renderingComponent.id] = renderingComponent;
+        entities.add(entity);
+        renderingComponents.add(renderingComponent);
       }
     }
     final sendWorldCommand = SendWorldServerCommand(
         playerId: playerId,
         entities: entities,
-        renderingComponents: renderingComponents);
+        renderingComponents: renderingComponents,
+    );
     print('Client connected!\n');
     sendCommand(sendWorldCommand);
   }

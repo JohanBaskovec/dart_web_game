@@ -11,39 +11,44 @@ import 'package:dart_game/common/tile_position.dart';
 
 class ObjectHolder<T extends GameObject> implements Iterable<T> {
   List<T> objects = [];
+  int nNotNull = 0;
   List<int> freeObjectsId = [];
   World world;
+  int maxObjects;
 
-  ObjectHolder(this.world);
+  ObjectHolder(this.world, this.maxObjects): objects = List(maxObjects) {
+    for (int i = 0 ; i < maxObjects ; i++) {
+      freeObjectsId.add(i);
+    }
+  }
 
   void add(T object) {
-    if (freeObjectsId.isEmpty) {
-      object.id = objects.length;
-      objects.add(object);
+    assert(object != null);
+    if (object.id == null) {
+      if (freeObjectsId.isEmpty) {
+        throw Exception('Out of memory!');
+      } else {
+        final int id = freeObjectsId.removeLast();
+        object.id = id;
+        objects[id] = object;
+      }
     } else {
-      final int id = freeObjectsId.removeLast();
-      object.id = id;
-      objects[id] = object;
+      if (object.id >= maxObjects) {
+        throw Exception('Out of memory!');
+      }
+      if (objects[object.id] == null) {
+        nNotNull++;
+      }
+      objects[object.id] = object;
     }
     object.world = world;
+    nNotNull++;
   }
 
   void removeAt(int index) {
     freeObjectsId.add(index);
     objects[index] = null;
-  }
-
-  void put(int index, T object) {
-    objects[index] = object;
-  }
-
-  void replaceWith(List<T> objects) {
-    this.objects = objects;
-    for (T t in this.objects) {
-      if (t != null) {
-        t.world = world;
-      }
-    }
+    nNotNull--;
   }
 
   T operator [](int index) => objects[index];
@@ -193,8 +198,8 @@ class World {
   List<Message> messages = [Message('wow', 'ça marche éé à@ç£汉字;')];
 
   World.fromConstants() {
-    entities = ObjectHolder(this);
-    renderingComponents = ObjectHolder(this);
+    entities = ObjectHolder(this, 2000);
+    renderingComponents = ObjectHolder(this, 2000);
     tiles = List(worldSize.x);
     for (int x = 0; x < worldSize.x; x++) {
       tiles[x] = List(worldSize.y);

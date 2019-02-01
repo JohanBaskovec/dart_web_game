@@ -9,8 +9,8 @@ import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/rendering_component.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/tile.dart';
-import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/ui_controller.dart';
+import 'package:meta/meta.dart';
 
 class SendWorldServerCommand extends ServerCommand {
   int playerId;
@@ -18,14 +18,20 @@ class SendWorldServerCommand extends ServerCommand {
   List<RenderingComponent> renderingComponents;
 
   SendWorldServerCommand(
-      {this.playerId, this.entities, this.renderingComponents});
+      {@required this.playerId,
+      @required this.entities,
+      @required this.renderingComponents});
 
   @override
   void execute(Session session, World world, [UiController uiController]) {
     print('Executed LoggedInCommand\n');
     session.loggedIn = true;
-    world.entities.replaceWith(entities);
-    world.renderingComponents.replaceWith(renderingComponents);
+    for (Entity e in entities) {
+      world.entities.add(e);
+    }
+    for (RenderingComponent e in renderingComponents) {
+      world.renderingComponents.add(e);
+    }
     for (RenderingComponent renderingComponent in renderingComponents) {
       if (renderingComponent != null &&
           renderingComponent.config.type == RenderingComponentType.solid) {
@@ -48,36 +54,30 @@ class SendWorldServerCommand extends ServerCommand {
   void writeToByteDataWriter(ByteDataWriter writer) {
     writer.writeUint8(ServerCommandType.sendWorld.index);
     writer.writeUint32(playerId);
-    writer.writeList(entities);
-    writer.writeList(renderingComponents);
+    writer.writeListWithoutNull(entities);
+    writer.writeListWithoutNull(renderingComponents);
   }
 
   int get bufferSize {
     int size = uint8Bytes + // type
         uint32Bytes + // playerId
         uint32Bytes + // entities.length
-        entities.length + // at least 1 byte for nullity
-        uint32Bytes + // renderingComponents.length
-        renderingComponents.length; // at least 1 byte for nullity
+        uint32Bytes; // renderingComponents.length
     for (Entity e in entities) {
-      if (e != null) {
-        size += e.bufferSize;
-      }
+      size += e.bufferSize;
     }
     for (RenderingComponent e in renderingComponents) {
-      if (e != null) {
-        size += e.bufferSize;
-      }
+      size += e.bufferSize;
     }
     return size;
   }
 
   static SendWorldServerCommand fromByteDataReader(ByteDataReader reader) {
-    final command = SendWorldServerCommand();
-    command.playerId = reader.readUint32();
-    command.entities = reader.readList(Entity.fromByteDataReader);
-    command.renderingComponents =
-        reader.readList(RenderingComponent.fromByteDataReader);
+    final command = SendWorldServerCommand(
+        playerId: reader.readUint32(),
+        entities: reader.readListWithoutNull(Entity.fromByteDataReader),
+        renderingComponents:
+            reader.readListWithoutNull(RenderingComponent.fromByteDataReader));
     return command;
   }
 

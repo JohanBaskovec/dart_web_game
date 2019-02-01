@@ -85,17 +85,12 @@ class ByteDataReader {
     return list;
   }
 
-  List<T> readList<T>(
+  List<T> readListWithoutNull<T>(
       T Function(ByteDataReader r) fromByteDataReader) {
     final int listSize = readUint32();
-    final List<T> list = [];
+    final List<T> list = List(listSize);
     for (int i = 0; i < listSize; i++) {
-      final bool isNull = readUint8() == 1;
-      if (isNull) {
-        list.add(null);
-      } else {
-        list.add(fromByteDataReader(this));
-      }
+      list[i] = fromByteDataReader(this);
     }
     return list;
   }
