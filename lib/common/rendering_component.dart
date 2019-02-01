@@ -44,9 +44,9 @@ class RenderingComponent extends GameObject implements Serializable {
 
   RenderingComponent.fromType(
       {@required this.imageType,
-      @required this.entityId,
       @required int x,
       @required int y,
+      this.entityId,
       int id,
       World world})
       : super(world: world, id: id) {
@@ -80,7 +80,6 @@ class RenderingComponent extends GameObject implements Serializable {
           int16Bytes; // y
     }
     bufferSize += uint32Bytes; // id
-    bufferSize += uint32Bytes; // entityId
   }
 
   @override
@@ -102,7 +101,6 @@ class RenderingComponent extends GameObject implements Serializable {
       writer.writeInt16(position.y);
     }
     writer.writeUint32(id);
-    writer.writeUint32(entityId);
   }
 
   static RenderingComponent fromByteData(ByteData data) {
@@ -127,7 +125,6 @@ class RenderingComponent extends GameObject implements Serializable {
       id: reader.readUint32(),
       x: x,
       y: y,
-      entityId: reader.readUint32(),
     );
   }
 

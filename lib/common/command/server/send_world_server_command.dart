@@ -26,11 +26,14 @@ class SendWorldServerCommand extends ServerCommand {
   void execute(Session session, World world, [UiController uiController]) {
     print('Executed LoggedInCommand\n');
     session.loggedIn = true;
-    for (Entity e in entities) {
-      world.entities.add(e);
-    }
     for (RenderingComponent e in renderingComponents) {
       world.renderingComponents.add(e);
+    }
+    for (Entity e in entities) {
+      world.entities.add(e);
+      if (e.renderingComponentId != null) {
+        world.renderingComponents[e.renderingComponentId].entityId = e.id;
+      }
     }
     for (RenderingComponent renderingComponent in renderingComponents) {
       if (renderingComponent != null &&
