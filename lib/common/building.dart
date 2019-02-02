@@ -2,7 +2,6 @@ import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
-import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/player_skills.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/server/client.dart';
@@ -30,7 +29,7 @@ class CraftingConfiguration {
   CraftingConfiguration(this.workbench, this.requiredItems);
 }
 
-bool playerCanBuild(Iterable<SoftObject> items, World world,
+bool playerCanBuild(Iterable<SoftObject> items,
     SolidObjectType type, SolidObject player, TilePosition position) {
   if (!player.isAdjacentToPosition(position)) {
     return false;
@@ -40,7 +39,7 @@ bool playerCanBuild(Iterable<SoftObject> items, World world,
   if (recipe == null) {
     return false;
   }
-  return _hasEnoughItems(items, recipe.requiredItems, world);
+  return _hasEnoughItems(items, recipe.requiredItems);
 }
 
 final Map<SoftObjectType, CraftingConfiguration> craftingRecipes = {
@@ -48,7 +47,7 @@ final Map<SoftObjectType, CraftingConfiguration> craftingRecipes = {
       CraftingConfiguration(SolidObjectType.campFire, {SoftObjectType.snake: 1})
 };
 
-bool playerCanCraft(Iterable<SoftObject> items, World world,
+bool playerCanCraft(Iterable<SoftObject> items,
     SoftObjectType type, SolidObject player) {
   final CraftingConfiguration config = craftingRecipes[type];
   if (config == null) {
@@ -83,13 +82,13 @@ bool playerCanCraft(Iterable<SoftObject> items, World world,
     }
   }
 
-  return _hasEnoughItems(items, config.requiredItems, world);
+  return _hasEnoughItems(items, config.requiredItems);
 }
 
 /// Remove items of recipes from inventory if there are enough of each
 /// type, and synchronize the client
 List<SoftObject> consumeItemsForCrafting(GameClient client,
-    Map<SoftObjectType, int> recipe, Iterable<SoftObject> items, World world) {
+    Map<SoftObjectType, int> recipe, Iterable<SoftObject> items) {
   final List<SoftObject> itemsToConsume = [];
   for (var type in recipe.keys) {
     final int quantityNeeded = recipe[type];
@@ -108,7 +107,7 @@ List<SoftObject> consumeItemsForCrafting(GameClient client,
 }
 
 bool _hasEnoughItems(
-    Iterable<SoftObject> items, Map<SoftObjectType, int> recipe, World world) {
+    Iterable<SoftObject> items, Map<SoftObjectType, int> recipe) {
   final Map<SoftObjectType, int> required = Map.from(recipe);
 
   for (var type in recipe.keys) {

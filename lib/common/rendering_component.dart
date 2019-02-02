@@ -5,7 +5,7 @@ import 'package:dart_game/common/byte_data_reader.dart';
 import 'package:dart_game/common/byte_data_writer.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/entity.dart';
-import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/game_objects/world.dart' as world;
 import 'package:dart_game/common/identifiable.dart';
 import 'package:dart_game/common/image_type.dart';
 import 'package:dart_game/common/serializable.dart';
@@ -47,9 +47,8 @@ class RenderingComponent extends GameObject implements Serializable {
       @required int x,
       @required int y,
       this.entityId,
-      int id,
-      World world})
-      : super(world: world, id: id) {
+      int id})
+      : super(id: id) {
     config = defaultComponentPerType[imageType];
     if (config == null) {
       throw Exception('Not implemented!');

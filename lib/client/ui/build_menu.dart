@@ -24,7 +24,7 @@ class BuildMenu extends UiElement {
 
   SolidObjectType selectedType;
 
-  BuildMenu(this.session) : super() {
+  BuildMenu() : super() {
     for (SolidObjectType type in buildingRecipes.keys) {
       buttons.add(BuildMenuButton(type));
     }
@@ -50,3 +50,4 @@ class BuildMenu extends UiElement {
     return false;
   }
 }
+

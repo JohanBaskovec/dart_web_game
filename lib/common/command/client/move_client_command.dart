@@ -7,10 +7,12 @@ import 'package:dart_game/common/command/client/client_command_type.dart';
 import 'package:dart_game/common/command/server/move_rendering_component_server_command.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/entity.dart';
-import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/game_objects/world.dart' as world;
 import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/server/client.dart';
+import 'package:dart_game/server/game_server.dart' as server;
+
 
 class MoveClientCommand extends ClientCommand {
   int x;
@@ -19,21 +21,21 @@ class MoveClientCommand extends ClientCommand {
   MoveClientCommand({this.x, this.y});
 
   @override
-  void execute(GameClient client, World world) {
+  void execute(GameClient client) {
     print('Executing $this\n');
     final Entity player = client.session.player;
-    if (!canExecute(player, world)) {
+    if (!canExecute(player)) {
       return;
     }
     final serverCommand = MoveRenderingComponentServerCommand(
         renderingComponentId: client.session.player.renderingComponentId,
         x: player.renderingComponent.box.left + x * tileSize,
         y: player.renderingComponent.box.top + y * tileSize);
-    serverCommand.execute(client.session, world);
-    world.sendCommandToAllClients(serverCommand);
+    serverCommand.execute(client.session, true);
+    server.sendCommandToAllClients(serverCommand);
   }
 
-  bool canExecute(Entity player, World world) {
+  bool canExecute(Entity player) {
     final currentPosition = player.renderingComponent.box.toTilePosition();
     final target = TilePosition(currentPosition.x + x, currentPosition.y + y);
     if (!target.isInWorldBound) {

@@ -1,27 +1,20 @@
 import 'package:dart_game/client/ui/button.dart';
-import 'package:dart_game/client/ui/client_ui_controller.dart';
+import 'package:dart_game/client/ui/client_ui_controller.dart' as ui;
 import 'package:dart_game/client/ui/inventory_menu.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/common/box.dart';
-import 'package:dart_game/common/building.dart';
-import 'package:dart_game/common/game_objects/soft_object.dart';
-import 'package:dart_game/common/game_objects/world.dart';
-import 'package:dart_game/common/session.dart';
 
 class CraftingInventory extends InventoryMenu {
-  Session session;
   List<int> items = [];
   Button okButton;
-  ClientUiController uiController;
   WebSocketClient webSocketClient;
-  World world;
 
-  CraftingInventory(this.session, this.uiController, this.world)
+  CraftingInventory()
       : okButton = Button(),
         super() {
     okButton.onLeftClick = () {
-      if (uiController.cookingMenu.visible) {
+      if (ui.cookingMenu.visible) {
         /*
         final Iterable<SoftObject> items = world.getSoftObjects(uiController.craftingInventory.items);
         final SoftObjectType selectedItemType = uiController.cookingMenu.selectedItemType;
@@ -43,7 +36,7 @@ class CraftingInventory extends InventoryMenu {
         update();
       };
     }
-    okButton.visible = uiController.cookingMenu.visible;
+    okButton.visible = ui.cookingMenu.visible;
   }
 
   @override
@@ -64,3 +57,4 @@ class CraftingInventory extends InventoryMenu {
     */
   }
 }
+

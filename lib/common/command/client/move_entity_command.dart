@@ -6,11 +6,12 @@ import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/command/client/client_command_type.dart';
 import 'package:dart_game/common/command/server/move_rendering_component_server_command.dart';
 import 'package:dart_game/common/entity.dart';
-import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/game_objects/world.dart' as world;
 import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/world_position.dart';
 import 'package:dart_game/server/client.dart';
+import 'package:dart_game/server/game_server.dart' as server;
 
 class MoveEntityClientCommand extends ClientCommand {
   int renderingComponentId;
@@ -19,10 +20,10 @@ class MoveEntityClientCommand extends ClientCommand {
   MoveEntityClientCommand({this.renderingComponentId, this.target});
 
   @override
-  void execute(GameClient client, World world) {
+  void execute(GameClient client) {
     print('Executing $this\n');
     final Entity player = client.session.player;
-    if (!canExecute(player, world)) {
+    if (!canExecute(player)) {
       return;
     }
     final Entity entity = world.entities[renderingComponentId];
@@ -30,11 +31,11 @@ class MoveEntityClientCommand extends ClientCommand {
         renderingComponentId: entity.renderingComponentId,
         x: target.x,
         y: target.y);
-    serverCommand.execute(client.session, world);
-    world.sendCommandToAllClients(serverCommand);
+    serverCommand.execute(client.session, true);
+    server.sendCommandToAllClients(serverCommand);
   }
 
-  bool canExecute(Entity player, World world) {
+  bool canExecute(Entity player) {
     if (renderingComponentId >= world.renderingComponents.length) {
       print('renderingComponentId is too high.\n');
     }

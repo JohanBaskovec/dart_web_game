@@ -1,30 +1,27 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/command/server/send_world_server_command.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/entity.dart';
-import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/game_objects/world.dart' as world;
 import 'package:dart_game/common/image_type.dart';
 import 'package:dart_game/common/rendering_component.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/common/tile_position.dart';
-import 'package:dart_game/server/game_server.dart';
+import 'package:dart_game/server/game_server.dart' as server;
 
 class GameClient {
   Session session;
   WebSocket webSocket;
   Function onLeave;
-  GameServer gameServer;
   String id;
 
-  GameClient(this.session, this.webSocket, this.gameServer)
-      : assert(webSocket != null),
-        assert(gameServer != null);
+  GameClient(this.session, this.webSocket)
+      : assert(webSocket != null);
 
   void sendCommand(ServerCommand command) {
     webSocket.add(command.toByteData().buffer.asUint8List());
@@ -54,27 +51,27 @@ class GameClient {
 
   void processData(ByteData bytes) {
     final command = ClientCommand.fromByteData(bytes);
-    command.execute(this, gameServer.world);
+    command.execute(this);
   }
 
-  Future<void> login(String username, String password, World world) async {
+  Future<void> login(String username, String password) async {
     if (username == null || username.isEmpty) {
       print('Client tried to login with empty username!');
     }
-    int playerId = gameServer.world.usernameToIdMap[username];
+    int playerId = server.usernameToIdMap[username];
     Entity player;
     if (playerId == null) {
-      player = addNewPlayerAtRandomPosition(world);
+      player = addNewPlayerAtRandomPosition();
       playerId = player.id;
-      gameServer.world.usernameToIdMap[username] = playerId;
+      server.usernameToIdMap[username] = playerId;
     } else {
       player = world.entities[playerId];
     }
     // player is dead
     if (player == null) {
-      player = addNewPlayerAtRandomPosition(world);
+      player = addNewPlayerAtRandomPosition();
       playerId = player.id;
-      gameServer.world.usernameToIdMap[username] = playerId;
+      server.usernameToIdMap[username] = playerId;
     }
     session = Session(player, username);
     assert(session != null);
@@ -102,7 +99,7 @@ class GameClient {
     sendCommand(sendWorldCommand);
   }
 
-  Entity addNewPlayerAtRandomPosition(World world) {
+  Entity addNewPlayerAtRandomPosition() {
     Entity newPlayer;
     for (int x = 0; x < worldSize.x; x++) {
       for (int y = 0; y < worldSize.y; y++) {

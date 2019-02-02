@@ -13,3 +13,5 @@ class Session {
     return 'Session{username: $username, password: $password, loggedIn: $loggedIn, player: $player}';
   }
 }
+
+Session currentSession;

@@ -1,5 +1,4 @@
 import 'package:dart_game/common/game_objects/soft_object.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 enum SkillType {
   cooking,

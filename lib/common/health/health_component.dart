@@ -1,11 +1,6 @@
-import 'dart:math';
-
-import 'package:dart_game/common/game_objects/solid_object.dart';
-import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/health/body_part.dart';
 import 'package:dart_game/common/health/body_part_status.dart';
 import 'package:dart_game/common/health/body_part_type.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 class HealthComponent {
   List<BodyPart> rootBodyParts = [];

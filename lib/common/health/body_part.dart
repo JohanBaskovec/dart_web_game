@@ -1,6 +1,5 @@
 import 'package:dart_game/common/health/body_part_status.dart';
 import 'package:dart_game/common/health/body_part_type.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 class BodyPart {
   int health;

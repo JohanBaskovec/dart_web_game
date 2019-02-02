@@ -1,21 +1,15 @@
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/client/ui/button.dart';
 import 'package:dart_game/client/ui/ui_element.dart';
-import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/common/box.dart';
-import 'package:dart_game/common/building.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
-import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/session.dart';
 
 class CookingMenu extends UiElement {
-  Session session;
-  World world;
   List<CookingMenuButton> buttons = [];
-  WebSocketClient webSocketClient;
   SoftObjectType selectedItemType;
 
-  CookingMenu(this.session, this.world, this.webSocketClient);
+  CookingMenu();
 
   @override
   set box(Box value) {
@@ -24,14 +18,14 @@ class CookingMenu extends UiElement {
   }
 
   void update() {
-    if (session == null || session.player == null) {
+    if (currentSession == null || currentSession.player == null) {
       return;
     }
     buttons = [];
+    /*
     var i = 0;
     for (MapEntry<SoftObjectType, CraftingConfiguration> config
         in craftingRecipes.entries) {
-      /*
       final Iterable<SoftObject> itemsInInventory =
           session.player.inventory.items.map(world.getSoftObject);
       if (playerCanCraft(itemsInInventory, world, config.key, session.player)) {
@@ -43,8 +37,8 @@ class CookingMenu extends UiElement {
         buttons.add(button);
         i++;
       }
-      */
     }
+      */
   }
 
   bool clickAt(CanvasPosition canvasPosition) {

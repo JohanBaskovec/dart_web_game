@@ -1,11 +1,8 @@
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/client/ui/button.dart';
-import 'package:dart_game/client/ui/client_ui_controller.dart';
+import 'package:dart_game/client/ui/client_ui_controller.dart' as ui;
 import 'package:dart_game/client/ui/ui_element.dart';
-import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/common/box.dart';
-import 'package:dart_game/common/game_objects/soft_object.dart';
-import 'package:dart_game/common/session.dart';
 
 class InventoryButton extends Button {
   int itemId;
@@ -15,9 +12,6 @@ class InventoryButton extends Button {
 
 class PlayerInventoryMenu extends UiElement {
   List<InventoryButton> buttons = [];
-  Session session;
-  WebSocketClient webSocketClient;
-  ClientUiController uiController;
   static const int marginBottom = 10;
   static const int widthPerItem = 40;
   static const int buttonHeight = 40;
@@ -28,7 +22,7 @@ class PlayerInventoryMenu extends UiElement {
   static const int height = 40 + paddingTop + paddingBottom;
   static const int width = 9 * 40 + paddingLeft + paddingRight;
 
-  PlayerInventoryMenu(this.session, this.webSocketClient, [this.uiController]);
+  PlayerInventoryMenu();
 
   void reinitialize(int screenWidth, int screenHeight) {
     box = Box(
@@ -39,18 +33,18 @@ class PlayerInventoryMenu extends UiElement {
   }
 
   bool shiftLeftClick(CanvasPosition position) {
-    if (uiController.craftingInventory.visible) {
+    if (ui.craftingInventory.visible) {
       for (int i = 0; i < buttons.length; i++) {
         if (buttons[i].box.pointIsInBox(position.x, position.y) &&
-            !uiController.craftingInventory.items.contains(buttons[i].itemId)) {
-          uiController.craftingInventory.items.add(buttons[i].itemId);
-          uiController.craftingInventory.update();
+            !ui.craftingInventory.items.contains(buttons[i].itemId)) {
+          ui.craftingInventory.items.add(buttons[i].itemId);
+          ui.craftingInventory.update();
           print('Shift-left-click on item n°$i in player inventory');
           return true;
         }
       }
     } else {
-      final activeInventoryWindow = uiController.activeInventoryWindow;
+      final activeInventoryWindow = ui.activeInventoryWindow;
       if (activeInventoryWindow != null) {
         for (int i = 0; i < buttons.length; i++) {
           if (buttons[i].box.pointIsInBox(position.x, position.y)) {
@@ -78,9 +72,9 @@ class PlayerInventoryMenu extends UiElement {
   }
 
   void leftClick(CanvasPosition canvasPosition) {
-    if (uiController.dragging) {
-      final SoftObject item = uiController.maybeDraggedItem;
+    if (ui.dragging) {
       /*
+      final SoftObject item = ui.maybeDraggedItem;
       if (session.player.inventory.contains(item.id)) {
         // TODO: move items inside the inventory
       } else {

@@ -5,14 +5,13 @@ import 'package:dart_game/common/command/client/client_command_type.dart';
 import 'package:dart_game/common/command/client/login_client_command.dart';
 import 'package:dart_game/common/command/client/move_client_command.dart';
 import 'package:dart_game/common/command/client/move_entity_command.dart';
-import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/serializable.dart';
 import 'package:dart_game/server/client.dart';
 
 abstract class ClientCommand<T> extends Serializable {
   ClientCommand();
 
-  void execute(GameClient client, World world);
+  void execute(GameClient client);
 
   static ClientCommand fromByteData(ByteData data) {
     final reader = ByteDataReader(data);

@@ -1,6 +1,5 @@
 import 'dart:core';
 
-import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/identifiable.dart';
@@ -9,15 +8,19 @@ import 'package:dart_game/common/rendering_component.dart';
 import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/common/tile_position.dart';
 
+List<List<Tile>> tiles = [];
+ObjectHolder<Entity> entities;
+ObjectHolder<RenderingComponent> renderingComponents;
+List<Message> messages = [Message('wow', 'ça marche éé à@ç£汉字;')];
+
 class ObjectHolder<T extends GameObject> implements Iterable<T> {
   List<T> objects = [];
   int nNotNull = 0;
   List<int> freeObjectsId = [];
-  World world;
   int maxObjects;
 
-  ObjectHolder(this.world, this.maxObjects): objects = List(maxObjects) {
-    for (int i = 0 ; i < maxObjects ; i++) {
+  ObjectHolder(this.maxObjects) : objects = List(maxObjects) {
+    for (int i = 0; i < maxObjects; i++) {
       freeObjectsId.add(i);
     }
   }
@@ -41,7 +44,6 @@ class ObjectHolder<T extends GameObject> implements Iterable<T> {
       }
       objects[object.id] = object;
     }
-    object.world = world;
     nNotNull++;
   }
 
@@ -191,33 +193,23 @@ class ObjectHolder<T extends GameObject> implements Iterable<T> {
   }
 }
 
-class World {
-  List<List<Tile>> tiles = [];
-  ObjectHolder<Entity> entities;
-  ObjectHolder<RenderingComponent> renderingComponents;
-  List<Message> messages = [Message('wow', 'ça marche éé à@ç£汉字;')];
-
-  World.fromConstants() {
-    entities = ObjectHolder(this, 2000);
-    renderingComponents = ObjectHolder(this, 2000);
-    tiles = List(worldSize.x);
-    for (int x = 0; x < worldSize.x; x++) {
-      tiles[x] = List(worldSize.y);
-      for (int y = 0 ; y < worldSize.y ; y++) {
-        tiles[x][y] = Tile();
-      }
+void init() {
+  entities = ObjectHolder(2000);
+  renderingComponents = ObjectHolder(2000);
+  tiles = List(worldSize.x);
+  for (int x = 0; x < worldSize.x; x++) {
+    tiles[x] = List(worldSize.y);
+    for (int y = 0; y < worldSize.y; y++) {
+      tiles[x][y] = Tile();
     }
   }
+}
 
-  Tile getTileAt(TilePosition position) {
-    return tiles[position.x][position.y];
-  }
+Tile getTileAt(TilePosition position) {
+  return tiles[position.x][position.y];
+}
 
-  /*
-  Entity getTileAt(TilePosition position) {
-    return entities[tilesColumn[position.x][position.y]];
-  }
-
+/*
   List<Tile> getTileAround(TilePosition position) {
     final List<Tile> tiles = [];
     final Box box = Box(position.x - 1, position.y - 1, 2, 2);
@@ -231,9 +223,4 @@ class World {
   }
   */
 
-  void removeSoftObjectId(int id) {}
-
-  void sendCommandToAllClients(ServerCommand command) {}
-
-  void update() {}
-}
+void update() {}

@@ -53,3 +53,4 @@ abstract class InventoryMenu extends UiElement {
     return true;
   }
 }
+

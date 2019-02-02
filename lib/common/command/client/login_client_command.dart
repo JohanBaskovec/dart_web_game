@@ -4,7 +4,6 @@ import 'package:dart_game/common/byte_data_reader.dart';
 import 'package:dart_game/common/byte_data_writer.dart';
 import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/command/client/client_command_type.dart';
-import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/server/client.dart';
 
 class LoginClientCommand extends ClientCommand {
@@ -14,8 +13,8 @@ class LoginClientCommand extends ClientCommand {
   LoginClientCommand([this.username, this.password]);
 
   @override
-  void execute(GameClient client, World world) {
-    client.login(username, password, world);
+  void execute(GameClient client) {
+    client.login(username, password);
     print('Executed $this');
   }
 

@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:dart_game/common/byte_data_reader.dart';
 import 'package:dart_game/common/byte_data_writer.dart';
-import 'package:dart_game/common/game_objects/world.dart';
+import 'package:dart_game/common/game_objects/world.dart' as world;
 import 'package:dart_game/common/identifiable.dart';
 import 'package:dart_game/common/rendering_component.dart';
 import 'package:meta/meta.dart';
@@ -26,14 +26,13 @@ class Entity extends GameObject {
   void set renderingComponent(RenderingComponent value) =>
       renderingComponentId = value.id;
 
-  Entity(
-      {@required this.type,
-      int renderingComponentId,
-      int inventoryComponentId,
-      int healthComponentId,
-      int id,
-      World world})
-      : super(world: world, id: id) {
+  Entity({
+    @required this.type,
+    int renderingComponentId,
+    int inventoryComponentId,
+    int healthComponentId,
+    int id,
+  }) : super(id: id) {
     _renderingComponentId = renderingComponentId;
     _inventoryComponentId = inventoryComponentId;
     _healthComponentId = healthComponentId;
@@ -123,8 +122,7 @@ class Entity extends GameObject {
     final int id = (typeAndId << 4) >> 4;
     assert(typeId < 16);
     assert(id < maxId);
-    final Entity entity = Entity(
-        id: id, type: EntityType.values[typeId]);
+    final Entity entity = Entity(id: id, type: EntityType.values[typeId]);
     switch (entity.type) {
       case EntityType.player:
         entity.renderingComponentId = reader.readUint32();
@@ -144,21 +142,6 @@ class Entity extends GameObject {
 
   @override
   String toString() {
-    return 'Entity{renderingComponentId: $renderingComponentId, ${renderingComponentId != null && world != null ? 'renderingComponent: $renderingComponent' : ''}, inventoryComponentId: $inventoryComponentId, healthComponentId: $healthComponentId}';
+    return 'Entity{type: $type, _renderingComponentId: $_renderingComponentId, _inventoryComponentId: $_inventoryComponentId, _healthComponentId: $_healthComponentId, _bufferSize: $_bufferSize, _byteData: $_byteData, dirty: $dirty}';
   }
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Entity &&
-          runtimeType == other.runtimeType &&
-          renderingComponentId == other.renderingComponentId &&
-          inventoryComponentId == other.inventoryComponentId &&
-          healthComponentId == other.healthComponentId;
-
-  @override
-  int get hashCode =>
-      renderingComponentId.hashCode ^
-      inventoryComponentId.hashCode ^
-      healthComponentId.hashCode;
 }

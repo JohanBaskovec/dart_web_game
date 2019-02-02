@@ -1,12 +1,10 @@
 import 'package:dart_game/common/byte_data_writer.dart';
-import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/serializable.dart';
 
 abstract class GameObject implements Serializable {
-  World world;
   int id;
 
-  GameObject({this.id, this.world});
+  GameObject({this.id});
 
   @override
   void writeToByteDataWriter(ByteDataWriter writer) {

@@ -1,7 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:dart_game/common/byte_data_writer.dart';
-
 class ByteDataReader {
   ByteData byteData;
   int i = 0;

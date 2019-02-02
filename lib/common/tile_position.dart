@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:dart_game/common/constants.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 class TilePosition {
   // position of the tile in the tile map

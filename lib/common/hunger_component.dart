@@ -1,7 +1,3 @@
-import 'package:dart_game/server/server_world.dart';
-import 'package:dart_game/common/game_objects/world.dart';
-import 'package:json_annotation/json_annotation.dart';
-
 class HungerComponent {
   int hunger;
   int increasePerSecond;
@@ -9,7 +5,7 @@ class HungerComponent {
 
   HungerComponent(this.hunger, this.increasePerSecond);
 
-  void update(World world) {
+  void update() {
     /*
     assert(ownerId != null);
     assert(world.solidObjects[ownerId] != null);
