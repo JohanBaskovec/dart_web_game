@@ -10,7 +10,7 @@ class TilePosition {
   TilePosition(this.x, this.y);
 
   bool get isInWorldBound =>
-      x >= 0 && x < worldSize && y >= 0 && y < worldSize;
+      x >= 0 && x < worldTileSize && y >= 0 && y < worldTileSize;
 
   @override
   String toString() {

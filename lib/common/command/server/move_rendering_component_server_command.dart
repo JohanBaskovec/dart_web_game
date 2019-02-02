@@ -7,46 +7,47 @@ import 'package:dart_game/common/command/server/server_command_type.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/game_objects/world.dart' as world;
-import 'package:dart_game/common/rendering_component.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/common/tile_position.dart';
+import 'package:meta/meta.dart';
 
-class MoveRenderingComponentServerCommand extends ServerCommand {
-  int renderingComponentId;
+class MoveEntityServerCommand extends ServerCommand {
+  int entityId;
+  int entityAreaId;
   int x;
   int y;
 
-  MoveRenderingComponentServerCommand(
-      {this.renderingComponentId, this.x, this.y});
+  MoveEntityServerCommand(
+      {@required this.entityId,
+      @required this.entityAreaId,
+      @required this.x,
+      @required this.y});
 
   @override
   void execute(Session session, bool serverSide) {
     print('Executed $this\n');
-    final renderingComponent = world.renderingComponents[renderingComponentId];
-    if (renderingComponent.config.type == RenderingComponentType.solid) {
-      final Entity entity = renderingComponent.entity;
-      final Tile originTile = world.getTileAt(renderingComponent.tilePosition);
+    final Entity entity = world.entities[entityAreaId][entityId];
+    if (entity.config.type == RenderingComponentType.solid) {
+      final Tile originTile = world.getTileAt(entity.tilePosition);
       final int newX = x ~/ tileSize;
       final int newY = y ~/ tileSize;
       final Tile targetTile = world.getTileAt(TilePosition(newX, newY));
       originTile.solidEntity = null;
       targetTile.solidEntity = entity;
     }
-    final int areaIndex = world.getAreaIndex(x, y);
-    final int currentAreaIndex = renderingComponent.currentAreaIndex;
-    final renderingByArea = world.renderingComponentsByArea;
+    final int targetAreaIndex = world.getAreaIndex(x, y);
 
-    if (areaIndex != renderingComponent.currentAreaIndex) {
-      renderingByArea[currentAreaIndex].remove(renderingComponent);
-      renderingComponent.currentAreaIndex = areaIndex;
-      renderingByArea[areaIndex].add(renderingComponent);
+    if (targetAreaIndex != entity.areaId) {
+      world.entities.remove(entity);
+      world.entities.addToArea(entity, targetAreaIndex);
     }
-    renderingComponent.box.moveTo(x, y);
+    entity.box.moveTo(x, y);
   }
 
   static const int bufferSize = uint8Bytes + // type
-          uint32Bytes + // renderingComponentId
+          uint16Bytes + // entityId
+          uint16Bytes + // areaId
           int32Bytes + // x
           int32Bytes // y
       ;
@@ -61,15 +62,16 @@ class MoveRenderingComponentServerCommand extends ServerCommand {
   @override
   void writeToByteDataWriter(ByteDataWriter writer) {
     writer.writeUint8(ServerCommandType.moveRenderingComponent.index);
-    writer.writeUint32(renderingComponentId);
+    writer.writeUint16(entityId);
+    writer.writeUint16(entityAreaId);
     writer.writeInt32(x);
     writer.writeInt32(y);
   }
 
-  static MoveRenderingComponentServerCommand fromByteDataReader(
-      ByteDataReader reader) {
-    final command = MoveRenderingComponentServerCommand(
-        renderingComponentId: reader.readUint32(),
+  static MoveEntityServerCommand fromByteDataReader(ByteDataReader reader) {
+    final command = MoveEntityServerCommand(
+        entityId: reader.readUint16(),
+        entityAreaId: reader.readUint16(),
         x: reader.readInt32(),
         y: reader.readUint32());
     return command;
@@ -77,6 +79,6 @@ class MoveRenderingComponentServerCommand extends ServerCommand {
 
   @override
   String toString() {
-    return 'MoveRenderingComponentServerCommand{renderingComponentId: $renderingComponentId, x: $x, y: $y}';
+    return 'MoveRenderingComponentServerCommand{renderingComponentId: $entityId, x: $x, y: $y}';
   }
 }

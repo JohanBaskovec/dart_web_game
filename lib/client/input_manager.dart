@@ -152,6 +152,7 @@ void listen() {
     final bool isRightClick = e.button == 2;
     final CanvasPosition canvasPosition = renderer.getCursorPositionInCanvas(e);
     if (canClick) {
+      /*
       if (renderer.cameraPosition == null) {
         return;
       }
@@ -190,7 +191,6 @@ void listen() {
         }
         return;
       }
-      /*
         if (!isRightClick) {
           if (cookButton.tryLeftClick(canvasPosition)) {
             return;
@@ -199,7 +199,6 @@ void listen() {
             return;
           }
         }
-        */
       ui.activeInventoryWindow = null;
       for (int i = 0; i < ui.inventoryMenus.length; i++) {
         final inventory = ui.inventoryMenus[i];
@@ -228,7 +227,6 @@ void listen() {
           renderer.getWorldPositionFromCanvasPosition(canvasPosition);
       final TilePosition tilePosition = mousePosition.toTilePosition();
       if (tilePosition.isInWorldBound) {
-        /*
           final object = _world.getTileAt(tilePosition.x, tilePosition.y).solidEntity;
           if (object == null) {
             if (!ui.dragging) {
@@ -255,10 +253,10 @@ void listen() {
               clickOnSolidObject(object);
             }
           }
-                */
       } else {
         ui.dropItem();
       }
+                */
     }
   });
   renderer.canvas.onMouseWheel.listen((WheelEvent e) {

@@ -9,10 +9,8 @@ import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/world.dart' as world;
-import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/i18n.dart';
 import 'package:dart_game/common/image_type.dart';
-import 'package:dart_game/common/rendering_component.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/world_position.dart';
 
@@ -40,16 +38,19 @@ void render() {
     return;
   }
 
-  moveCameraToPlayerPosition(currentSession.player.renderingComponent.box);
+  if (currentSession.player == null) {
+    return;
+  }
+  moveCameraToPlayerPosition(currentSession.player.box);
   _ctx.scale(scale, scale);
   if (cameraPosition != null) {
     _ctx.translate(cameraPosition.x, cameraPosition.y);
   }
 
   final Box renderingBox = Box(
-    left: currentSession.player.renderingComponent.box.left -
+    left: currentSession.player.box.left -
         ((canvas.width / 2) * (1 / scale)).toInt(),
-    top: currentSession.player.renderingComponent.box.top -
+    top: currentSession.player.box.top -
         ((canvas.height / 2) * (1 / scale)).toInt(),
     width: ((canvas.width) * (1 / scale)).toInt(),
     height: ((canvas.height) * (1 / scale)).toInt(),
@@ -328,16 +329,16 @@ void fillBox(Box box) {
 
 void renderAllEntities(Box renderingBox) {
   final Entity player = currentSession.player;
-  final Box playerBox = player.renderingComponent.box;
-  final surroundingRenderings =
+  final Box playerBox = player.box;
+  final entitiesInArea =
       world.getSurroundingRenderingComponentList(playerBox.left, playerBox.top);
   for (int z = 0; z < 3; z++) {
-    for (List<RenderingComponent> renderingsList in surroundingRenderings) {
-      if (renderingsList != null) {
-        for (RenderingComponent rendering in renderingsList) {
-          if (rendering != null &&
-              rendering.config.type == RenderingComponentType.values[z]) {
-            renderRenderingComponent(rendering, renderingBox);
+    for (List<Entity> entities in entitiesInArea) {
+      if (entities != null) {
+        for (Entity entity in entities) {
+          if (entity != null &&
+              entity.config.type == RenderingComponentType.values[z]) {
+            renderEntity(entity, renderingBox);
           }
         }
       }
@@ -345,14 +346,14 @@ void renderAllEntities(Box renderingBox) {
   }
 }
 
-void renderRenderingComponent(RenderingComponent rendering, Box renderingBox) {
-  if (rendering.box != null &&
-      rendering.box.left < renderingBox.right &&
-      rendering.box.right > renderingBox.left &&
-      rendering.box.bottom > renderingBox.top &&
-      rendering.box.top < renderingBox.bottom) {
-    _ctx.drawImageScaled(images[rendering.imageType], rendering.box.left,
-        rendering.box.top, rendering.box.width, rendering.box.height);
+void renderEntity(Entity entity, Box renderingBox) {
+  if (entity.box != null &&
+      entity.box.left < renderingBox.right &&
+      entity.box.right > renderingBox.left &&
+      entity.box.bottom > renderingBox.top &&
+      entity.box.top < renderingBox.bottom) {
+    _ctx.drawImageScaled(images[entity.imageType], entity.box.left,
+        entity.box.top, entity.box.width, entity.box.height);
   }
 }
 

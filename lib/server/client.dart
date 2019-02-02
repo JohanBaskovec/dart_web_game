@@ -8,7 +8,6 @@ import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/game_objects/world.dart' as world;
 import 'package:dart_game/common/image_type.dart';
-import 'package:dart_game/common/rendering_component.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/common/tile_position.dart';
@@ -20,8 +19,7 @@ class GameClient {
   Function onLeave;
   String id;
 
-  GameClient(this.session, this.webSocket)
-      : assert(webSocket != null);
+  GameClient(this.session, this.webSocket) : assert(webSocket != null);
 
   void sendCommand(ServerCommand command) {
     webSocket.add(command.toByteData().buffer.asUint8List());
@@ -58,20 +56,15 @@ class GameClient {
     if (username == null || username.isEmpty) {
       print('Client tried to login with empty username!');
     }
-    int playerId = server.usernameToIdMap[username];
-    Entity player;
-    if (playerId == null) {
+    Entity player = server.usernameToPlayerMap[username];
+    if (player == null) {
       player = addNewPlayerAtRandomPosition();
-      playerId = player.id;
-      server.usernameToIdMap[username] = playerId;
-    } else {
-      player = world.entities[playerId];
+      server.usernameToPlayerMap[username] = player;
     }
     // player is dead
     if (player == null) {
       player = addNewPlayerAtRandomPosition();
-      playerId = player.id;
-      server.usernameToIdMap[username] = playerId;
+      server.usernameToPlayerMap[username] = player;
     }
     session = Session(player, username);
     assert(session != null);
@@ -81,19 +74,11 @@ class GameClient {
     // we only send the visible entities to the player on first login
     // (we then send other entities only when required,
     // such as items in inventories)
-    final List<Entity> entities = [];
-    final List<RenderingComponent> renderingComponents = [];
-    for (RenderingComponent renderingComponent in world.renderingComponents) {
-      if (renderingComponent != null) {
-        final Entity entity = renderingComponent.entity;
-        entities.add(entity);
-        renderingComponents.add(renderingComponent);
-      }
-    }
+    final List<List<Entity>> entities = world.entities.objects;
     final sendWorldCommand = SendWorldServerCommand(
-        playerId: playerId,
-        entities: entities,
-        renderingComponents: renderingComponents,
+      playerArea: player.areaId,
+      playerId: player.id,
+      entitiesPerArea: entities,
     );
     print('Client connected!\n');
     sendCommand(sendWorldCommand);
@@ -101,19 +86,16 @@ class GameClient {
 
   Entity addNewPlayerAtRandomPosition() {
     Entity newPlayer;
-    for (int x = 0; x < worldSize; x++) {
-      for (int y = 0; y < worldSize; y++) {
+    for (int x = 0; x < worldTileSize; x++) {
+      for (int y = 0; y < worldTileSize; y++) {
         final Tile tile = world.getTileAt(TilePosition(x, y));
         if (tile.solidEntity == null) {
-          newPlayer = Entity(type: EntityType.player);
+          newPlayer = Entity(
+              type: EntityType.player,
+              imageType: ImageType.player,
+              x: x * tileSize,
+              y: y * tileSize);
           world.entities.add(newPlayer);
-          final rendering = RenderingComponent.fromType(
-              x: x,
-              y: y,
-              entityId: newPlayer.id,
-              imageType: ImageType.player);
-          world.addRenderingComponent(rendering);
-          newPlayer.renderingComponentId = rendering.id;
           break;
         }
       }

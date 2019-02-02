@@ -4,46 +4,52 @@ import 'package:dart_game/common/byte_data_reader.dart';
 import 'package:dart_game/common/byte_data_writer.dart';
 import 'package:dart_game/common/command/server/server_command.dart';
 import 'package:dart_game/common/command/server/server_command_type.dart';
+import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/game_objects/world.dart' as world;
-import 'package:dart_game/common/rendering_component.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/tile.dart';
 import 'package:meta/meta.dart';
 
 class SendWorldServerCommand extends ServerCommand {
   int playerId;
-  List<Entity> entities;
-  List<RenderingComponent> renderingComponents;
+  int playerArea;
+  List<List<Entity>> entitiesPerArea;
 
   SendWorldServerCommand(
       {@required this.playerId,
-      @required this.entities,
-      @required this.renderingComponents});
+      @required this.playerArea,
+      @required this.entitiesPerArea});
 
   @override
   void execute(Session session, bool serverSide) {
     print('Executed LoggedInCommand\n');
     session.loggedIn = true;
-    for (RenderingComponent e in renderingComponents) {
-      world.addRenderingComponent(e);
-    }
-    for (Entity e in entities) {
-      world.entities.add(e);
-      if (e.renderingComponentId != null) {
-        world.renderingComponents[e.renderingComponentId].entityId = e.id;
+    world.entities.objects = entitiesPerArea;
+    for (List<Entity> entities in entitiesPerArea) {
+      for (Entity e in entities) {
+        if (e.config.type == RenderingComponentType.solid) {
+          final Tile tile = world.getTileAt(e.tilePosition);
+          tile.solidEntity = e;
+        }
       }
     }
-    for (RenderingComponent renderingComponent in renderingComponents) {
-      if (renderingComponent != null &&
-          renderingComponent.config.type == RenderingComponentType.solid) {
-        final Tile tile = world.getTileAt(renderingComponent.tilePosition);
-        final Entity entity = renderingComponent.entity;
-        tile.solidEntity = entity;
-      }
-    }
-    session.player = world.entities[playerId];
+    session.player = world.entities[playerArea][playerId];
   }
+
+  int get bufferSize {
+    int size = uint8Bytes + // type
+        uint16Bytes + // playerId
+        uint16Bytes; // playerArea
+    for (List<Entity> entities in entitiesPerArea) {
+      size += uint32Bytes; // entities.length
+      for (Entity e in entities) {
+        size += e.bufferSize;
+      }
+    }
+    return size;
+  }
+
 
   @override
   ByteData toByteData() {
@@ -55,36 +61,33 @@ class SendWorldServerCommand extends ServerCommand {
   @override
   void writeToByteDataWriter(ByteDataWriter writer) {
     writer.writeUint8(ServerCommandType.sendWorld.index);
-    writer.writeUint32(playerId);
-    writer.writeListWithoutNull(entities);
-    writer.writeListWithoutNull(renderingComponents);
-  }
-
-  int get bufferSize {
-    int size = uint8Bytes + // type
-        uint32Bytes + // playerId
-        uint32Bytes + // entities.length
-        uint32Bytes; // renderingComponents.length
-    for (Entity e in entities) {
-      size += e.bufferSize;
+    writer.writeUint16(playerId);
+    writer.writeUint16(playerArea);
+    for (int i = 0 ; i < nAreas ; i++) {
+      writer.writeUint32(entitiesPerArea[i].length);
+      for (Entity t in entitiesPerArea[i]) {
+        t.writeToByteDataWriter(writer);
+      }
     }
-    for (RenderingComponent e in renderingComponents) {
-      size += e.bufferSize;
-    }
-    return size;
   }
 
   static SendWorldServerCommand fromByteDataReader(ByteDataReader reader) {
-    final command = SendWorldServerCommand(
-        playerId: reader.readUint32(),
-        entities: reader.readListWithoutNull(Entity.fromByteDataReader),
-        renderingComponents:
-            reader.readListWithoutNull(RenderingComponent.fromByteDataReader));
-    return command;
-  }
+    final int playerId = reader.readUint16();
+    final int playerArea = reader.readUint16();
+    final List<List<Entity>> entitiesPerAreas = List(nAreas);
+    for (int i = 0 ; i < nAreas ; i++) {
+      entitiesPerAreas[i] = [];
+      final int listSize = reader.readUint32();
+      for (int k = 0 ; k < listSize ; k++) {
+        entitiesPerAreas[i].add(Entity.fromByteDataReader(reader));
+      }
+    }
 
-  @override
-  String toString() {
-    return 'SendWorldServerCommand{playerId: $playerId, entities: $entities, renderingComponents: $renderingComponents}';
+    final command = SendWorldServerCommand(
+      playerId: playerId,
+      playerArea: playerArea,
+      entitiesPerArea: entitiesPerAreas
+    );
+    return command;
   }
 }

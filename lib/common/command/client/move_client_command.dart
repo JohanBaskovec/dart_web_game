@@ -12,13 +12,13 @@ import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/server/client.dart';
 import 'package:dart_game/server/game_server.dart' as server;
-
+import 'package:meta/meta.dart';
 
 class MoveClientCommand extends ClientCommand {
   int x;
   int y;
 
-  MoveClientCommand({this.x, this.y});
+  MoveClientCommand({@required this.x, @required this.y});
 
   @override
   void execute(GameClient client) {
@@ -27,16 +27,17 @@ class MoveClientCommand extends ClientCommand {
     if (!canExecute(player)) {
       return;
     }
-    final serverCommand = MoveRenderingComponentServerCommand(
-        renderingComponentId: client.session.player.renderingComponentId,
-        x: player.renderingComponent.box.left + x * tileSize,
-        y: player.renderingComponent.box.top + y * tileSize);
+    final serverCommand = MoveEntityServerCommand(
+        entityId: player.id,
+        entityAreaId: player.areaId,
+        x: player.box.left + x * tileSize,
+        y: player.box.top + y * tileSize);
     serverCommand.execute(client.session, true);
     server.sendCommandToAllClients(serverCommand);
   }
 
   bool canExecute(Entity player) {
-    final currentPosition = player.renderingComponent.box.toTilePosition();
+    final currentPosition = player.box.toTilePosition();
     final target = TilePosition(currentPosition.x + x, currentPosition.y + y);
     if (!target.isInWorldBound) {
       print('Tried to move to tile outside of map.\n');

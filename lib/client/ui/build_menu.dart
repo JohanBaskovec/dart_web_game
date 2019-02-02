@@ -40,6 +40,7 @@ class BuildMenu extends UiElement {
   }
 
   bool leftClickAt(CanvasPosition canvasPosition) {
+    /*
     for (BuildMenuButton button in buttons) {
       if (button.box.pointIsInBox(canvasPosition.x, canvasPosition.y)) {
         print('clicking on button ${button.type}\n');
@@ -47,6 +48,7 @@ class BuildMenu extends UiElement {
         return true;
       }
     }
+    */
     return false;
   }
 }

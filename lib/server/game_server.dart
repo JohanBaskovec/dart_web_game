@@ -7,16 +7,16 @@ import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/game_objects/world.dart' as world;
 import 'package:dart_game/common/image_type.dart';
-import 'package:dart_game/common/rendering_component.dart';
 import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/server/client.dart';
+import 'package:meta/meta.dart';
 
 Random randomGenerator = Random.secure();
 HttpServer httpServer;
 final List<GameClient> clients = [];
 String _frontendHost;
 int _frontendPort;
-Map<String, int> usernameToIdMap = {};
+Map<String, Entity> usernameToPlayerMap = {};
 
 Future<void> listen(int port, String frontendHost, int frontendPort) async {
   _frontendHost = frontendHost;
@@ -92,16 +92,16 @@ void startObjectsUpdate() {
 }
 
 void fillWorldWithStuff() {
-  for (int x = 0; x < worldSize; x++) {
-    for (int y = 0; y < worldSize; y++) {
+  for (int x = 0; x < worldTileSize; x++) {
+    for (int y = 0; y < worldTileSize; y++) {
       final int rand = randomGenerator.nextInt(100);
       if (rand < 10) {
         addTree(randomGenerator.nextDouble(), x, y);
       }
     }
   }
-  for (int x = 0; x < worldSize; x++) {
-    for (int y = 0; y < worldSize; y++) {
+  for (int x = 0; x < worldTileSize; x++) {
+    for (int y = 0; y < worldTileSize; y++) {
       final int rand = randomGenerator.nextInt(2);
       if (rand == 0) {
         addTile(ImageType.grass, x, y);
@@ -114,7 +114,7 @@ void fillWorldWithStuff() {
     final int x = randomGenerator.nextInt(worldSizePx.x);
     final int y = randomGenerator.nextInt(worldSizePx.y);
 
-    addEntityWithRendering(EntityType.food, ImageType.apple, x, y);
+    addEntity(type: EntityType.food, imageType: ImageType.apple, x: x, y: y);
   }
 }
 
@@ -144,37 +144,44 @@ String random32BitsHex() {
   return randomGenerator.nextInt(1 << 32).toRadixString(16);
 }
 
-Entity addEntity(EntityType type) {
-  final entity = Entity(type: type);
+Entity addEntity(
+    {@required EntityType type,
+    @required int x,
+    @required int y,
+    @required ImageType imageType}) {
+  final entity = Entity(type: type, x: x, y: y, imageType: imageType);
   world.entities.add(entity);
+  return entity;
+}
+
+Entity addGridAlignedEntity(
+    {@required EntityType type,
+    @required ImageType image,
+    @required int x,
+    @required int y,
+    @required int zIndex}) {
+  final Entity entity =
+      addEntity(type: type, x: x * tileSize, y: y * tileSize, imageType: image);
+  print('Added $entity');
   return entity;
 }
 
 Entity addTree(double nextDouble, int x, int y) {
   print('Adding tree.');
   return addGridAlignedEntity(
-      EntityType.gatherable, ImageType.tree, x * tileSize, y * tileSize, 2);
-}
-
-Entity addEntityWithRendering(EntityType type, ImageType image, int x, int y) {
-  final Entity entity = addEntity(type);
-  addRenderingComponent(x, y, entity, false, image, 1);
-  return entity;
+      type: EntityType.gatherable,
+      image: ImageType.tree,
+      x: x,
+      y: y,
+      zIndex: 2);
 }
 
 Entity addTile(ImageType image, int x, int y) {
   return addGridAlignedEntity(
-      EntityType.ground, image, x * tileSize, y * tileSize, 0);
+      type: EntityType.ground, image: image, x: x, y: y, zIndex: 0);
 }
 
-Entity addGridAlignedEntity(
-    EntityType type, ImageType image, int x, int y, int zIndex) {
-  final Entity entity = addEntity(type);
-  addGridAlignedRenderingComponent(x, y, entity, image, zIndex);
-  print('Added $entity');
-  return entity;
-}
-
+/*
 RenderingComponent addGridAlignedRenderingComponent(
     int x, int y, Entity entity, ImageType image, int zIndex) {
   return addRenderingComponent(x, y, entity, true, image, zIndex);
@@ -184,8 +191,8 @@ RenderingComponent addRenderingComponent(int x, int y, Entity entity,
     bool gridAligned, ImageType image, int zIndex) {
   final rendering = RenderingComponent.fromType(
       x: x, y: y, entityId: entity.id, imageType: image);
-  world.addRenderingComponent(rendering);
   entity.renderingComponent = rendering;
+  world.renderingComponents.add(rendering);
   final Tile tile = world.getTileAt(rendering.tilePosition);
 
   if (gridAligned && zIndex == 2) {
@@ -195,3 +202,4 @@ RenderingComponent addRenderingComponent(int x, int y, Entity entity,
   }
   return rendering;
 }
+*/

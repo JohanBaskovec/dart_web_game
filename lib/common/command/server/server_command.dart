@@ -19,7 +19,7 @@ abstract class ServerCommand extends Serializable {
       case ServerCommandType.sendWorld:
         return SendWorldServerCommand.fromByteDataReader(reader);
       case ServerCommandType.moveRenderingComponent:
-        return MoveRenderingComponentServerCommand.fromByteDataReader(reader);
+        return MoveEntityServerCommand.fromByteDataReader(reader);
       default:
         throw Exception('Not implemented!');
     }

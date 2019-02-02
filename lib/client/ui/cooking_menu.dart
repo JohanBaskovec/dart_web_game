@@ -42,12 +42,14 @@ class CookingMenu extends UiElement {
   }
 
   bool clickAt(CanvasPosition canvasPosition) {
+    /*
     if (contains(canvasPosition)) {
       for (CookingMenuButton button in buttons) {
         button.tryLeftClick(canvasPosition);
       }
       return true;
     }
+    */
     return false;
   }
 }
