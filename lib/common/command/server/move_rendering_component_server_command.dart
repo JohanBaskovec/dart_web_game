@@ -42,7 +42,7 @@ class MoveEntityServerCommand extends ServerCommand {
       world.entities.remove(entity);
       world.entities.addToArea(entity, targetAreaIndex);
     }
-    entity.box.moveTo(x, y);
+    entity.moveTo(x, y);
   }
 
   static const int bufferSize = uint8Bytes + // type

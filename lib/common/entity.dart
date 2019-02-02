@@ -81,7 +81,6 @@ class Entity extends GameObject {
 
   set healthComponentId(int value) {
     _healthComponentId = value;
-    _dirty();
   }
 
   int get inventoryComponentId => _inventoryComponentId;
@@ -89,6 +88,11 @@ class Entity extends GameObject {
   set inventoryComponentId(int value) {
     _inventoryComponentId = value;
     _dirty();
+  }
+
+  void moveTo(int x, int y) {
+    box.moveTo(x, y);
+    dirty = true;
   }
 
   ByteData get byteData => _byteData;
@@ -175,4 +179,5 @@ class Entity extends GameObject {
   String toString() {
     return 'Entity{type: $type, _inventoryComponentId: $_inventoryComponentId, _healthComponentId: $_healthComponentId, _bufferSize: $_bufferSize, _byteData: $_byteData, box: $box, imageType: $imageType, config: $config, dirty: $dirty}';
   }
+
 }
