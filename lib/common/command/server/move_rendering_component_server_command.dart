@@ -33,6 +33,15 @@ class MoveRenderingComponentServerCommand extends ServerCommand {
       originTile.solidEntity = null;
       targetTile.solidEntity = entity;
     }
+    final int areaIndex = world.getAreaIndex(x, y);
+    final int currentAreaIndex = renderingComponent.currentAreaIndex;
+    final renderingByArea = world.renderingComponentsByArea;
+
+    if (areaIndex != renderingComponent.currentAreaIndex) {
+      renderingByArea[currentAreaIndex].remove(renderingComponent);
+      renderingComponent.currentAreaIndex = areaIndex;
+      renderingByArea[areaIndex].add(renderingComponent);
+    }
     renderingComponent.box.moveTo(x, y);
   }
 

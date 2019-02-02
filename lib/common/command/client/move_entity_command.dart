@@ -36,7 +36,7 @@ class MoveEntityClientCommand extends ClientCommand {
   }
 
   bool canExecute(Entity player) {
-    if (renderingComponentId >= world.renderingComponents.length) {
+    if (renderingComponentId >= world.renderingComponentsByArea.length) {
       print('renderingComponentId is too high.\n');
     }
     if (renderingComponentId < 0) {

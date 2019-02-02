@@ -101,8 +101,8 @@ class GameClient {
 
   Entity addNewPlayerAtRandomPosition() {
     Entity newPlayer;
-    for (int x = 0; x < worldSize.x; x++) {
-      for (int y = 0; y < worldSize.y; y++) {
+    for (int x = 0; x < worldSize; x++) {
+      for (int y = 0; y < worldSize; y++) {
         final Tile tile = world.getTileAt(TilePosition(x, y));
         if (tile.solidEntity == null) {
           newPlayer = Entity(type: EntityType.player);
@@ -112,7 +112,7 @@ class GameClient {
               y: y,
               entityId: newPlayer.id,
               imageType: ImageType.player);
-          world.renderingComponents.add(rendering);
+          world.addRenderingComponent(rendering);
           newPlayer.renderingComponentId = rendering.id;
           break;
         }

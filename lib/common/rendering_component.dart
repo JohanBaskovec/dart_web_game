@@ -39,6 +39,7 @@ class RenderingComponent extends GameObject implements Serializable {
   ImageType imageType;
   RenderingConfig config;
   int bufferSize;
+  int currentAreaIndex = 0;
 
   Entity get entity => world.entities[entityId];
 

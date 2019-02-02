@@ -6,8 +6,10 @@ import 'package:dart_game/client/ui/cooking_menu.dart';
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/building.dart';
 import 'package:dart_game/common/constants.dart';
+import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/game_objects/soft_object.dart';
 import 'package:dart_game/common/game_objects/world.dart' as world;
+import 'package:dart_game/common/game_objects/world.dart';
 import 'package:dart_game/common/i18n.dart';
 import 'package:dart_game/common/image_type.dart';
 import 'package:dart_game/common/rendering_component.dart';
@@ -325,11 +327,19 @@ void fillBox(Box box) {
 }
 
 void renderAllEntities(Box renderingBox) {
+  final Entity player = currentSession.player;
+  final Box playerBox = player.renderingComponent.box;
+  final surroundingRenderings =
+      world.getSurroundingRenderingComponentList(playerBox.left, playerBox.top);
   for (int z = 0; z < 3; z++) {
-    for (RenderingComponent rendering in world.renderingComponents) {
-      if (rendering != null &&
-          rendering.config.type == RenderingComponentType.values[z]) {
-        renderRenderingComponent(rendering, renderingBox);
+    for (List<RenderingComponent> renderingsList in surroundingRenderings) {
+      if (renderingsList != null) {
+        for (RenderingComponent rendering in renderingsList) {
+          if (rendering != null &&
+              rendering.config.type == RenderingComponentType.values[z]) {
+            renderRenderingComponent(rendering, renderingBox);
+          }
+        }
       }
     }
   }

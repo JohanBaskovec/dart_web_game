@@ -14,13 +14,11 @@ import 'package:dart_game/server/client.dart';
 Random randomGenerator = Random.secure();
 HttpServer httpServer;
 final List<GameClient> clients = [];
-int _port;
 String _frontendHost;
 int _frontendPort;
 Map<String, int> usernameToIdMap = {};
 
 Future<void> listen(int port, String frontendHost, int frontendPort) async {
-  _port = port;
   _frontendHost = frontendHost;
   _frontendPort = frontendPort;
   /*
@@ -94,16 +92,16 @@ void startObjectsUpdate() {
 }
 
 void fillWorldWithStuff() {
-  for (int x = 0; x < worldSize.x; x++) {
-    for (int y = 0; y < worldSize.y; y++) {
+  for (int x = 0; x < worldSize; x++) {
+    for (int y = 0; y < worldSize; y++) {
       final int rand = randomGenerator.nextInt(100);
       if (rand < 10) {
         addTree(randomGenerator.nextDouble(), x, y);
       }
     }
   }
-  for (int x = 0; x < worldSize.x; x++) {
-    for (int y = 0; y < worldSize.y; y++) {
+  for (int x = 0; x < worldSize; x++) {
+    for (int y = 0; y < worldSize; y++) {
       final int rand = randomGenerator.nextInt(2);
       if (rand == 0) {
         addTile(ImageType.grass, x, y);
@@ -186,7 +184,7 @@ RenderingComponent addRenderingComponent(int x, int y, Entity entity,
     bool gridAligned, ImageType image, int zIndex) {
   final rendering = RenderingComponent.fromType(
       x: x, y: y, entityId: entity.id, imageType: image);
-  world.renderingComponents.add(rendering);
+  world.addRenderingComponent(rendering);
   entity.renderingComponent = rendering;
   final Tile tile = world.getTileAt(rendering.tilePosition);
 

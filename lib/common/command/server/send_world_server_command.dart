@@ -26,7 +26,7 @@ class SendWorldServerCommand extends ServerCommand {
     print('Executed LoggedInCommand\n');
     session.loggedIn = true;
     for (RenderingComponent e in renderingComponents) {
-      world.renderingComponents.add(e);
+      world.addRenderingComponent(e);
     }
     for (Entity e in entities) {
       world.entities.add(e);
