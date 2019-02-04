@@ -5,13 +5,13 @@ import 'package:dart_game/client/ui/cooking_menu.dart';
 import 'package:dart_game/client/ui/crafting_inventory.dart';
 import 'package:dart_game/client/ui/entity_inventory_menu.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
-import 'package:dart_game/common/game_objects/soft_object.dart';
+import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 
 class CookButton extends Button {}
 
 List<EntityInventoryMenu> inventoryMenus = [];
-SoftObject maybeDraggedItem;
+Entity maybeDraggedItem;
 bool dragging = false;
 
 EntityInventoryMenu activeInventoryWindow;
@@ -95,8 +95,8 @@ void updateCraftingMenu() {
 }
 
 @override
-void dropItemIfDragging(int id) {
-  if (maybeDraggedItem != null && maybeDraggedItem.id == id) {
+void dropItemIfDragging({int id, int areaId}) {
+  if (maybeDraggedItem != null && maybeDraggedItem.id == id && maybeDraggedItem.areaId == areaId) {
     dropItem();
   }
 }

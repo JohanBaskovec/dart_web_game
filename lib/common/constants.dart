@@ -4,7 +4,7 @@ import 'package:dart_game/common/size.dart';
 // width (and height) of an area in tiles
 const int areaTileSize = 16;
 // width (and height) of the world in areas
-const int worldAreaSize = 5;
+const int worldAreaSize = 1;
 // total number of areas in the world
 const int nAreas = worldAreaSize * worldAreaSize;
 // width (and height) of the world in tiles
@@ -21,3 +21,5 @@ final Size worldSizePx =
     Size(worldTileSize * tileSize, worldTileSize * tileSize);
 // width and height of areas in pixel
 const int areaSizePx = areaTileSize * tileSize;
+final Box worldBoxPx =
+    Box(left: 0, top: 0, width: worldTileSize * tileSize, height: worldTileSize * tileSize);

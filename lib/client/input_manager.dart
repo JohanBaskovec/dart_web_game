@@ -5,8 +5,12 @@ import 'package:dart_game/client/renderer.dart' as renderer;
 import 'package:dart_game/client/ui/client_ui_controller.dart' as ui;
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/common/command/client/move_client_command.dart';
+import 'package:dart_game/common/command/client/move_entity_client_command.dart';
+import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
+import 'package:dart_game/common/game_objects/world.dart' as world;
 import 'package:dart_game/common/session.dart';
+import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/common/tile_position.dart';
 import 'package:dart_game/common/world_position.dart';
 
@@ -82,6 +86,7 @@ void listen() {
     e.preventDefault();
   });
   renderer.canvas.onMouseDown.listen((MouseEvent e) {
+    print('MouseDown');
     mouseDown = true;
     final CanvasPosition canvasPosition = renderer.getCursorPositionInCanvas(e);
     final int draggedItemId = ui.playerInventory.dragClick(canvasPosition);
@@ -99,36 +104,34 @@ void listen() {
       }
       */
     if (tilePosition.isInWorldBound) {
-      /*
-        final object = _world.getObjectAt(tilePosition);
-        if (object != null) {
-          final int relativeX = mousePosition.x.toInt() - object.box.left;
-          final int relativeY = mousePosition.y.toInt() - object.box.top;
-          if (!renderer.imageIsTransparent(renderer.solidImages[object.type],
-              relativeX, relativeY, object.box)) {
-            return;
-          }
+      final Tile tile = world.tiles[tilePosition.x][tilePosition.y];
+      final Entity entity = tile.solidEntity;
+      if (entity != null) {
+        final int relativeX = mousePosition.x.toInt() - entity.box.left;
+        final int relativeY = mousePosition.y.toInt() - entity.box.top;
+        if (!renderer.imageIsTransparent(renderer.images[entity.imageType],
+            relativeX, relativeY, entity.box)) {
+          return;
         }
-        //final List<Tile> tiles = _world.getTileAround(tilePosition);
-        for (Tile tile in tiles) {
-          for (int i = tile.itemsOnGround.length - 1; i > -1; i--) {
-            final int itemId = tile.itemsOnGround[i];
-            //final SoftObject item = _world.getSoftObject(itemId);
-            if (item.box.pointIsInBox(mousePosition.x, mousePosition.y)) {
-              final int relativeX = mousePosition.x.toInt() - item.box.left;
-              final int relativeY = mousePosition.y.toInt() - item.box.top;
-              final image = renderer.softImages[item.type];
-              if (!renderer.imageIsTransparent(
-                  image, relativeX, relativeY, item.box)) {
-                print('clicked on item ${item.type}!');
-                print('$relativeX:$relativeY');
-                ui.maybeDraggedItem = item;
-                break;
-              }
+      }
+      final List<Tile> tiles = world.getTileAround(tilePosition);
+      for (Tile tile in tiles) {
+        for (int i = tile.entitiesOnGround.length - 1; i > -1; i--) {
+          final Entity entity = tile.entitiesOnGround[i];
+          if (entity.box.pointIsInBox(mousePosition.x, mousePosition.y)) {
+            final int relativeX = mousePosition.x.toInt() - entity.box.left;
+            final int relativeY = mousePosition.y.toInt() - entity.box.top;
+            final image = renderer.images[entity.imageType];
+            if (!renderer.imageIsTransparent(
+                image, relativeX, relativeY, entity.box)) {
+              print('clicked on item ${entity.type}!');
+              print('$relativeX:$relativeY');
+              ui.maybeDraggedItem = entity;
+              break;
             }
           }
         }
-          */
+      }
     }
   });
 
@@ -152,10 +155,10 @@ void listen() {
     final bool isRightClick = e.button == 2;
     final CanvasPosition canvasPosition = renderer.getCursorPositionInCanvas(e);
     if (canClick) {
-      /*
       if (renderer.cameraPosition == null) {
         return;
       }
+      /*
       if (ui.buildMenu.visible) {
         if (ui.buildMenu.leftClickAt(canvasPosition)) {
           return;
@@ -199,6 +202,7 @@ void listen() {
             return;
           }
         }
+        */
       ui.activeInventoryWindow = null;
       for (int i = 0; i < ui.inventoryMenus.length; i++) {
         final inventory = ui.inventoryMenus[i];
@@ -225,18 +229,26 @@ void listen() {
       ui.chat.input.active = false;
       final WorldPosition mousePosition =
           renderer.getWorldPositionFromCanvasPosition(canvasPosition);
+
       final TilePosition tilePosition = mousePosition.toTilePosition();
       if (tilePosition.isInWorldBound) {
-          final object = _world.getTileAt(tilePosition.x, tilePosition.y).solidEntity;
-          if (object == null) {
-            if (!ui.dragging) {
-              clickOnGround(tilePosition);
-            } else {
-              final Tile tile = _world.getTileAt(tilePosition);
+        final Tile tile = world.tiles[tilePosition.x][tilePosition.y];
+        final Entity entity = tile.solidEntity;
+        if (entity == null) {
+          if (!ui.dragging) {
+            clickOnGround(tilePosition);
+          } else {
+            final command = MoveEntityClientCommand(
+                entityAreaId: ui.maybeDraggedItem.areaId,
+                entityId: ui.maybeDraggedItem.id,
+                x: mousePosition.x - ui.maybeDraggedItem.box.left,
+                y: mousePosition.y - ui.maybeDraggedItem.box.top);
+            if (command.canExecute(currentSession.player)) {
+              webSocketClient.sendCommand(command);
+            }
+            /*
               if (ui.maybeDraggedItem.ownerId == null) {
                 print('Dropping item from the ground to the ground\n');
-                final command = MoveItemCommand(
-                    mousePosition, ui.maybeDraggedItem.id);
                 webSocketClient.sendCommand(command);
               } else {
                 print('Dropping item from inventory\n');
@@ -244,19 +256,21 @@ void listen() {
                     mousePosition, ui.maybeDraggedItem.id);
                 webSocketClient.sendCommand(command);
               }
-              print('Items on this tile: ${tile.itemsOnGround}\n');
-            }
-          } else {
-            if (e.button == 2) {
-              rightClickOnSolidObject(object);
-            } else {
-              clickOnSolidObject(object);
-            }
+            print('Items on this tile: ${tile.itemsOnGround}\n');
+              */
           }
+        } else {
+          /*
+          if (e.button == 2) {
+            rightClickOnSolidObject(object);
+          } else {
+            clickOnSolidObject(object);
+          }
+          */
+        }
       } else {
         ui.dropItem();
       }
-                */
     }
   });
   renderer.canvas.onMouseWheel.listen((WheelEvent e) {
@@ -304,9 +318,7 @@ void clickOnSolidObject(SolidObject object) {
 }
 
 bool get canClick {
-  return DateTime.now()
-      .subtract(minDurationBetweenAction)
-      .isAfter(lastClickTime);
+  return true;
 }
 
 void clickOnGround(TilePosition tilePosition) {

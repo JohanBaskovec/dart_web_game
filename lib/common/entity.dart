@@ -4,7 +4,6 @@ import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/byte_data_reader.dart';
 import 'package:dart_game/common/byte_data_writer.dart';
 import 'package:dart_game/common/constants.dart';
-import 'package:dart_game/common/game_objects/world.dart' as world;
 import 'package:dart_game/common/identifiable.dart';
 import 'package:dart_game/common/image_type.dart';
 import 'package:dart_game/common/tile_position.dart';

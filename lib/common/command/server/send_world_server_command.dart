@@ -19,7 +19,8 @@ class SendWorldServerCommand extends ServerCommand {
   SendWorldServerCommand(
       {@required this.playerId,
       @required this.playerArea,
-      @required this.entitiesPerArea});
+      @required this.entitiesPerArea})
+      : super(type: ServerCommandType.sendWorld);
 
   @override
   void execute(Session session, bool serverSide) {
@@ -28,9 +29,11 @@ class SendWorldServerCommand extends ServerCommand {
     world.entities.objects = entitiesPerArea;
     for (List<Entity> entities in entitiesPerArea) {
       for (Entity e in entities) {
+        final Tile tile = world.getTileAt(e.tilePosition);
         if (e.config.type == RenderingComponentType.solid) {
-          final Tile tile = world.getTileAt(e.tilePosition);
           tile.solidEntity = e;
+        } else if (e.config.type == RenderingComponentType.item) {
+          tile.entitiesOnGround.add(e);
         }
       }
     }
@@ -50,7 +53,6 @@ class SendWorldServerCommand extends ServerCommand {
     return size;
   }
 
-
   @override
   ByteData toByteData() {
     final writer = ByteDataWriter(bufferSize);
@@ -63,7 +65,7 @@ class SendWorldServerCommand extends ServerCommand {
     writer.writeUint8(ServerCommandType.sendWorld.index);
     writer.writeUint16(playerId);
     writer.writeUint16(playerArea);
-    for (int i = 0 ; i < nAreas ; i++) {
+    for (int i = 0; i < nAreas; i++) {
       writer.writeUint32(entitiesPerArea[i].length);
       for (Entity t in entitiesPerArea[i]) {
         t.writeToByteDataWriter(writer);
@@ -75,19 +77,18 @@ class SendWorldServerCommand extends ServerCommand {
     final int playerId = reader.readUint16();
     final int playerArea = reader.readUint16();
     final List<List<Entity>> entitiesPerAreas = List(nAreas);
-    for (int i = 0 ; i < nAreas ; i++) {
+    for (int i = 0; i < nAreas; i++) {
       entitiesPerAreas[i] = [];
       final int listSize = reader.readUint32();
-      for (int k = 0 ; k < listSize ; k++) {
+      for (int k = 0; k < listSize; k++) {
         entitiesPerAreas[i].add(Entity.fromByteDataReader(reader));
       }
     }
 
     final command = SendWorldServerCommand(
-      playerId: playerId,
-      playerArea: playerArea,
-      entitiesPerArea: entitiesPerAreas
-    );
+        playerId: playerId,
+        playerArea: playerArea,
+        entitiesPerArea: entitiesPerAreas);
     return command;
   }
 }

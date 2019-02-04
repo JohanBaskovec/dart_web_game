@@ -1,10 +1,11 @@
 import 'dart:typed_data';
 
+
 import 'package:dart_game/common/byte_data_reader.dart';
 import 'package:dart_game/common/byte_data_writer.dart';
 import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/command/client/client_command_type.dart';
-import 'package:dart_game/common/command/server/move_rendering_component_server_command.dart';
+import 'package:dart_game/common/command/server/move_entity_server_command.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/game_objects/world.dart' as world;

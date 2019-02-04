@@ -1,5 +1,6 @@
 import 'dart:html';
 
+import 'package:dart_game/client/input_manager.dart' as input;
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/client/ui/client_ui_controller.dart' as ui;
 import 'package:dart_game/client/ui/cooking_menu.dart';
@@ -57,9 +58,9 @@ void render() {
   );
 
   renderAllEntities(renderingBox);
+  _ctx.setTransform(1, 0, 0, 1, 0, 0);
   /*
 
-    _ctx.setTransform(1, 0, 0, 1, 0, 0);
     renderBuildButton();
     renderCookButton();
     renderPlayerInventory(world);
@@ -69,11 +70,11 @@ void render() {
     renderInventoryMenus(world);
     renderChat(world);
     renderHungerMeter();
-    if (ui.maybeDraggedItem != null && ui.dragging) {
-      _ctx.drawImageScaled(softImages[ui.maybeDraggedItem.type],
-          inputManager.mousePosition.x, inputManager.mousePosition.y, 40, 40);
-    }
     */
+    if (ui.maybeDraggedItem != null && ui.dragging) {
+      _ctx.drawImageScaled(images[ui.maybeDraggedItem.imageType],
+          input.mousePosition.x, input.mousePosition.y, 40, 40);
+    }
 }
 
 void renderHungerMeter() {

@@ -60,6 +60,13 @@ class Box implements Serializable {
     height = bottom - top;
   }
 
+  bool contains(Box other) {
+    return right > other.right &&
+        left < other.left &&
+        top < other.top &&
+        bottom > other.bottom;
+  }
+
   TilePosition toTilePosition() {
     return TilePosition(left ~/ tileSize, top ~/ tileSize);
   }
@@ -106,14 +113,14 @@ class Box implements Serializable {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is Box &&
-              runtimeType == other.runtimeType &&
-              left == other.left &&
-              right == other.right &&
-              top == other.top &&
-              bottom == other.bottom &&
-              width == other.width &&
-              height == other.height;
+      other is Box &&
+          runtimeType == other.runtimeType &&
+          left == other.left &&
+          right == other.right &&
+          top == other.top &&
+          bottom == other.bottom &&
+          width == other.width &&
+          height == other.height;
 
   @override
   int get hashCode =>

@@ -2,7 +2,7 @@ enum ServerCommandType {
   sendWorld,
   addToInventory,
   removeFromInventory,
-  moveRenderingComponent,
+  moveEntity,
   addTile,
   removeTile,
   setEquippedItem,

@@ -1,5 +1,6 @@
 import 'dart:core';
 
+import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/message.dart';
@@ -27,8 +28,7 @@ int getAreaIndex(int x, int y) {
       (tileY / areaTileSize).floor() * (worldTileSize / areaTileSize).floor();
 }
 
-List<List<Entity>> getSurroundingRenderingComponentList(
-    int x, int y) {
+List<List<Entity>> getSurroundingRenderingComponentList(int x, int y) {
   final List<List<Entity>> entities = List(9);
   entities[0] = getEntityInArea(x, y);
   entities[1] = getEntityInArea(x - areaSizePx, y);
@@ -85,6 +85,19 @@ List<Entity> getEntityInArea(int x, int y) {
 
 Tile getTileAt(TilePosition position) {
   return tiles[position.x][position.y];
+}
+
+List<Tile> getTileAround(TilePosition position) {
+  final List<Tile> tilesAround = [];
+  final Box box =
+      Box(left: position.x - 1, top: position.y - 1, width: 2, height: 2);
+  box.clamp(worldBox);
+  for (int x = box.left; x <= box.right; x++) {
+    for (int y = box.top; y <= box.bottom; y++) {
+      tilesAround.add(tiles[x][y]);
+    }
+  }
+  return tilesAround;
 }
 
 void update() {}

@@ -22,19 +22,23 @@ class MoveEntityServerCommand extends ServerCommand {
       {@required this.entityId,
       @required this.entityAreaId,
       @required this.x,
-      @required this.y});
+      @required this.y})
+      : super(type: ServerCommandType.moveEntity);
 
   @override
   void execute(Session session, bool serverSide) {
     print('Executed $this\n');
     final Entity entity = world.entities[entityAreaId][entityId];
+    final Tile originTile = world.getTileAt(entity.tilePosition);
+    final int newTileX = x ~/ tileSize;
+    final int newTileY = y ~/ tileSize;
+    final Tile targetTile = world.getTileAt(TilePosition(newTileX, newTileY));
     if (entity.config.type == RenderingComponentType.solid) {
-      final Tile originTile = world.getTileAt(entity.tilePosition);
-      final int newX = x ~/ tileSize;
-      final int newY = y ~/ tileSize;
-      final Tile targetTile = world.getTileAt(TilePosition(newX, newY));
       originTile.solidEntity = null;
       targetTile.solidEntity = entity;
+    } else if (entity.config.type == RenderingComponentType.item) {
+     originTile.entitiesOnGround.remove(entity);
+     targetTile.entitiesOnGround.add(entity);
     }
     final int targetAreaIndex = world.getAreaIndex(x, y);
 
@@ -61,7 +65,7 @@ class MoveEntityServerCommand extends ServerCommand {
 
   @override
   void writeToByteDataWriter(ByteDataWriter writer) {
-    writer.writeUint8(ServerCommandType.moveRenderingComponent.index);
+    writer.writeUint8(ServerCommandType.moveEntity.index);
     writer.writeUint16(entityId);
     writer.writeUint16(entityAreaId);
     writer.writeInt32(x);

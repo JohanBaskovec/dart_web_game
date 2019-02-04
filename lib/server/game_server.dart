@@ -7,7 +7,6 @@ import 'package:dart_game/common/constants.dart';
 import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/game_objects/world.dart' as world;
 import 'package:dart_game/common/image_type.dart';
-import 'package:dart_game/common/tile.dart';
 import 'package:dart_game/server/client.dart';
 import 'package:meta/meta.dart';
 
