@@ -88,11 +88,10 @@ class MoveEntityClientCommand extends ClientCommand {
         width: entity.box.width,
         height: entity.box.height);
     final boxAroundPlayer = Box(
-      left: (playerTilePosition.x - 1) * tileSize,
-      top: (playerTilePosition.y - 1) * tileSize,
-      width: tileSize * 3,
-      height: tileSize * 3
-    );
+        left: (playerTilePosition.x - 1) * tileSize,
+        top: (playerTilePosition.y - 1) * tileSize,
+        width: tileSize * 3,
+        height: tileSize * 3);
     boxAroundPlayer.clamp(worldBoxPx);
     if (!boxAroundPlayer.contains(targetBox)) {
       print('Moving the entity would put it out of range.\n');
@@ -100,10 +99,13 @@ class MoveEntityClientCommand extends ClientCommand {
     }
 
     final TilePosition targetTilePosition = targetBox.toTilePosition();
-    final Tile tile = world.tiles[targetTilePosition.x][targetTilePosition.y];
-    if (tile.solidEntity != null) {
-      print('Tried to move to tile already occupied.\n');
-      return false;
+    final List<Tile> tiles = world.getTileAround(targetTilePosition);
+    for (Tile tile in tiles) {
+      if (tile.solidEntity != null &&
+          tile.solidEntity.box.containsPartOf(targetBox)) {
+        print('Tried to move to tile already occupied.\n');
+        return false;
+      }
     }
     return true;
   }
