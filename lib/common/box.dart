@@ -68,14 +68,10 @@ class Box implements Serializable {
   }
 
   bool containsPartOf(Box other) {
-    return pointIsInBox(other.left, other.top)
-        || pointIsInBox(other.right, other.top)
-        || pointIsInBox(other.left, other.bottom)
-        || pointIsInBox(other.right, other.bottom)
-        || other.pointIsInBox(left, top)
-        || other.pointIsInBox(right, top)
-        || other.pointIsInBox(left, bottom)
-        || other.pointIsInBox(right, bottom);
+    return left < other.right &&
+        bottom > other.top &&
+        right > other.left &&
+        top < other.bottom;
   }
 
   TilePosition toTilePosition() {
