@@ -5,6 +5,7 @@ import 'package:dart_game/client/ui/cooking_menu.dart';
 import 'package:dart_game/client/ui/crafting_inventory.dart';
 import 'package:dart_game/client/ui/entity_inventory_menu.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
+import 'package:dart_game/client/renderer.dart' as renderer;
 import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
 import 'package:dart_game/common/session.dart';
@@ -105,7 +106,8 @@ void updateCraftingMenu() {
 
 @override
 void dropItemIfDragging({int id, int areaId}) {
-  if (maybeDraggedItem != null && maybeDraggedItem.id == id && maybeDraggedItem.areaId == areaId) {
+  if (maybeDraggedItem != null && maybeDraggedItem.id == id &&
+      maybeDraggedItem.areaId == areaId) {
     dropItem();
   }
 }
@@ -113,4 +115,5 @@ void dropItemIfDragging({int id, int areaId}) {
 void dropItem() {
   dragging = false;
   maybeDraggedItem = null;
+  renderer.clearHeldItem();
 }

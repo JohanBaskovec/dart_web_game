@@ -23,3 +23,11 @@ canvas {
 #canvas-player-inventory {
     z-index: 1;
 }
+
+#canvas-held-item {
+    z-index: 2;
+}
+
+#canvas-interactions {
+    z-index: 3;
+}

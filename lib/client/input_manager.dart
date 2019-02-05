@@ -21,6 +21,7 @@ Duration minDurationBetweenAction = Duration(milliseconds: 70);
 bool shift = false;
 bool mouseDown = false;
 CanvasPosition mousePosition = CanvasPosition(0, 0);
+CanvasElement interactionCanvas = document.getElementById('canvas-interactions');
 
 void listen() {
   _body.onClick.listen((MouseEvent e) {
@@ -78,14 +79,16 @@ void listen() {
   });
   window.onResize.listen((Event e) {
     renderer.initCanvasSize();
+    renderer.paintEverything();
   });
-  renderer.canvas.onResize.listen((Event e) {
+  interactionCanvas.onResize.listen((Event e) {
     renderer.initCanvasSize();
+    renderer.paintEverything();
   });
-  renderer.canvas.onContextMenu.listen((MouseEvent e) {
+  interactionCanvas.onContextMenu.listen((MouseEvent e) {
     e.preventDefault();
   });
-  renderer.canvas.onMouseDown.listen((MouseEvent e) {
+  interactionCanvas.onMouseDown.listen((MouseEvent e) {
     print('MouseDown');
     mouseDown = true;
     final CanvasPosition canvasPosition = renderer.getCursorPositionInCanvas(e);
@@ -135,16 +138,17 @@ void listen() {
     }
   });
 
-  renderer.canvas.onMouseMove.listen((MouseEvent e) {
+  interactionCanvas.onMouseMove.listen((MouseEvent e) {
     mousePosition.x = e.client.x.toInt();
     mousePosition.y = e.client.y.toInt();
 
     if ((e.movement.x != 0 || e.movement.y != 0) &&
         ui.maybeDraggedItem != null) {
+      renderer.paintHeldItem();
       ui.dragging = true;
     }
   });
-  renderer.canvas.onMouseUp.listen((MouseEvent e) {
+  interactionCanvas.onMouseUp.listen((MouseEvent e) {
     mouseDown = false;
     if (!ui.dragging) {
       ui.dropItem();
@@ -273,7 +277,7 @@ void listen() {
       }
     }
   });
-  renderer.canvas.onMouseWheel.listen((WheelEvent e) {
+  interactionCanvas.onMouseWheel.listen((WheelEvent e) {
     renderer.increaseScale(-e.deltaY / 1000.0);
   });
 }

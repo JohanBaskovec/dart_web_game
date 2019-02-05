@@ -28,8 +28,9 @@ class PlayerInventoryMenu extends UiElement {
 
   @override
   void paint() {
-    renderer.ctxPlayerInventory.setTransform(1, 0, 0, 1, 0, 0);
-    renderer.ctx.clearRect(0, 0, renderer.canvasPlayerInventory.width,
+    final ctx = renderer.ctxPlayerInventory;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, renderer.canvasPlayerInventory.width,
         renderer.canvasPlayerInventory.height);
     final int heightPx = (height * renderer.canvas.height).toInt();
     final int marginBottomPx = (marginBottom * renderer.canvas.height).toInt();
@@ -39,8 +40,8 @@ class PlayerInventoryMenu extends UiElement {
         top: renderer.canvas.height - heightPx - marginBottomPx,
         width: widthPx,
         height: heightPx);
-    renderer.ctxPlayerInventory.fillStyle = 'black';
-    renderer.ctxPlayerInventory
+    ctx.fillStyle = 'black';
+    ctx
         .fillRect(box.left, box.top, box.width, box.height);
     /*
     for (var i = 0; i < buttons.length; i++) {

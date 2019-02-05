@@ -1,6 +1,7 @@
 import 'dart:html';
 
 import 'package:dart_game/client/canvas_position.dart';
+import 'package:dart_game/client/input_manager.dart' as input;
 import 'package:dart_game/client/ui/cooking_menu.dart';
 import 'package:dart_game/client/ui/ui.dart' as ui;
 import 'package:dart_game/common/box.dart';
@@ -18,6 +19,8 @@ CanvasElement canvas;
 CanvasRenderingContext2D ctx;
 CanvasElement canvasPlayerInventory;
 CanvasRenderingContext2D ctxPlayerInventory;
+CanvasElement canvasHeldItem;
+CanvasRenderingContext2D ctxHeldItem;
 double scale = 1;
 CanvasPosition cameraPosition;
 Map<ImageType, ImageElement> images = {};
@@ -29,6 +32,8 @@ void init() {
       document.getElementById('canvas-player-inventory') as CanvasElement;
   ctxPlayerInventory =
       canvasPlayerInventory.getContext('2d') as CanvasRenderingContext2D;
+  canvasHeldItem = document.getElementById('canvas-held-item') as CanvasElement;
+  ctxHeldItem = canvasHeldItem.getContext('2d') as CanvasRenderingContext2D;
   for (ImageType type in ImageType.values) {
     images[type] = ImageElement();
     images[type].src = '/$type.png';
@@ -37,17 +42,15 @@ void init() {
   initCanvasSize();
 }
 
-void render() {
-  /*
+void paintEverything() {
+  paintScene();
+  ui.paint();
+}
+
+void paintScene() {
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  if (currentSession.loggedIn == false) {
-    return;
-  }
 
-  if (currentSession.player == null) {
-    return;
-  }
   moveCameraToPlayerPosition(currentSession.player.box);
   ctx.scale(scale, scale);
   if (cameraPosition != null) {
@@ -66,19 +69,18 @@ void render() {
   renderAllEntities(renderingBox);
   ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-    renderBuildButton();
-    renderCookButton();
-    renderBuildMenu(world);
-    renderCraftingInventory(world);
-    renderCookingMenu();
-    renderInventoryMenus(world);
-    renderChat(world);
-    renderHungerMeter();
-    if (ui.maybeDraggedItem != null && ui.dragging) {
-      ctx.drawImageScaled(images[ui.maybeDraggedItem.imageType],
-          input.mousePosition.x, input.mousePosition.y, 40, 40);
-    }
-    */
+}
+
+void clearHeldItem() {
+  ctxHeldItem.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+void paintHeldItem() {
+  ctxHeldItem.clearRect(0, 0, canvas.width, canvas.height);
+  if (ui.maybeDraggedItem != null && ui.dragging) {
+    ctxHeldItem.drawImageScaled(images[ui.maybeDraggedItem.imageType],
+        input.mousePosition.x, input.mousePosition.y, 40, 40);
+  }
 }
 
 void renderHungerMeter() {
@@ -305,6 +307,10 @@ void initCanvasSize() {
   canvas.height = screenHeight;
   canvasPlayerInventory.width = screenWidth;
   canvasPlayerInventory.height = screenHeight;
+  canvasHeldItem.width = screenWidth;
+  canvasHeldItem.height = screenHeight;
+  input.interactionCanvas.width = screenWidth;
+  input.interactionCanvas.height = screenHeight;
   print('Window width: $screenWidth, window height: $screenHeight');
 }
 
