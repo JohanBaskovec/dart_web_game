@@ -13,9 +13,15 @@ class MoveEntityServerToClientCommand
 
   @override
   void execute(Session session) {
+    final bool isPlayer = originalCommand.entityId ==
+        currentSession.player.id &&
+        originalCommand.entityAreaId == currentSession.player.areaId;
     originalCommand.execute(session, false);
     ui.dropItemIfDragging(
         id: originalCommand.entityId, areaId: originalCommand.entityAreaId);
+    if (isPlayer) {
+      renderer.moveCameraToPlayerPosition();
+    }
     renderer.paintScene();
   }
 }

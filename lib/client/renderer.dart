@@ -24,6 +24,8 @@ CanvasRenderingContext2D ctxHeldItem;
 double scale = 1;
 CanvasPosition cameraPosition;
 Map<ImageType, ImageElement> images = {};
+Box renderingBox;
+
 
 void init() {
   canvas = document.getElementById('canvas') as CanvasElement;
@@ -43,32 +45,31 @@ void init() {
 }
 
 void paintEverything() {
+  moveCameraToPlayerPosition();
   paintScene();
   ui.paint();
+}
+
+void clearEntity(Entity entity) {
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  final Box box = entity.box;
+  ctx.clearRect(box.left, box.top, box.width, box.height);
 }
 
 void paintScene() {
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  setCanvasScale(scale);
 
-  moveCameraToPlayerPosition(currentSession.player.box);
-  ctx.scale(scale, scale);
   if (cameraPosition != null) {
     ctx.translate(cameraPosition.x, cameraPosition.y);
   }
 
-  final Box renderingBox = Box(
-    left: currentSession.player.box.left -
-        ((canvas.width / 2) * (1 / scale)).toInt(),
-    top: currentSession.player.box.top -
-        ((canvas.height / 2) * (1 / scale)).toInt(),
-    width: ((canvas.width) * (1 / scale)).toInt(),
-    height: ((canvas.height) * (1 / scale)).toInt(),
-  );
-
   renderAllEntities(renderingBox);
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
+}
 
+void setCanvasScale(double scale) {
+  ctx.scale(scale, scale);
 }
 
 void clearHeldItem() {
@@ -288,10 +289,18 @@ WorldPosition getCursorPositionInWorld(MouseEvent event) {
   return getWorldPositionFromCanvasPosition(canvasPosition);
 }
 
-void moveCameraToPlayerPosition(Box box) {
+void moveCameraToPlayerPosition() {
+  renderingBox = Box(
+    left: currentSession.player.box.left -
+        ((canvas.width / 2) * (1 / scale)).toInt(),
+    top: currentSession.player.box.top -
+        ((canvas.height / 2) * (1 / scale)).toInt(),
+    width: ((canvas.width) * (1 / scale)).toInt(),
+    height: ((canvas.height) * (1 / scale)).toInt(),
+  );
   final double inverseScale = 1 / scale;
-  final double x = -box.left * 1.0 - tileSize / 2;
-  final double y = -box.top * 1.0 - tileSize / 2;
+  final double x = -currentSession.player.box.left * 1.0 - tileSize / 2;
+  final double y = -currentSession.player.box.top * 1.0 - tileSize / 2;
   final double canvasMiddleWidth = canvas.width / 2.0;
   final double canvasMiddleHeight = canvas.height / 2.0;
 
@@ -329,7 +338,7 @@ void renderAllEntities(Box renderingBox) {
         for (Entity entity in entities) {
           if (entity != null &&
               entity.config.type == RenderingComponentType.values[z]) {
-            renderEntity(entity, renderingBox);
+            renderEntity(entity);
           }
         }
       }
@@ -337,7 +346,7 @@ void renderAllEntities(Box renderingBox) {
   }
 }
 
-void renderEntity(Entity entity, Box renderingBox) {
+void renderEntity(Entity entity) {
   if (entity.box != null &&
       entity.box.left < renderingBox.right &&
       entity.box.right > renderingBox.left &&
