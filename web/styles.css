@@ -12,3 +12,14 @@ html, body {
     font-family: gameFont;
     src: url('Retroville.ttf');
 }
+
+canvas {
+    position: absolute;
+}
+#canvas {
+    z-index: 0;
+}
+
+#canvas-player-inventory {
+    z-index: 1;
+}

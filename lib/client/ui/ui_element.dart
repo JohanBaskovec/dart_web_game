@@ -16,4 +16,8 @@ abstract class UiElement {
   set box(Box value) => _box = value;
 
   Box get box => _box;
+
+  void paint() {
+
+  }
 }

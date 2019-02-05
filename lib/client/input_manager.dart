@@ -2,7 +2,7 @@ import 'dart:html';
 
 import 'package:dart_game/client/canvas_position.dart';
 import 'package:dart_game/client/renderer.dart' as renderer;
-import 'package:dart_game/client/ui/client_ui_controller.dart' as ui;
+import 'package:dart_game/client/ui/ui.dart' as ui;
 import 'package:dart_game/client/web_socket_client.dart';
 import 'package:dart_game/common/command/client/move_client_command.dart';
 import 'package:dart_game/common/command/client/move_entity_client_command.dart';
@@ -77,10 +77,10 @@ void listen() {
     }
   });
   window.onResize.listen((Event e) {
-    renderer.initializeUi();
+    renderer.initCanvasSize();
   });
   renderer.canvas.onResize.listen((Event e) {
-    renderer.initializeUi();
+    renderer.initCanvasSize();
   });
   renderer.canvas.onContextMenu.listen((MouseEvent e) {
     e.preventDefault();

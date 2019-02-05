@@ -1,7 +1,7 @@
 import 'dart:html';
 import 'dart:typed_data';
 
-import 'package:dart_game/client/ui/client_ui_controller.dart' as ui;
+import 'package:dart_game/client/ui/ui.dart' as ui;
 import 'package:dart_game/common/command/client/client_command.dart';
 import 'package:dart_game/common/command/client/login_client_command.dart';
 import 'package:dart_game/common/command/server/move_entity_server_command.dart';

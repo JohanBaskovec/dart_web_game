@@ -9,9 +9,9 @@ import 'package:dart_game/common/session.dart';
 
 class Game {
   void run() {
+    currentSession = Session(null, null);
     world.init();
     renderer.init();
-    currentSession = Session(null, null);
 
     Timer.periodic(Duration(milliseconds: (1000 / 60).floor()), (Timer timer) {
       renderer.render();

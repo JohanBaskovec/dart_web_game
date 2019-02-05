@@ -1,6 +1,7 @@
 import 'package:dart_game/client/canvas_position.dart';
+import 'package:dart_game/client/renderer.dart' as renderer;
 import 'package:dart_game/client/ui/button.dart';
-import 'package:dart_game/client/ui/client_ui_controller.dart' as ui;
+import 'package:dart_game/client/ui/ui.dart' as ui;
 import 'package:dart_game/client/ui/ui_element.dart';
 import 'package:dart_game/common/box.dart';
 
@@ -12,24 +13,44 @@ class InventoryButton extends Button {
 
 class PlayerInventoryMenu extends UiElement {
   List<InventoryButton> buttons = [];
-  static const int marginBottom = 10;
-  static const int widthPerItem = 40;
-  static const int buttonHeight = 40;
-  static const int paddingTop = 10;
-  static const int paddingBottom = 10;
-  static const int paddingLeft = 10;
-  static const int paddingRight = 10;
-  static const int height = 40 + paddingTop + paddingBottom;
-  static const int width = 9 * 40 + paddingLeft + paddingRight;
+  static const double marginBottom = 0.1;
+  static const double marginLeft = 0.1;
+  static const double widthPerItem = 40;
+  static const double buttonHeight = 40;
+  static const double paddingTop = 10;
+  static const double paddingBottom = 10;
+  static const double paddingLeft = 0.1;
+  static const double paddingRight = 10;
+  static const double height = 0.2;
+  static const double width = 0.5;
 
   PlayerInventoryMenu();
 
-  void reinitialize(int screenWidth, int screenHeight) {
+  @override
+  void paint() {
+    renderer.ctxPlayerInventory.setTransform(1, 0, 0, 1, 0, 0);
+    renderer.ctx.clearRect(0, 0, renderer.canvasPlayerInventory.width,
+        renderer.canvasPlayerInventory.height);
+    final int heightPx = (height * renderer.canvas.height).toInt();
+    final int marginBottomPx = (marginBottom * renderer.canvas.height).toInt();
+    final int widthPx = (renderer.canvas.width * width).toInt();
     box = Box(
-        left: 20,
-        top: screenHeight - height - marginBottom,
-        width: width,
-        height: height);
+        left: (renderer.canvas.width * marginLeft).toInt(),
+        top: renderer.canvas.height - heightPx - marginBottomPx,
+        width: widthPx,
+        height: heightPx);
+    renderer.ctxPlayerInventory.fillStyle = 'black';
+    renderer.ctxPlayerInventory
+        .fillRect(box.left, box.top, box.width, box.height);
+    /*
+    for (var i = 0; i < buttons.length; i++) {
+      final InventoryButton button = ui.inventory.buttons[i];
+      final int itemId = button.itemId;
+      final SoftObject item = world.getSoftObject(itemId);
+      _ctx.drawImageScaled(softImages[item.type], button.box.left,
+          button.box.top, button.box.width, button.box.height);
+    }
+    */
   }
 
   bool shiftLeftClick(CanvasPosition position) {

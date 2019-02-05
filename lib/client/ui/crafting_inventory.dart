@@ -1,5 +1,5 @@
 import 'package:dart_game/client/ui/button.dart';
-import 'package:dart_game/client/ui/client_ui_controller.dart' as ui;
+import 'package:dart_game/client/ui/ui.dart' as ui;
 import 'package:dart_game/client/ui/inventory_menu.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
 import 'package:dart_game/client/web_socket_client.dart';

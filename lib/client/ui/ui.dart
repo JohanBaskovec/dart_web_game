@@ -7,12 +7,19 @@ import 'package:dart_game/client/ui/entity_inventory_menu.dart';
 import 'package:dart_game/client/ui/player_inventory_menu.dart';
 import 'package:dart_game/common/entity.dart';
 import 'package:dart_game/common/game_objects/solid_object.dart';
+import 'package:dart_game/common/session.dart';
 
 class CookButton extends Button {}
 
 List<EntityInventoryMenu> inventoryMenus = [];
 Entity maybeDraggedItem;
 bool dragging = false;
+
+final Chat chat = Chat();
+final BuildMenu buildMenu = BuildMenu();
+final CraftingInventory craftingInventory = CraftingInventory();
+final CookingMenu cookingMenu = CookingMenu();
+final PlayerInventoryMenu playerInventory = PlayerInventoryMenu();
 
 EntityInventoryMenu activeInventoryWindow;
 
@@ -42,9 +49,11 @@ void onPlayerMove() {
   updateCraftingMenu();
 }
 
-void initialize(int screenWidth, int screenHeight) {
+void paint() {
+  if (currentSession.player != null) {
+    playerInventory.paint();
+  }
   /*
-  inventory.reinitialize(screenWidth, screenHeight);
   buildButton.box = Box(
       left: inventory.box.left,
       top: inventory.box.top - 33,
@@ -105,9 +114,3 @@ void dropItem() {
   dragging = false;
   maybeDraggedItem = null;
 }
-
-final Chat chat = Chat();
-final BuildMenu buildMenu = BuildMenu();
-final CraftingInventory craftingInventory = CraftingInventory();
-final CookingMenu cookingMenu = CookingMenu();
-final PlayerInventoryMenu playerInventory = PlayerInventoryMenu();

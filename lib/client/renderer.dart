@@ -1,9 +1,8 @@
 import 'dart:html';
 
-import 'package:dart_game/client/input_manager.dart' as input;
 import 'package:dart_game/client/canvas_position.dart';
-import 'package:dart_game/client/ui/client_ui_controller.dart' as ui;
 import 'package:dart_game/client/ui/cooking_menu.dart';
+import 'package:dart_game/client/ui/ui.dart' as ui;
 import 'package:dart_game/common/box.dart';
 import 'package:dart_game/common/building.dart';
 import 'package:dart_game/common/constants.dart';
@@ -16,25 +15,32 @@ import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/world_position.dart';
 
 CanvasElement canvas;
-CanvasRenderingContext2D _ctx;
+CanvasRenderingContext2D ctx;
+CanvasElement canvasPlayerInventory;
+CanvasRenderingContext2D ctxPlayerInventory;
 double scale = 1;
 CanvasPosition cameraPosition;
 Map<ImageType, ImageElement> images = {};
 
 void init() {
   canvas = document.getElementById('canvas') as CanvasElement;
-  _ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+  ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+  canvasPlayerInventory =
+      document.getElementById('canvas-player-inventory') as CanvasElement;
+  ctxPlayerInventory =
+      canvasPlayerInventory.getContext('2d') as CanvasRenderingContext2D;
   for (ImageType type in ImageType.values) {
     images[type] = ImageElement();
     images[type].src = '/$type.png';
   }
 
-  initializeUi();
+  initCanvasSize();
 }
 
 void render() {
-  _ctx.setTransform(1, 0, 0, 1, 0, 0);
-  _ctx.clearRect(0, 0, canvas.width, canvas.height);
+  /*
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (currentSession.loggedIn == false) {
     return;
   }
@@ -43,9 +49,9 @@ void render() {
     return;
   }
   moveCameraToPlayerPosition(currentSession.player.box);
-  _ctx.scale(scale, scale);
+  ctx.scale(scale, scale);
   if (cameraPosition != null) {
-    _ctx.translate(cameraPosition.x, cameraPosition.y);
+    ctx.translate(cameraPosition.x, cameraPosition.y);
   }
 
   final Box renderingBox = Box(
@@ -58,23 +64,21 @@ void render() {
   );
 
   renderAllEntities(renderingBox);
-  _ctx.setTransform(1, 0, 0, 1, 0, 0);
-  /*
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
 
     renderBuildButton();
     renderCookButton();
-    renderPlayerInventory(world);
     renderBuildMenu(world);
     renderCraftingInventory(world);
     renderCookingMenu();
     renderInventoryMenus(world);
     renderChat(world);
     renderHungerMeter();
-    */
     if (ui.maybeDraggedItem != null && ui.dragging) {
-      _ctx.drawImageScaled(images[ui.maybeDraggedItem.imageType],
+      ctx.drawImageScaled(images[ui.maybeDraggedItem.imageType],
           input.mousePosition.x, input.mousePosition.y, 40, 40);
     }
+    */
 }
 
 void renderHungerMeter() {
@@ -90,16 +94,16 @@ void renderHungerMeter() {
 
 void renderChat() {
   if (ui.chat.enabled) {
-    _ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-    _ctx.fillRect(ui.chat.box.left, ui.chat.box.top, ui.chat.box.width,
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+    ctx.fillRect(ui.chat.box.left, ui.chat.box.top, ui.chat.box.width,
         ui.chat.box.height);
-    _ctx.fillStyle = 'white';
-    _ctx.fillRect(ui.chat.input.box.left, ui.chat.input.box.top,
+    ctx.fillStyle = 'white';
+    ctx.fillRect(ui.chat.input.box.left, ui.chat.input.box.top,
         ui.chat.input.box.width, ui.chat.input.box.height);
-    _ctx.fillStyle = 'black';
-    _ctx.fillText(ui.chat.input.content, ui.chat.input.box.left + 3,
+    ctx.fillStyle = 'black';
+    ctx.fillText(ui.chat.input.content, ui.chat.input.box.left + 3,
         ui.chat.input.box.top + 10);
-    _ctx.fillStyle = 'white';
+    ctx.fillStyle = 'white';
     num height = 0;
     final List<String> lines = [];
     for (int i = world.messages.length - 1; i > -1; i--) {
@@ -111,7 +115,7 @@ void renderChat() {
         final StringBuffer line = StringBuffer();
         while (width < ui.chat.box.width) {
           line.write('${messageSplitBySpace[j]} ');
-          width += _ctx.measureText(messageSplitBySpace[j]).width;
+          width += ctx.measureText(messageSplitBySpace[j]).width;
           j++;
           if (j >= messageSplitBySpace.length) {
             break;
@@ -125,7 +129,7 @@ void renderChat() {
       }
     }
     for (int i = lines.length - 1; i > -1; i--) {
-      _ctx.fillText(
+      ctx.fillText(
           lines[i], ui.chat.box.left + 3, ui.chat.input.box.top - 15 * i - 5);
     }
   }
@@ -153,27 +157,27 @@ void renderInventoryMenus() {
 void renderCookingMenu() {
   final CookingMenu cookingMenu = ui.cookingMenu;
   if (cookingMenu.visible) {
-    _ctx.fillStyle = 'black';
-    _ctx.fillRect(cookingMenu.box.left, cookingMenu.box.top,
+    ctx.fillStyle = 'black';
+    ctx.fillRect(cookingMenu.box.left, cookingMenu.box.top,
         cookingMenu.box.width, cookingMenu.box.height);
 
     for (int i = 0; i < cookingMenu.buttons.length; i++) {
       final button = cookingMenu.buttons[i];
-      _ctx.drawImageScaled(images[button.objectType], button.box.left,
+      ctx.drawImageScaled(images[button.objectType], button.box.left,
           button.box.top, button.box.width, button.box.height);
-      _ctx.fillStyle = 'white';
+      ctx.fillStyle = 'white';
       var k = 0;
       final CraftingConfiguration craftingConfig =
           craftingRecipes[button.objectType];
       for (var requiredItems in craftingConfig.requiredItems.entries) {
-        _ctx.fillText(
+        ctx.fillText(
             '${t(requiredItems.key.toString())}: ${requiredItems.value}',
             cookingMenu.box.left + 40,
             cookingMenu.box.top + button.box.height * i + 15 + k * 10);
         k++;
       }
       k++;
-      _ctx.fillStyle = 'black';
+      ctx.fillStyle = 'black';
     }
   }
 }
@@ -181,27 +185,27 @@ void renderCookingMenu() {
 void renderBuildMenu() {
   final buildMenu = ui.buildMenu;
   if (buildMenu.visible) {
-    _ctx.fillStyle = 'black';
-    _ctx.fillRect(buildMenu.box.left, buildMenu.box.top, buildMenu.box.width,
+    ctx.fillStyle = 'black';
+    ctx.fillRect(buildMenu.box.left, buildMenu.box.top, buildMenu.box.width,
         buildMenu.box.height);
 
     for (int i = 0; i < buildMenu.buttons.length; i++) {
       final button = buildMenu.buttons[i];
-      _ctx.drawImageScaled(images[button.type], button.box.left, button.box.top,
+      ctx.drawImageScaled(images[button.type], button.box.left, button.box.top,
           button.box.width, button.box.height);
-      _ctx.fillStyle = 'white';
+      ctx.fillStyle = 'white';
       var k = 0;
       final BuildingConfiguration craftingConfiguration =
           buildingRecipes[button.type];
       for (MapEntry<SoftObjectType, int> ingredientList
           in craftingConfiguration.requiredItems.entries) {
-        _ctx.fillText(
+        ctx.fillText(
             '${t(ingredientList.key.toString())}: ${ingredientList.value}',
             buildMenu.box.left + 40,
             buildMenu.box.top + button.box.height * i + 15 + k * 10);
         k++;
       }
-      _ctx.fillStyle = 'black';
+      ctx.fillStyle = 'black';
     }
   }
 }
@@ -228,27 +232,6 @@ void renderCraftingInventory() {
       _ctx.font = '12px gameFont';
       _ctx.fillText('OK', inventory.okButton.box.left + 28,
           inventory.okButton.box.top + 19);
-    }
-    */
-}
-
-void renderPlayerInventory() {
-  /*
-    if (session.player != null) {
-      ui.inventory.update();
-      _ctx.fillStyle = 'black';
-      _ctx.fillRect(
-          ui.inventory.box.left,
-          ui.inventory.box.top,
-          ui.inventory.box.width,
-          ui.inventory.box.height);
-      for (var i = 0; i < ui.inventory.buttons.length; i++) {
-        final InventoryButton button = ui.inventory.buttons[i];
-        final int itemId = button.itemId;
-        final SoftObject item = world.getSoftObject(itemId);
-        _ctx.drawImageScaled(softImages[item.type], button.box.left,
-            button.box.top, button.box.width, button.box.height);
-      }
     }
     */
 }
@@ -315,17 +298,18 @@ void moveCameraToPlayerPosition(Box box) {
   cameraPosition = CanvasPosition(translateX, translateY);
 }
 
-void initializeUi() {
+void initCanvasSize() {
   final int screenWidth = window.innerWidth - 10;
   final int screenHeight = window.innerHeight - 10;
   canvas.width = screenWidth;
   canvas.height = screenHeight;
+  canvasPlayerInventory.width = screenWidth;
+  canvasPlayerInventory.height = screenHeight;
   print('Window width: $screenWidth, window height: $screenHeight');
-  ui.initialize(screenWidth, screenHeight);
 }
 
 void fillBox(Box box) {
-  _ctx.fillRect(box.left, box.top, box.width, box.height);
+  ctx.fillRect(box.left, box.top, box.width, box.height);
 }
 
 void renderAllEntities(Box renderingBox) {
@@ -353,7 +337,7 @@ void renderEntity(Entity entity, Box renderingBox) {
       entity.box.right > renderingBox.left &&
       entity.box.bottom > renderingBox.top &&
       entity.box.top < renderingBox.bottom) {
-    _ctx.drawImageScaled(images[entity.imageType], entity.box.left,
+    ctx.drawImageScaled(images[entity.imageType], entity.box.left,
         entity.box.top, entity.box.width, entity.box.height);
   }
 }
