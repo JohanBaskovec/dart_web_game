@@ -25,7 +25,7 @@ CanvasElement interactionCanvas = document.getElementById('canvas-interactions')
 
 void listen() {
   _body.onClick.listen((MouseEvent e) {
-    if (e.target == renderer.canvas) {
+    if (e.target == interactionCanvas) {
       canvasActive = true;
     }
   });

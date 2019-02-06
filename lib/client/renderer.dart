@@ -15,27 +15,37 @@ import 'package:dart_game/common/image_type.dart';
 import 'package:dart_game/common/session.dart';
 import 'package:dart_game/common/world_position.dart';
 
-CanvasElement canvas;
-CanvasRenderingContext2D ctx;
 CanvasElement canvasPlayerInventory;
 CanvasRenderingContext2D ctxPlayerInventory;
 CanvasElement canvasHeldItem;
 CanvasRenderingContext2D ctxHeldItem;
+CanvasElement canvasItems;
+CanvasRenderingContext2D ctxItems;
+CanvasElement canvasGrid;
+CanvasRenderingContext2D ctxSolid;
+CanvasElement canvasGround;
+CanvasRenderingContext2D ctxGround;
+int screenHeight = 0;
+int screenWidth = 0;
 double scale = 1;
 CanvasPosition cameraPosition;
 Map<ImageType, ImageElement> images = {};
 Box renderingBox;
 
-
 void init() {
-  canvas = document.getElementById('canvas') as CanvasElement;
-  ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
   canvasPlayerInventory =
       document.getElementById('canvas-player-inventory') as CanvasElement;
   ctxPlayerInventory =
       canvasPlayerInventory.getContext('2d') as CanvasRenderingContext2D;
   canvasHeldItem = document.getElementById('canvas-held-item') as CanvasElement;
   ctxHeldItem = canvasHeldItem.getContext('2d') as CanvasRenderingContext2D;
+
+  canvasItems = document.getElementById('canvas-items') as CanvasElement;
+  ctxItems = canvasItems.getContext('2d') as CanvasRenderingContext2D;
+  canvasGround = document.getElementById('canvas-ground') as CanvasElement;
+  ctxGround = canvasGround.getContext('2d') as CanvasRenderingContext2D;
+  canvasGrid = document.getElementById('canvas-grid') as CanvasElement;
+  ctxSolid = canvasGrid.getContext('2d') as CanvasRenderingContext2D;
   for (ImageType type in ImageType.values) {
     images[type] = ImageElement();
     images[type].src = '/$type.png';
@@ -50,34 +60,46 @@ void paintEverything() {
   ui.paint();
 }
 
-void clearEntity(Entity entity) {
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
+void clearSolidEntity(Entity entity) {
   final Box box = entity.box;
-  ctx.clearRect(box.left, box.top, box.width, box.height);
+  ctxSolid.clearRect(box.left, box.top, box.width, box.height);
+}
+
+void clearItem(Entity entity) {
+  final Box box = entity.box;
+  ctxItems.clearRect(box.left, box.top, box.width, box.height);
 }
 
 void paintScene() {
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctxItems.setTransform(1, 0, 0, 1, 0, 0);
+  ctxSolid.setTransform(1, 0, 0, 1, 0, 0);
+  ctxGround.setTransform(1, 0, 0, 1, 0, 0);
+  ctxItems.clearRect(0, 0, screenWidth, screenHeight);
+  ctxSolid.clearRect(0, 0, screenWidth, screenHeight);
+  ctxGround.clearRect(0, 0, screenWidth, screenHeight);
   setCanvasScale(scale);
 
   if (cameraPosition != null) {
-    ctx.translate(cameraPosition.x, cameraPosition.y);
+    ctxItems.translate(cameraPosition.x, cameraPosition.y);
+    ctxSolid.translate(cameraPosition.x, cameraPosition.y);
+    ctxGround.translate(cameraPosition.x, cameraPosition.y);
   }
 
   renderAllEntities(renderingBox);
 }
 
 void setCanvasScale(double scale) {
-  ctx.scale(scale, scale);
+  ctxGround.scale(scale, scale);
+  ctxItems.scale(scale, scale);
+  ctxSolid.scale(scale, scale);
 }
 
 void clearHeldItem() {
-  ctxHeldItem.clearRect(0, 0, canvas.width, canvas.height);
+  ctxHeldItem.clearRect(0, 0, canvasHeldItem.width, canvasHeldItem.height);
 }
 
 void paintHeldItem() {
-  ctxHeldItem.clearRect(0, 0, canvas.width, canvas.height);
+  ctxHeldItem.clearRect(0, 0, canvasHeldItem.width, canvasHeldItem.height);
   if (ui.maybeDraggedItem != null && ui.dragging) {
     ctxHeldItem.drawImageScaled(images[ui.maybeDraggedItem.imageType],
         input.mousePosition.x, input.mousePosition.y, 40, 40);
@@ -96,6 +118,7 @@ void renderHungerMeter() {
 }
 
 void renderChat() {
+  /*
   if (ui.chat.enabled) {
     ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
     ctx.fillRect(ui.chat.box.left, ui.chat.box.top, ui.chat.box.width,
@@ -136,6 +159,7 @@ void renderChat() {
           lines[i], ui.chat.box.left + 3, ui.chat.input.box.top - 15 * i - 5);
     }
   }
+  */
 }
 
 void renderInventoryMenus() {
@@ -158,6 +182,7 @@ void renderInventoryMenus() {
 }
 
 void renderCookingMenu() {
+  /*
   final CookingMenu cookingMenu = ui.cookingMenu;
   if (cookingMenu.visible) {
     ctx.fillStyle = 'black';
@@ -183,9 +208,11 @@ void renderCookingMenu() {
       ctx.fillStyle = 'black';
     }
   }
+  */
 }
 
 void renderBuildMenu() {
+  /*
   final buildMenu = ui.buildMenu;
   if (buildMenu.visible) {
     ctx.fillStyle = 'black';
@@ -211,6 +238,7 @@ void renderBuildMenu() {
       ctx.fillStyle = 'black';
     }
   }
+  */
 }
 
 void renderCraftingInventory() {
@@ -270,7 +298,7 @@ void increaseScale(double increase) {
 }
 
 CanvasPosition getCursorPositionInCanvas(MouseEvent event) {
-  final rect = canvas.getBoundingClientRect();
+  final rect = canvasGrid.getBoundingClientRect();
   final int x = event.client.x - rect.left;
   final int y = event.client.y - rect.top;
   return CanvasPosition(x, y);
@@ -292,17 +320,17 @@ WorldPosition getCursorPositionInWorld(MouseEvent event) {
 void moveCameraToPlayerPosition() {
   renderingBox = Box(
     left: currentSession.player.box.left -
-        ((canvas.width / 2) * (1 / scale)).toInt(),
+        ((screenWidth / 2) * (1 / scale)).toInt(),
     top: currentSession.player.box.top -
-        ((canvas.height / 2) * (1 / scale)).toInt(),
-    width: ((canvas.width) * (1 / scale)).toInt(),
-    height: ((canvas.height) * (1 / scale)).toInt(),
+        ((screenHeight / 2) * (1 / scale)).toInt(),
+    width: (screenWidth * (1 / scale)).toInt(),
+    height: (screenHeight * (1 / scale)).toInt(),
   );
   final double inverseScale = 1 / scale;
   final double x = -currentSession.player.box.left * 1.0 - tileSize / 2;
   final double y = -currentSession.player.box.top * 1.0 - tileSize / 2;
-  final double canvasMiddleWidth = canvas.width / 2.0;
-  final double canvasMiddleHeight = canvas.height / 2.0;
+  final double canvasMiddleWidth = screenWidth / 2.0;
+  final double canvasMiddleHeight = screenHeight / 2.0;
 
   final int translateX = (x + canvasMiddleWidth * inverseScale).toInt();
   final int translateY = (y + canvasMiddleHeight * inverseScale).toInt();
@@ -310,50 +338,102 @@ void moveCameraToPlayerPosition() {
 }
 
 void initCanvasSize() {
-  final int screenWidth = window.innerWidth - 10;
-  final int screenHeight = window.innerHeight - 10;
-  canvas.width = screenWidth;
-  canvas.height = screenHeight;
+  screenWidth = window.innerWidth - 10;
+  screenHeight = window.innerHeight - 10;
   canvasPlayerInventory.width = screenWidth;
   canvasPlayerInventory.height = screenHeight;
   canvasHeldItem.width = screenWidth;
   canvasHeldItem.height = screenHeight;
+  canvasItems.width = screenWidth;
+  canvasItems.height = screenHeight;
+  canvasGrid.width = screenWidth;
+  canvasGrid.height = screenHeight;
+  canvasGround.width = screenWidth;
+  canvasGround.height = screenHeight;
   input.interactionCanvas.width = screenWidth;
   input.interactionCanvas.height = screenHeight;
   print('Window width: $screenWidth, window height: $screenHeight');
 }
 
-void fillBox(Box box) {
-  ctx.fillRect(box.left, box.top, box.width, box.height);
-}
-
 void renderAllEntities(Box renderingBox) {
   final Entity player = currentSession.player;
   final Box playerBox = player.box;
-  final entitiesInArea =
+  final List<List<Entity>> entitiesInArea =
       world.getSurroundingRenderingComponentList(playerBox.left, playerBox.top);
-  for (int z = 0; z < 3; z++) {
-    for (List<Entity> entities in entitiesInArea) {
-      if (entities != null) {
-        for (Entity entity in entities) {
-          if (entity != null &&
-              entity.config.type == RenderingComponentType.values[z]) {
-            renderEntity(entity);
-          }
+  renderGroundEntities(entitiesInArea);
+  renderItems(entitiesInArea);
+  renderSolidEntities(entitiesInArea);
+}
+
+void renderGroundEntity(Entity entity) {
+  if (entity.box != null &&
+      entity.box.left < renderingBox.right &&
+      entity.box.right > renderingBox.left &&
+      entity.box.bottom > renderingBox.top &&
+      entity.box.top < renderingBox.bottom) {
+    ctxGround.drawImageScaled(images[entity.imageType], entity.box.left,
+        entity.box.top, entity.box.width, entity.box.height);
+  }
+}
+
+void renderGroundEntities(List<List<Entity>> entitiesInArea) {
+  for (List<Entity> entities in entitiesInArea) {
+    if (entities != null) {
+      for (Entity entity in entities) {
+        if (entity != null &&
+            entity.config.type == RenderingComponentType.ground) {
+          renderGroundEntity(entity);
         }
       }
     }
   }
 }
 
-void renderEntity(Entity entity) {
+void renderSolidEntity(Entity entity) {
   if (entity.box != null &&
       entity.box.left < renderingBox.right &&
       entity.box.right > renderingBox.left &&
       entity.box.bottom > renderingBox.top &&
       entity.box.top < renderingBox.bottom) {
-    ctx.drawImageScaled(images[entity.imageType], entity.box.left,
+    ctxSolid.drawImageScaled(images[entity.imageType], entity.box.left,
         entity.box.top, entity.box.width, entity.box.height);
+  }
+}
+
+void renderSolidEntities(List<List<Entity>> entitiesInArea) {
+  for (List<Entity> entities in entitiesInArea) {
+    if (entities != null) {
+      for (Entity entity in entities) {
+        if (entity != null &&
+            entity.config.type == RenderingComponentType.solid) {
+          renderSolidEntity(entity);
+        }
+      }
+    }
+  }
+}
+
+void renderItemEntity(Entity entity) {
+  if (entity.box != null &&
+      entity.box.left < renderingBox.right &&
+      entity.box.right > renderingBox.left &&
+      entity.box.bottom > renderingBox.top &&
+      entity.box.top < renderingBox.bottom) {
+    ctxItems.drawImageScaled(images[entity.imageType], entity.box.left,
+        entity.box.top, entity.box.width, entity.box.height);
+  }
+}
+
+void renderItems(List<List<Entity>> entitiesInArea) {
+  for (List<Entity> entities in entitiesInArea) {
+    if (entities != null) {
+      for (Entity entity in entities) {
+        if (entity != null &&
+            entity.config.type == RenderingComponentType.item) {
+          renderItemEntity(entity);
+        }
+      }
+    }
   }
 }
 

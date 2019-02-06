@@ -16,18 +16,27 @@ html, body {
 canvas {
     position: absolute;
 }
-#canvas {
+#canvas-ground {
     z-index: 0;
 }
 
-#canvas-player-inventory {
+#canvas-items {
     z-index: 1;
 }
 
-#canvas-held-item {
+#canvas-grid {
     z-index: 2;
 }
 
-#canvas-interactions {
+#canvas-player-inventory {
     z-index: 3;
 }
+
+#canvas-held-item {
+    z-index: 4;
+}
+
+#canvas-interactions {
+    z-index: 5;
+}
+

@@ -32,12 +32,12 @@ class PlayerInventoryMenu extends UiElement {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, renderer.canvasPlayerInventory.width,
         renderer.canvasPlayerInventory.height);
-    final int heightPx = (height * renderer.canvas.height).toInt();
-    final int marginBottomPx = (marginBottom * renderer.canvas.height).toInt();
-    final int widthPx = (renderer.canvas.width * width).toInt();
+    final int heightPx = (height * renderer.screenHeight).toInt();
+    final int marginBottomPx = (marginBottom * renderer.screenHeight).toInt();
+    final int widthPx = (renderer.screenWidth * width).toInt();
     box = Box(
-        left: (renderer.canvas.width * marginLeft).toInt(),
-        top: renderer.canvas.height - heightPx - marginBottomPx,
+        left: (renderer.screenWidth * marginLeft).toInt(),
+        top: renderer.screenHeight - heightPx - marginBottomPx,
         width: widthPx,
         height: heightPx);
     ctx.fillStyle = 'black';
